@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/opcaoAnotacao"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Adicionar Anotação"
+        android:gravity="center"
+        android:padding="16dp"
+        android:background="?attr/selectableItemBackground"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/opcaoLema"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Adicionar Lema"
+        android:gravity="center"
+        android:padding="16dp"
+        android:background="?attr/selectableItemBackground"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/opcaoMensagem"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Adicionar Mensagem"
+        android:gravity="center"
+        android:padding="16dp"
+        android:background="?attr/selectableItemBackground"
+        android:textSize="16sp" />
+</LinearLayout>

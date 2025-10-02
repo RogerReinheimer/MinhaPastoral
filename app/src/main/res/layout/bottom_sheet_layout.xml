@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffff"
+    tools:context=".Bottom_sheet_layout">
+
+    <!-- Topo -->
+    <LinearLayout
+        android:id="@+id/layoutPerfil"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="5dp">
+
+            <ImageView
+                android:id="@+id/imgPerfil"
+                android:layout_width="44dp"
+                android:layout_height="34dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="16dp"
+                app:srcCompat="@drawable/img_3" />
+
+            <TextView
+                android:id="@+id/txtPerfilNome"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:fontFamily="sans-serif-black"
+                android:text="Olá, Edson!"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#383535" />
+    </LinearLayout>
+
+    <!-- Menu -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:gravity="bottom"
+        app:layout_constraintTop_toBottomOf="@id/layoutPerfil"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <!-- Botão Layouts -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#383535" />
+
+        <LinearLayout
+            android:id="@+id/layoutLayout"
+            android:layout_width="match_parent"
+            android:layout_height="59dp"
+
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"
+            android:orientation="horizontal"
+            android:paddingHorizontal="16dp">
+
+            <ImageView
+                android:id="@+id/imgMsg"
+                android:layout_width="44dp"
+                android:layout_height="34dp"
+                android:layout_gravity="center_vertical"
+                app:srcCompat="@drawable/dashboard" />
+
+            <TextView
+                android:id="@+id/txtMsg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="8dp"
+                android:fontFamily="sans-serif-black"
+                android:text="Layouts"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#383535" />
+
+        <!-- Botão Configurações -->
+        <LinearLayout
+            android:id="@+id/layoutConfig"
+            android:layout_width="match_parent"
+            android:layout_height="59dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"
+            android:orientation="horizontal"
+            android:paddingHorizontal="16dp">
+
+            <ImageView
+                android:id="@+id/imgConfig"
+                android:layout_width="44dp"
+                android:layout_height="34dp"
+                android:layout_gravity="center_vertical"
+                app:srcCompat="@drawable/img_2" />
+
+            <TextView
+                android:id="@+id/txtConfig"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:fontFamily="sans-serif-black"
+                android:text="Configurações"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginStart="8dp"/>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#383535" />
+
+        <!-- Botão Sair -->
+        <LinearLayout
+            android:id="@+id/layoutSair"
+            android:layout_width="match_parent"
+            android:layout_height="59dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground"
+            android:orientation="horizontal"
+            android:paddingHorizontal="16dp">
+
+            <ImageView
+                android:id="@+id/imgSair"
+                android:layout_width="44dp"
+                android:layout_height="34dp"
+                android:layout_gravity="center_vertical"
+                app:srcCompat="@drawable/img_1" />
+
+            <TextView
+                android:id="@+id/txtSair"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:fontFamily="sans-serif-black"
+                android:text="Sair"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginStart="8dp"/>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#383535" />
+
+        <!-- Versão -->
+        <LinearLayout
+            android:id="@+id/layoutVersao"
+            android:layout_width="match_parent"
+            android:layout_height="59dp"
+            android:orientation="horizontal"
+            android:paddingHorizontal="16dp">
+
+            <ImageView
+                android:id="@+id/imgVersao"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:layout_gravity="center_vertical"
+                app:srcCompat="@drawable/img" />
+
+            <TextView
+                android:id="@+id/txtVersao"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:fontFamily="sans-serif-black"
+                android:text="V1.0.0.0.0 beta"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginStart="8dp"/>
+        </LinearLayout>
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

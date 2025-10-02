@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/fundoTela"
+    tools:context=".PredefinicaoLema">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintFundo"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp">
+
+                <ImageView
+                    android:id="@+id/imageView2"
+                    android:layout_width="62dp"
+                    android:layout_height="62dp"
+                    android:layout_marginTop="16dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/logo" />
+
+                <LinearLayout
+                    android:layout_width="309dp"
+                    android:layout_height="490dp"
+                    android:layout_marginTop="40dp"
+                    android:background="@drawable/fundo_azul_escuro"
+                    android:orientation="vertical"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/imageView2">
+
+                    <Space
+                        android:layout_width="match_parent"
+                        android:layout_height="16dp" />
+
+                    <TextView
+                        android:id="@+id/textView"
+                        android:layout_width="114dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:text="Predefinição Lema do ano"
+                        android:textAlignment="center"
+                        android:textColor="@color/white"
+                        android:textSize="20sp"
+                        android:textStyle="bold|italic" />
+
+                    <LinearLayout
+                        android:id="@+id/layout_mensagem1"
+                        android:layout_width="270dp"
+                        android:layout_height="70dp"
+                        android:layout_marginTop="40dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@drawable/fundo_azul_menosescuro"
+                        android:orientation="vertical">
+
+                        <EditText
+                            android:id="@+id/editTitulo1"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="5dp"
+                            android:backgroundTint="#00FFFFFF"
+                            android:hint="Escreva seu título aqui"
+                            android:inputType="text"
+                            android:padding="0dp"
+                            android:textAlignment="center"
+                            android:textColor="#fff"
+                            android:textColorHint="@color/white"
+                            android:textSize="14sp"
+                            android:textStyle="italic" />
+
+                        <EditText
+                            android:id="@+id/editData"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:backgroundTint="#00FFFFFF"
+                            android:focusable="false"
+                            android:hint="00/00/0000"
+                            android:inputType="none"
+                            android:padding="0dp"
+                            android:textAlignment="center"
+                            android:textColor="#FFFFFF"
+                            android:textColorHint="@color/white"
+                            android:textSize="14sp"
+                            android:textStyle="italic" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="270dp"
+                        android:layout_height="177dp"
+                        android:layout_marginTop="16dp"
+                        android:background="@drawable/fundo_azul_menosescuro"
+                        android:orientation="vertical">
+
+                        <EditText
+                            android:id="@+id/editTextText"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginLeft="9dp"
+                            android:layout_marginTop="12dp"
+                            android:background="@android:color/transparent"
+                            android:ems="10"
+                            android:gravity="top"
+                            android:inputType="text"
+                            android:text="Digite seu texto aqui..."
+                            android:textAlignment="textStart"
+                            android:textColor="@color/white"
+                            android:textSize="12sp"
+                            android:textStyle="italic" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="31dp"
+                        android:layout_marginTop="34dp"
+                        android:orientation="horizontal">
+
+                        <androidx.appcompat.widget.AppCompatButton
+                            android:id="@+id/btnSalvar"
+                            android:layout_width="106dp"
+                            android:layout_height="31dp"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginLeft="20dp"
+                            android:layout_marginTop="30dp"
+                            android:layout_marginRight="26dp"
+                            android:background="@drawable/fundo_botao_azul_escuro"
+                            android:paddingTop="2dp"
+                            android:text="Salvar"
+                            android:textAlignment="inherit"
+                            android:textAllCaps="false"
+                            android:textColor="@color/white"
+                            android:textColorLink="@color/azul_mais_escuro"
+                            android:textSize="12sp" />
+
+                        <androidx.appcompat.widget.AppCompatButton
+                            android:id="@+id/btnEntrar"
+                            android:layout_width="106dp"
+                            android:layout_height="31dp"
+                            android:layout_gravity="center_horizontal"
+
+                            android:layout_marginTop="30dp"
+
+                            android:background="@drawable/fundo_botao_azul_escuro"
+                            android:paddingTop="2dp"
+                            android:text="Excluir"
+                            android:textAlignment="inherit"
+                            android:textAllCaps="false"
+                            android:textColor="@color/white"
+                            android:textColorLink="@color/azul_mais_escuro"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+
+                </LinearLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/bottomBar"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/rodape"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingHorizontal="24dp"
+            android:weightSum="5"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <ImageView
+                android:id="@+id/btnPagHome5"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:contentDescription="Início"
+                android:src="@drawable/baseline_home_24" />
+
+            <ImageView
+                android:id="@+id/btnMensagens5"
+                android:layout_width="0dp"
+                android:layout_height="32dp"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:contentDescription="Bíblia"
+                android:src="@drawable/biblia" />
+
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/btnFlutuante5"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="Adicionar nova mensagem"
+                    android:elevation="8dp"
+                    android:src="@drawable/soma" />
+
+                <View
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="20dp"
+                    android:background="@drawable/circulo_azul"
+                    android:elevation="6dp" />
+            </FrameLayout>
+
+            <ImageView
+                android:id="@+id/btnMensagensSemana5"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:contentDescription="Cruz"
+                android:src="@drawable/cruz_magra" />
+
+            <ImageView
+                android:id="@+id/btnMenu"
+                android:layout_width="1dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:contentDescription="Mais"
+                android:src="@drawable/pontos" />
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

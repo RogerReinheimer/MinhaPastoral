@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="azul_mais_escuro">#1E3A5F</color>
+    <color name="fundoTela">#F2F2F2</color>
+    <color name="corTxtSecundario">#757575</color>
+    <color name="corBtnAzul">#2C4E78</color>
+    <color name="azul_escuro"> #2C4E78 </color>
+</resources>

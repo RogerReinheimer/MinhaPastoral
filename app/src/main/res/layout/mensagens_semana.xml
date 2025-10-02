@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="791dp"
+        android:layout_above="@+id/bottomBar"
+        android:layout_marginBottom="-20dp"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:id="@+id/layout_fundo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <ImageView
+                android:id="@+id/img_logo"
+                android:layout_width="62dp"
+                android:layout_height="62dp"
+                android:layout_gravity="center"
+                app:srcCompat="@drawable/logo" />
+
+            <!-- mensagem do dia -->
+            <include layout="@layout/card_mensagem_dia"/>
+
+            <!-- fundo azul escuro -->
+            <LinearLayout
+                android:id="@+id/layout_fundo_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/fundo_azul_escuro"
+                android:orientation="vertical"
+                android:paddingBottom="16dp">
+
+                <!-- caixa de pesquisa -->
+                <EditText
+                    android:id="@+id/et_caixa_pesquisa"
+                    android:layout_width="match_parent"
+                    android:layout_height="36dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginRight="16dp"
+                    android:background="@drawable/fundo_azul_claro"
+                    android:drawableStart="@android:drawable/ic_menu_search"
+                    android:padding="10dp"
+                    android:text="Pesquise uma mensagem"
+                    android:textColor="#FDFDFD"
+                    android:textSize="10sp" />
+
+                <TextView
+                    android:id="@+id/tv_layout_predefinido"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Última Semana"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+
+                <!-- caixa de conteudo -->
+                <include layout="@layout/card_mensagem_interno"/>
+
+                <!-- caixa de conteudo -->
+                <include layout="@layout/card_mensagem_interno"/>
+
+                <!-- caixa de conteudo -->
+                <include layout="@layout/card_mensagem_interno"/>
+
+                <!-- caixa de conteudo -->
+                <include layout="@layout/card_mensagem_interno"/>
+
+                <!-- caixa de conteudo -->
+                <include layout="@layout/card_mensagem_interno"/>
+
+                <!-- caixa de conteudo -->
+                <include layout="@layout/card_mensagem_interno"/>
+
+                <!-- caixa de conteudo -->
+                <include layout="@layout/card_mensagem_interno"/>
+
+            </LinearLayout>
+
+            <!-- botao de apagar -->
+            <Button
+                android:id="@+id/btnApagarMensagens"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="24dp"
+                android:backgroundTint="#1E3A5F"
+                android:text="Apagar Mensagens"
+                android:textColor="#fff" />
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- rodape -->
+    <LinearLayout
+        android:id="@+id/bottomBar"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/rodape"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingHorizontal="24dp"
+        android:weightSum="5">
+
+        <ImageView
+            android:id="@+id/btnPagHome3"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:contentDescription="Início"
+            android:clickable="true"
+            android:src="@drawable/baseline_home_24" />
+
+        <ImageView
+            android:id="@+id/btnMensagens3"
+            android:layout_width="0dp"
+            android:layout_height="32dp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:contentDescription="Bíblia"
+            android:clickable="true"
+            android:src="@drawable/biblia" />
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/btnFlutuante"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_gravity="center"
+                android:contentDescription="Adicionar nova mensagem"
+                android:clickable="true"
+                android:elevation="8dp"
+                android:src="@drawable/soma" />
+
+            <View
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/circulo_azul"
+                android:elevation="6dp" />
+        </FrameLayout>
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:contentDescription="Cruz"
+            android:clickable="true"
+            android:src="@drawable/cruz_magra" />
+
+        <ImageView
+            android:id="@+id/btnMenu"
+            android:layout_width="1dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:contentDescription="Mais"
+            android:clickable="true"
+            android:src="@drawable/pontos" />
+    </LinearLayout>
+
+</RelativeLayout>

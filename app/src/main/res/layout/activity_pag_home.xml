@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/fundoTela">
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="765dp"
+        android:layout_above="@+id/bottomBar"
+        android:layout_marginBottom="1dp"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:id="@+id/layout_fundo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <ImageView
+                android:id="@+id/img_logo"
+                android:layout_width="62dp"
+                android:layout_height="62dp"
+                android:layout_gravity="center"
+                app:srcCompat="@drawable/logo" />
+
+            <include layout="@layout/card_lema_ano" />
+
+            <include layout="@layout/card_mensagem_dia" />
+
+            <include layout="@layout/card_antigo_testamento" />
+
+            <include layout="@layout/card_novo_testamento" />
+
+        </LinearLayout>
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/bottomBar"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/rodape"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingHorizontal="24dp"
+        android:weightSum="5">
+
+        <ImageView
+            android:id="@+id/btnPagHome"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:contentDescription="Início"
+            android:src="@drawable/baseline_home_24" />
+
+        <ImageView
+            android:id="@+id/btnMensagens"
+            android:layout_width="0dp"
+            android:layout_height="32dp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:contentDescription="Bíblia"
+            android:src="@drawable/biblia" />
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/btnFlutuante"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_gravity="center"
+                android:contentDescription="Adicionar nova mensagem"
+                android:elevation="8dp"
+                android:src="@drawable/soma" />
+
+            <View
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/circulo_azul"
+                android:elevation="6dp" />
+        </FrameLayout>
+
+        <ImageView
+            android:id="@+id/btnMensagensSemana"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:contentDescription="Cruz"
+            android:src="@drawable/cruz_magra" />
+
+        <ImageView
+            android:id="@+id/btnMenu"
+            android:layout_width="1dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:contentDescription="Mais"
+            android:src="@drawable/pontos" />
+    </LinearLayout>
+
+</RelativeLayout>
