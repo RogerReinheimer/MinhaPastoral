@@ -83,7 +83,7 @@
                 <include layout="@layout/card_mensagem_interno" />
 
                 <Button
-                    android:id="@+id/button4"
+                    android:id="@+id/btnEnviar"
                     android:layout_width="150dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"

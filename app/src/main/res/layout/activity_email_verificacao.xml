@@ -28,7 +28,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/textView11"
+            android:id="@+id/txtVoltar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
@@ -42,13 +42,13 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
-            android:id="@+id/imageView14"
+            android:id="@+id/imgVoltar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginTop="87dp"
             android:src="@drawable/maiorr"
-            app:layout_constraintEnd_toStartOf="@+id/textView11"
+            app:layout_constraintEnd_toStartOf="@+id/txtVoltar"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -97,7 +97,7 @@
             android:background="@drawable/fundo_branco">
 
             <EditText
-                android:id="@+id/editTextText8"
+                android:id="@+id/etCodigoVerificacao"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginStart="48dp"
@@ -132,7 +132,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/button4"
+            android:id="@+id/btnEnviar"
             android:layout_width="273dp"
             android:layout_height="52dp"
             android:layout_gravity="center_horizontal"

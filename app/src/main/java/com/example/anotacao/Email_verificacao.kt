@@ -21,20 +21,20 @@ class Email_verificacao : AppCompatActivity() {
             insets
         }
 
-        val textView11 = findViewById<TextView>(R.id.textView11)
-        textView11.setOnClickListener {
+        val txtVoltar = findViewById<TextView>(R.id.txtVoltar)
+        txtVoltar.setOnClickListener {
             val intent = Intent(this, Pag_esqueceu_senha::class.java)
             startActivity(intent)
         }
 
-        val imageView14 = findViewById<ImageView>(R.id.imageView14)
-        imageView14.setOnClickListener {
+        val imgVoltar = findViewById<ImageView>(R.id.imgVoltar)
+        imgVoltar.setOnClickListener {
             val intent = Intent(this, Pag_esqueceu_senha::class.java)
             startActivity(intent)
         }
 
-        val button4 = findViewById<Button>(R.id.button4)
-        button4.setOnClickListener {
+        val btnEnviar = findViewById<Button>(R.id.btnEnviar)
+        btnEnviar.setOnClickListener {
             val intent = Intent(this, Insira_nova_senha::class.java)
             startActivity(intent)
         }
