@@ -9,7 +9,7 @@
     tools:context=".Pag2">
 
     <TextView
-        android:id="@+id/textView5"
+        android:id="@+id/txtEsqueceuSenha"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="268dp"
@@ -36,7 +36,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView5" />
+        app:layout_constraintTop_toBottomOf="@+id/txtEsqueceuSenha" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout2"
@@ -194,7 +194,7 @@
             android:textSize="16sp" />
 
         <TextView
-            android:id="@+id/textView2"
+            android:id="@+id/txtCadastrar"
             android:layout_width="wrap_content"
             android:layout_height="18dp"
             android:layout_marginBottom="27dp"

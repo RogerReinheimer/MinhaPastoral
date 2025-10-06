@@ -63,7 +63,7 @@
                 <include layout="@layout/card_mensagem_interno" />
 
                 <Button
-                    android:id="@+id/button2"
+                    android:id="@+id/btnCadastrar"
                     android:layout_width="150dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
@@ -73,7 +73,7 @@
                 <include layout="@layout/card_mensagem_interno" />
 
                 <Button
-                    android:id="@+id/button3"
+                    android:id="@+id/btnEnviar"
                     android:layout_width="150dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"

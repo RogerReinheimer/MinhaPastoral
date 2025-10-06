@@ -28,7 +28,7 @@
             app:srcCompat="@drawable/logo" />
 
         <TextView
-            android:id="@+id/textView19"
+            android:id="@+id/txtVoltar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
@@ -42,12 +42,12 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
-            android:id="@+id/imageView16"
+            android:id="@+id/imgVoltar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginTop="87dp"
-            app:layout_constraintEnd_toStartOf="@+id/textView19"
+            app:layout_constraintEnd_toStartOf="@+id/txtVoltar"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/maiorr" />
@@ -99,13 +99,13 @@
                 android:layout_marginTop="26dp"
                 android:layout_marginBottom="22dp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/editTextText9"
+                app:layout_constraintEnd_toStartOf="@+id/etSenhaNova"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/senhamedio" />
 
             <EditText
-                android:id="@+id/editTextText9"
+                android:id="@+id/etSenhaNova"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginStart="30dp"
@@ -153,7 +153,7 @@
             tools:layout_editor_absoluteY="135dp">
 
             <EditText
-                android:id="@+id/editTextText10"
+                android:id="@+id/etConfirmaSenha"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginStart="48dp"
@@ -175,7 +175,7 @@
                 android:layout_marginTop="26dp"
                 android:layout_marginBottom="22dp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/editTextText10"
+                app:layout_constraintEnd_toStartOf="@+id/etConfirmaSenha"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/senhamedio" />
@@ -198,7 +198,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/button5"
+            android:id="@+id/btnEnviar"
             android:layout_width="273dp"
             android:layout_height="52dp"
             android:layout_gravity="center_horizontal"

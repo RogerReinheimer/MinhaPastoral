@@ -12,20 +12,20 @@ class Pag_esqueceu_senha : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_pag_esqueceu_senha)
 
-        val textView10 = findViewById<TextView>(R.id.textView10)
-        textView10.setOnClickListener {
+        val txtVoltarParaLogin = findViewById<TextView>(R.id.txtVoltarParaLogin)
+        txtVoltarParaLogin.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
         }
 
-        val imageView12 = findViewById<ImageView>(R.id.imageView12)
-        imageView12.setOnClickListener {
+        val imgVoltarLogin = findViewById<ImageView>(R.id.imgVoltarLogin)
+        imgVoltarLogin.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
         }
 
-        val button3 = findViewById<Button>(R.id.button3)
-        button3.setOnClickListener {
+        val btnEnviar = findViewById<Button>(R.id.btnEnviar)
+        btnEnviar.setOnClickListener {
             val intent = Intent(this, Email_verificacao::class.java)
             startActivity(intent)
         }

@@ -11,6 +11,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
 class Insira_nova_senha : AppCompatActivity() {
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -21,20 +23,20 @@ class Insira_nova_senha : AppCompatActivity() {
             insets
         }
 
-        val textView19 = findViewById<TextView>(R.id.textView19)
-        textView19.setOnClickListener {
+        val txtVoltar = findViewById<TextView>(R.id.txtVoltar)
+        txtVoltar.setOnClickListener {
             val intent = Intent(this, Email_verificacao::class.java)
             startActivity(intent)
         }
 
-        val imageView16 = findViewById<ImageView>(R.id.imageView16)
-        imageView16.setOnClickListener {
+        val imgVoltar = findViewById<ImageView>(R.id.imgVoltar)
+        imgVoltar.setOnClickListener {
             val intent = Intent(this, Email_verificacao::class.java)
             startActivity(intent)
         }
 
-        val button5 = findViewById<Button>(R.id.button5)
-        button5.setOnClickListener {
+        val btnEnviar = findViewById<Button>(R.id.btnEnviar)
+        btnEnviar.setOnClickListener {
             val intent = Intent(this, Senha_alterada::class.java)
             startActivity(intent)
         }

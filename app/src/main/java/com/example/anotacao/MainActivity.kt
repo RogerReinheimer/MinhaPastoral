@@ -2,7 +2,6 @@ package com.example.anotacao
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -29,14 +28,14 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        val textView2 = findViewById<TextView>(R.id.textView2)
-        textView2.setOnClickListener {
+        val txtCadastrar = findViewById<TextView>(R.id.txtCadastrar)
+        txtCadastrar.setOnClickListener {
             val intent = Intent(this, Pag2::class.java)
             startActivity(intent)
         }
 
-        val textView5 = findViewById<TextView>(R.id.textView5)
-        textView5.setOnClickListener {
+        val txtEsqueceuSenha = findViewById<TextView>(R.id.txtEsqueceuSenha)
+        txtEsqueceuSenha.setOnClickListener {
             val intent = Intent(this, Pag_esqueceu_senha::class.java)
             startActivity(intent)
         }
