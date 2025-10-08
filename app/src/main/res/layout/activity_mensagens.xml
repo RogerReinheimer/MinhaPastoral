@@ -53,7 +53,7 @@
                 <include layout="@layout/card_mensagem_interno" />
 
                 <Button
-                    android:id="@+id/button1"
+                    android:id="@+id/btnExcluir1"
                     android:layout_width="150dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
@@ -63,7 +63,7 @@
                 <include layout="@layout/card_mensagem_interno" />
 
                 <Button
-                    android:id="@+id/btnCadastrar"
+                    android:id="@+id/btnExcluir2"
                     android:layout_width="150dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
@@ -73,7 +73,7 @@
                 <include layout="@layout/card_mensagem_interno" />
 
                 <Button
-                    android:id="@+id/btnEnviar"
+                    android:id="@+id/btnExcluir3"
                     android:layout_width="150dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
@@ -83,7 +83,7 @@
                 <include layout="@layout/card_mensagem_interno" />
 
                 <Button
-                    android:id="@+id/btnEnviar"
+                    android:id="@+id/btnExcluir4"
                     android:layout_width="150dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"

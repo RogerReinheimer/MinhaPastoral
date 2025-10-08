@@ -33,6 +33,11 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
+
+    buildFeatures {
+        viewBinding = true
+    }
+
 }
 
 dependencies {
@@ -45,4 +50,22 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    // Retrofit para fazer as chamadas à API
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    // Gson para converter a resposta JSON em objetos Kotlin/Java
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
+    // Coroutines para gerenciar as chamadas de rede sem travar a tela
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")    // Retrofit para fazer as chamadas à API
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    // Gson para converter a resposta JSON em objetos Kotlin/Java
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
+    // Coroutines para gerenciar as chamadas de rede sem travar a tela
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
+
+    // Adicione esta linha para o inspetor de rede
+    implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
 }

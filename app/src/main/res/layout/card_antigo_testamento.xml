@@ -52,7 +52,7 @@
                 android:layout_marginStart="12dp"
                 android:layout_marginEnd="12dp"
                 android:layout_weight="1"
-                android:text="&quot;Porque Deus tanto amou o mundo que deu o seu Filho Unigênito, para que todo o que nele crer não pereça, mas tenha a vida eterna.&quot;"
+                android:text="&quot;Não temas, porque eu sou contigo; não te assombres, porque eu sou o teu Deus; eu te fortaleço, e te ajudo, e te sustento com a destra da minha justiça.&quot;"
                 android:textColor="#000000"
                 android:textStyle="italic" />
 
@@ -64,7 +64,7 @@
                 android:layout_marginStart="12dp"
                 android:layout_marginEnd="12dp"
                 android:layout_weight="1"
-                android:text="João 3:16"
+                android:text="Isaías 41:10"
                 android:textAlignment="textEnd"
                 android:textColor="#000000"
                 android:textStyle="bold" />
