@@ -88,6 +88,13 @@ class Pag_home : AppCompatActivity() {
             attributes.windowAnimations = R.style.DialogAnimationDireita
         }
 
+        val opcLayout = dialog.findViewById<LinearLayout>(R.id.layoutLayout)
+        opcLayout.setOnClickListener {
+            val intent = Intent(this, Pag_layouts::class.java)
+            startActivity(intent)
+            dialog.dismiss()
+        }
+
         dialog.show()
     }
 
