@@ -10,20 +10,24 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.lifecycleScope
-import com.example.anotacao.data.AppDatabase
 import com.example.anotacao.ui.login.Pag_Cadastro
-import kotlinx.coroutines.launch
+// V IMPORTS NOVOS DO FIREBASE V
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 class MainActivity : AppCompatActivity() {
 
-    // 1. ACESSO AO BANCO DE DADOS (igual fizemos na tela de cadastro)
-    private val userDao by lazy { AppDatabase.getDatabase(this).userDao() }
+    // 1. DECLARANDO A REFERÊNCIA PARA O FIREBASE AUTHENTICATION
+    private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_pag_entrar)
+
+        // 2. INICIALIZANDO O FIREBASE AUTH
+        auth = Firebase.auth
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -43,50 +47,36 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        // 2. PEGANDO AS REFERÊNCIAS DOS CAMPOS DE LOGIN
-        val etUsuario = findViewById<EditText>(R.id.etEmailUsuario)
+        // 3. PEGANDO AS REFERÊNCIAS DOS CAMPOS DE LOGIN
+        val etEmail = findViewById<EditText>(R.id.etEmailUsuario)
         val etSenha = findViewById<EditText>(R.id.etSenha)
         val btnEntrar = findViewById<Button>(R.id.btnEntrar)
 
-        // 3. LÓGICA DO BOTÃO ENTRAR (MODIFICADA)
+        // 4. LÓGICA DO BOTÃO ENTRAR COM FIREBASE
         btnEntrar.setOnClickListener {
-            val usuarioDigitado = etUsuario.text.toString()
+            val emailDigitado = etEmail.text.toString()
             val senhaDigitada = etSenha.text.toString()
 
-            // Validação para garantir que os campos não estão vazios
-            if (usuarioDigitado.isNotEmpty() && senhaDigitada.isNotEmpty()) {
-                realizarLogin(usuarioDigitado, senhaDigitada)
+            if (emailDigitado.isNotEmpty() && senhaDigitada.isNotEmpty()) {
+                realizarLoginFirebase(emailDigitado, senhaDigitada)
             } else {
-                Toast.makeText(this, "Por favor, preencha o usuário e a senha.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Por favor, preencha o e-mail e a senha.", Toast.LENGTH_SHORT)
+                    .show()
             }
         }
     }
 
-    // 4. NOVA FUNÇÃO PARA VERIFICAR O LOGIN
-    private fun realizarLogin(usuarioDigitado: String, senhaDigitada: String) {
-        // Usamos coroutines (lifecycleScope) para acessar o banco fora da thread principal
-        lifecycleScope.launch {
-            // Usamos a função do DAO para buscar um usuário pelo nome.
-            // Por enquanto, a busca será feita apenas pelo NOME DE USUÁRIO.
-            val usuarioEncontrado = userDao.findByUsername(usuarioDigitado)
-
-            // Verificamos duas coisas:
-            // 1. Se o usuário foi encontrado (não é nulo)
-            // 2. Se a senha do usuário encontrado é igual à senha digitada
-            if (usuarioEncontrado != null && usuarioEncontrado.passwordHash == senhaDigitada) {
-                // SUCESSO!
-                Toast.makeText(this@MainActivity, "Login bem-sucedido!", Toast.LENGTH_SHORT).show()
-
-                // Navega para a tela principal do app
-                val intent = Intent(this@MainActivity, Pag_home::class.java)
-                startActivity(intent)
-
-                // Fecha a tela de login para que o usuário não possa voltar para ela
-                finish()
-            } else {
-                // FALHA!
-                Toast.makeText(this@MainActivity, "Usuário ou senha inválidos.", Toast.LENGTH_SHORT).show()
+    // 5. NOVA FUNÇÃO PARA VERIFICAR O LOGIN COM FIREBASE
+    private fun realizarLoginFirebase(email: String, senha: String) {
+        auth.signInWithEmailAndPassword(email, senha)
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    // SUCESSO!
+                    Toast.makeText(this, "Login bem-sucedido!", Toast.LENGTH_SHORT).show()
+                    val intent = Intent(this, Pag_home::class.java)
+                    startActivity(intent)
+                    finish() // Fecha a tela de login
+                }
             }
-        }
     }
 }
