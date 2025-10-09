@@ -9,6 +9,7 @@ import android.view.Window
 import android.view.WindowManager
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -81,7 +82,6 @@ class PredefinicaoMsg : AppCompatActivity() {
 
 
     }//oncreate
-    //abrir
     private fun mostrarSheetLateral() {
         val dialog = Dialog(this)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -89,11 +89,18 @@ class PredefinicaoMsg : AppCompatActivity() {
 
         dialog.window?.apply {
             setLayout(
-                (resources.displayMetrics.widthPixels * 0.7).toInt(), // 70% da largura da tela
+                (resources.displayMetrics.widthPixels * 0.7).toInt(),
                 WindowManager.LayoutParams.MATCH_PARENT
             )
-            setGravity(Gravity.END) // abre na lateral direita
+            setGravity(Gravity.END)
             attributes.windowAnimations = R.style.DialogAnimationDireita
+        }
+
+        val opcLayout = dialog.findViewById<LinearLayout>(R.id.layoutLayout)
+        opcLayout.setOnClickListener {
+            val intent = Intent(this, Pag_layouts::class.java)
+            startActivity(intent)
+            dialog.dismiss()
         }
 
         dialog.show()
