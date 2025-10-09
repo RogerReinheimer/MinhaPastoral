@@ -1,17 +1,10 @@
 package com.example.anotacao
 
-data class ApiResponse(
-    val reference: Reference,
-    val text: String
-)
-
-data class Reference(
-    val book: Book,
+data class VerseResponse(
+    val pk: Int,
+    val translation: String,
+    val book: Int,
     val chapter: Int,
-    val verse: Int
-)
-
-data class Book(
-    val name: String,
-    val testament: String
+    val verse: Int,
+    val text: String
 )
