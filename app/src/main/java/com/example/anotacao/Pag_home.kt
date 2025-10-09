@@ -9,6 +9,7 @@ import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -97,7 +98,6 @@ class Pag_home : AppCompatActivity() {
 
         dialog.show()
     }
-
     private fun mostrarSheetOpcoes() {
         val bottomSheetDialog = BottomSheetDialog(this)
         val view = layoutInflater.inflate(R.layout.bottom_sheet_opcoes, null)
