@@ -98,7 +98,7 @@
             app:srcCompat="@drawable/email_medio" />
 
         <EditText
-            android:id="@+id/editTextText"
+            android:id="@+id/etEmail"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginStart="46dp"
@@ -157,7 +157,7 @@
             app:srcCompat="@drawable/usuariomedio" />
 
         <EditText
-            android:id="@+id/editTextText4"
+            android:id="@+id/etUsuario"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginStart="46dp"
@@ -211,13 +211,13 @@
             android:layout_marginTop="26dp"
             android:layout_marginBottom="22dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/editTextText5"
+            app:layout_constraintEnd_toStartOf="@+id/etSenha"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/senhamedio" />
 
         <EditText
-            android:id="@+id/editTextText5"
+            android:id="@+id/etSenha"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginStart="48dp"
@@ -264,7 +264,7 @@
         app:layout_constraintTop_toBottomOf="@+id/constraintLayout7">
 
         <EditText
-            android:id="@+id/editTextText6"
+            android:id="@+id/etConfirmaSenha"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginStart="48dp"
@@ -288,7 +288,7 @@
             android:layout_marginTop="26dp"
             android:layout_marginBottom="22dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/editTextText6"
+            app:layout_constraintEnd_toStartOf="@+id/etConfirmaSenha"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.4"

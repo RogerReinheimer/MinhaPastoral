@@ -59,7 +59,7 @@
             android:exported="false" />
 
         <activity
-            android:name=".ui.login.Pag2"
+            android:name=".ui.login.Pag_Cadastro"
             android:exported="true" />
 
         <activity

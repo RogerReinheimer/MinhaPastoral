@@ -7,7 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.example.anotacao.ui.login.Pag2
+import com.example.anotacao.ui.login.Pag_Cadastro
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
 
         val txtCadastrar = findViewById<TextView>(R.id.txtCadastrar)
         txtCadastrar.setOnClickListener {
-            val intent = Intent(this, Pag2::class.java)
+            val intent = Intent(this, Pag_Cadastro::class.java)
             startActivity(intent)
         }
 
