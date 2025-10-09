@@ -3,6 +3,7 @@ package com.example.anotacao
 import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
+import android.text.Html
 import android.util.Log
 import android.view.Gravity
 import android.view.View
@@ -16,22 +17,20 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import androidx.lifecycle.lifecycleScope
-
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.GET
+import retrofit2.http.Path
+import java.util.Calendar
+import java.util.Random
 
 class Pag_home : AppCompatActivity() {
 
+    // --- Sua lógica de UI original (sem mudanças) ---
     private lateinit var tvTextVersiculoAntigo: TextView
     private lateinit var tvNumeroVersiculoAntigo: TextView
     private lateinit var tvTextVersiculoNovo: TextView
     private lateinit var tvNumeroVersiculoNovo: TextView
-
-    private val livrosExcluidos = setOf(
-        "Tobias", "Judite", "Sabedoria", "Eclesiástico", "Baruque", "1 Macabeus", "2 Macabeus"
-    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,13 +41,10 @@ class Pag_home : AppCompatActivity() {
         tvTextVersiculoNovo = findViewById(R.id.tv_text_versiculo_novo)
         tvNumeroVersiculoNovo = findViewById(R.id.tv_numero_versiculo_novo)
 
-        // Exemplo simples de expandir seções (ajuste conforme seu layout)
-        findViewById<View>(R.id.Cabecario_AT).setOnClickListener {
-            alternarVisibilidade(R.id.Conteudo_AT)
-        }
-        findViewById<View>(R.id.Cabecario_NT).setOnClickListener {
-            alternarVisibilidade(R.id.Conteudo_NT)
-        }
+        findViewById<View>(R.id.Cabecario_AT).setOnClickListener { alternarVisibilidade(R.id.Conteudo_AT) }
+        findViewById<View>(R.id.Cabecario_NT).setOnClickListener { alternarVisibilidade(R.id.Conteudo_NT) }
+        findViewById<View>(R.id.Cabecario_LA).setOnClickListener { alternarVisibilidade(R.id.Conteudo_LA) }
+        findViewById<View>(R.id.Cabecario_MD).setOnClickListener { alternarVisibilidade(R.id.Conteudo_MD) }
 
         val btnMenu = findViewById<ImageView>(R.id.btnMenu)
         val btnMais = findViewById<ImageView>(R.id.btnFlutuante)
@@ -57,16 +53,10 @@ class Pag_home : AppCompatActivity() {
 
         btnMenu.setOnClickListener { mostrarSheetLateral() }
         btnMais.setOnClickListener { mostrarSheetOpcoes() }
+        btnCruz.setOnClickListener { startActivity(Intent(this, Mensagens_semana::class.java)) }
+        btnBiblia.setOnClickListener { Toast.makeText(this, "Função Bíblia ainda não implementada.", Toast.LENGTH_SHORT).show() }
 
-        btnCruz.setOnClickListener {
-            startActivity(Intent(this, Mensagens_semana::class.java))
-        }
-
-        btnBiblia.setOnClickListener {
-            Toast.makeText(this, "Função Bíblia ainda não implementada.", Toast.LENGTH_SHORT).show()
-        }
-
-        buscarVersiculos()
+        buscarVersiculosDoDia()
     }
 
     private fun alternarVisibilidade(id: Int) {
@@ -78,27 +68,20 @@ class Pag_home : AppCompatActivity() {
         val dialog = Dialog(this)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(R.layout.bottom_sheet_layout)
-
         dialog.window?.apply {
-            setLayout(
-                (resources.displayMetrics.widthPixels * 0.7).toInt(),
-                WindowManager.LayoutParams.MATCH_PARENT
-            )
+            setLayout((resources.displayMetrics.widthPixels * 0.7).toInt(), WindowManager.LayoutParams.MATCH_PARENT)
             setGravity(Gravity.END)
             attributes.windowAnimations = R.style.DialogAnimationDireita
         }
-
         dialog.show()
     }
 
     private fun mostrarSheetOpcoes() {
         val bottomSheetDialog = BottomSheetDialog(this)
         val view = layoutInflater.inflate(R.layout.bottom_sheet_opcoes, null)
-
         val opcaoAnotacao = view.findViewById<TextView>(R.id.opcaoAnotacao)
         val opcaoLema = view.findViewById<TextView>(R.id.opcaoLema)
         val opcaoMensagem = view.findViewById<TextView>(R.id.opcaoMensagem)
-
         opcaoAnotacao.setOnClickListener {
             startActivity(Intent(this, MainAnotacao::class.java))
             bottomSheetDialog.dismiss()
@@ -111,61 +94,91 @@ class Pag_home : AppCompatActivity() {
             startActivity(Intent(this, PredefinicaoMsg::class.java))
             bottomSheetDialog.dismiss()
         }
-
         bottomSheetDialog.setContentView(view)
         bottomSheetDialog.show()
     }
 
-    // --- LÓGICA DE BUSCA DE VERSÍCULOS (API BOLLS) ---
-    private fun buscarVersiculos() {
+
+    data class ApiVerse(val pk: Int, val verse: Int, val text: String)
+
+    data class DisplayVerse(val bookName: String, val chapter: Int, val verse: Int, val text: String)
+
+    interface BibleApi {
+        @GET("get-text/NVT/{bookId}/{chapter}/")
+        suspend fun getChapter(
+            @Path("bookId") bookId: Int,
+            @Path("chapter") chapter: Int
+        ): List<ApiVerse>
+    }
+
+    private val retrofit = Retrofit.Builder()
+        .baseUrl("https://bolls.life/")
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+
+    private val api = retrofit.create(BibleApi::class.java)
+
+    private fun buscarVersiculosDoDia() {
         lifecycleScope.launch {
             try {
-                val antigoTestamentoJob = async { buscarVersiculoValido("OT") }
-                val novoTestamentoJob = async { buscarVersiculoValido("NT") }
+                val antigoJob = async { getVersiculoDoDiaParaTestamento("AT") }
+                val novoJob = async { getVersiculoDoDiaParaTestamento("NT") }
 
-                val versiculoAntigo = antigoTestamentoJob.await()
-                val versiculoNovo = novoTestamentoJob.await()
+                val antigo = antigoJob.await()
+                val novo = novoJob.await()
 
-                versiculoAntigo?.let { preencherCardAntigoTestamento(it) }
-                versiculoNovo?.let { preencherCardNovoTestamento(it) }
+                antigo?.let { preencherCardAntigoTestamento(it) }
+                novo?.let { preencherCardNovoTestamento(it) }
 
             } catch (e: Exception) {
-                Log.e("Pag_home", "Erro ao buscar versículos: ${e.message}")
+                Log.e("Pag_home", "Erro ao buscar versículos do dia: ${e.message}")
                 Toast.makeText(this@Pag_home, "Falha ao carregar versículos.", Toast.LENGTH_LONG).show()
             }
         }
     }
 
-    // ATENÇÃO: A função agora retorna 'ApiResponse?'
-    private suspend fun buscarVersiculoValido(testamentoDesejado: String): ApiResponse? {
-        while (true) {
-            try {
-                val respostaApi = RetrofitClient.apiService.getVersiculoAleatorio("KJV")
-                val versiculo = respostaApi.firstOrNull() ?: continue
+    private suspend fun getVersiculoDoDiaParaTestamento(testamento: String): DisplayVerse? {
+        return try {
+            val diaDoAno = Calendar.getInstance().get(Calendar.DAY_OF_YEAR)
+            val ano = Calendar.getInstance().get(Calendar.YEAR)
+            val seed = (ano * 1000 + diaDoAno).toLong()
+            val random = Random(seed)
 
-                val testamentoCorreto = versiculo.reference.book.testament == testamentoDesejado
-                val livroValido = versiculo.reference.book.name !in livrosExcluidos
-
-                if (testamentoCorreto && livroValido) {
-                    return versiculo
-                }
-
-            } catch (e: Exception) {
-                Log.e("Pag_home", "Falha em uma tentativa de busca: ${e.message}")
-                return null
+            val bookId: Int
+            if (testamento == "AT") {
+                bookId = random.nextInt(39) + 1
+            } else {
+                bookId = random.nextInt(27) + 40
             }
+
+            val infoLivro = BibleData.mapBookIdToData[bookId] ?: return null
+            val chapter = random.nextInt(infoLivro.chapters) + 1
+
+            val capituloDaApi = api.getChapter(bookId, chapter)
+            val primeiroVersiculo = capituloDaApi.firstOrNull() ?: return null
+
+
+            DisplayVerse(
+                bookName = infoLivro.name,
+                chapter = chapter,
+                verse = primeiroVersiculo.verse,
+                text = primeiroVersiculo.text
+            )
+        } catch (e: Exception) {
+            Log.e("Pag_home", "Falha ao buscar capítulo para o dia: ${e.message}")
+            null
         }
     }
 
-    // ATENÇÃO: O parâmetro agora é do tipo 'ApiResponse'
-    private fun preencherCardAntigoTestamento(versiculo: ApiResponse) {
-        tvTextVersiculoAntigo.text = "\"${versiculo.text}\""
-        tvNumeroVersiculoAntigo.text = "${versiculo.reference.book.name} ${versiculo.reference.chapter}:${versiculo.reference.verse}"
+    private fun preencherCardAntigoTestamento(versiculo: DisplayVerse) {
+        val textoLimpo = Html.fromHtml(versiculo.text, Html.FROM_HTML_MODE_LEGACY).toString()
+        tvTextVersiculoAntigo.text = "\"$textoLimpo\""
+        tvNumeroVersiculoAntigo.text = "${versiculo.bookName} ${versiculo.chapter}:${versiculo.verse}"
     }
 
-    // ATENÇÃO: O parâmetro agora é do tipo 'ApiResponse'
-    private fun preencherCardNovoTestamento(versiculo: ApiResponse) {
-        tvTextVersiculoNovo.text = "\"${versiculo.text}\""
-        tvNumeroVersiculoNovo.text = "${versiculo.reference.book.name} ${versiculo.reference.chapter}:${versiculo.reference.verse}"
+    private fun preencherCardNovoTestamento(versiculo: DisplayVerse) {
+        val textoLimpo = Html.fromHtml(versiculo.text, Html.FROM_HTML_MODE_LEGACY).toString()
+        tvTextVersiculoNovo.text = "\"$textoLimpo\""
+        tvNumeroVersiculoNovo.text = "${versiculo.bookName} ${versiculo.chapter}:${versiculo.verse}"
     }
 }
