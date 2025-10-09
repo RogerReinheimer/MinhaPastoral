@@ -18,7 +18,6 @@ import com.google.firebase.ktx.Firebase
 
 class MainActivity : AppCompatActivity() {
 
-    // 1. DECLARANDO A REFERÊNCIA PARA O FIREBASE AUTHENTICATION
     private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
