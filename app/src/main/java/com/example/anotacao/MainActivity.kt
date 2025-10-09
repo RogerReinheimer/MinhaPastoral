@@ -24,6 +24,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        // O nome do seu layout XML de login
         setContentView(R.layout.activity_pag_entrar)
 
         // 2. INICIALIZANDO O FIREBASE AUTH
@@ -60,8 +61,7 @@ class MainActivity : AppCompatActivity() {
             if (emailDigitado.isNotEmpty() && senhaDigitada.isNotEmpty()) {
                 realizarLoginFirebase(emailDigitado, senhaDigitada)
             } else {
-                Toast.makeText(this, "Por favor, preencha o e-mail e a senha.", Toast.LENGTH_SHORT)
-                    .show()
+                Toast.makeText(this, "Por favor, preencha o e-mail e a senha.", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -71,11 +71,18 @@ class MainActivity : AppCompatActivity() {
         auth.signInWithEmailAndPassword(email, senha)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    // SUCESSO!
+                    // SUCESSO! O usuário está logado.
                     Toast.makeText(this, "Login bem-sucedido!", Toast.LENGTH_SHORT).show()
+
+                    // Navega para a tela principal do app
                     val intent = Intent(this, Pag_home::class.java)
                     startActivity(intent)
-                    finish() // Fecha a tela de login
+                    finish() // Fecha a tela de login para o usuário não poder voltar para ela
+                } else {
+                    // FALHA!
+                    // A task.exception?.message dará uma mensagem útil (ex: senha errada, usuário não encontrado).
+                    val exception = task.exception
+                    Toast.makeText(baseContext, "Falha no login: ${exception?.message}", Toast.LENGTH_LONG).show()
                 }
             }
     }
