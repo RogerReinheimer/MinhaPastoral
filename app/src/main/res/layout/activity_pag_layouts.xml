@@ -92,7 +92,7 @@
                 <LinearLayout
                     android:id="@+id/layout_mensagem_dia"
                     android:layout_width="match_parent"
-                    android:layout_height="80dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginLeft="16dp"
                     android:layout_marginTop="16dp"
                     android:layout_marginRight="16dp"
@@ -104,11 +104,20 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="30dp"
-                        android:text="mensagem do dia"
+                        android:layout_marginBottom="30dp"
+                        android:text="mensagens do dia salvas"
                         android:textAlignment="center"
                         android:textColor="#FFFFFF"
                         android:textSize="14sp"
                         android:textStyle="italic" />
+
+                    <LinearLayout
+                        android:id="@+id/container_mensagens_dia"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="gone"
+                        android:padding="8dp" />
 
                 </LinearLayout>
 
