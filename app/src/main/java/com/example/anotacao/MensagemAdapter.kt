@@ -5,7 +5,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.anotacao.R
 
 data class Mensagem(val titulo: String, val data: String, val texto: String)
 
@@ -20,7 +19,7 @@ class MensagemAdapter (private val listaMensagens: List<Mensagem>) :
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MensagemViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.card_mensagem_interno, parent, false)
+            .inflate(R.layout.card_mensagem_salva, parent, false)
         return MensagemViewHolder(view)
     }
 

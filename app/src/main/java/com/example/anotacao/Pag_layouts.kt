@@ -27,6 +27,7 @@ class Pag_layouts : AppCompatActivity() {
     private val db = Firebase.firestore
     private val auth = FirebaseAuth.getInstance()
     private var listenerRegistration: com.google.firebase.firestore.ListenerRegistration? = null
+    private var listenerLema: com.google.firebase.firestore.ListenerRegistration? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,18 +48,26 @@ class Pag_layouts : AppCompatActivity() {
         val layoutMensagemDia = findViewById<LinearLayout>(R.id.layout_mensagem_dia)
         val containerMensagensDia = findViewById<LinearLayout>(R.id.container_mensagens_dia)
 
+        val layoutLemaAno = findViewById<LinearLayout>(R.id.layout_lema_ano)
+        val containerLemaAno = findViewById<LinearLayout>(R.id.container_lema_ano)
+
         layoutMensagemDia.setOnClickListener {
             containerMensagensDia.visibility =
-                if (containerMensagensDia.visibility == android.view.View.VISIBLE)
-                    android.view.View.GONE
-                else
-                    android.view.View.VISIBLE
+                if (containerMensagensDia.visibility == View.VISIBLE) View.GONE else View.VISIBLE
+        }
+
+        layoutLemaAno.setOnClickListener {
+            containerLemaAno.visibility =
+                if (containerLemaAno.visibility == View.VISIBLE) View.GONE else View.VISIBLE
         }
 
         val uid = auth.currentUser?.uid
         if (uid == null) {
             Toast.makeText(this, "Usuário não autenticado", Toast.LENGTH_SHORT).show()
         } else {
+            val inflater = LayoutInflater.from(this)
+
+            // 🔹 Listener das mensagens
             listenerRegistration = db.collection("mensagens")
                 .whereEqualTo("uid", uid)
                 .orderBy("timestamp", Query.Direction.DESCENDING)
@@ -67,11 +76,9 @@ class Pag_layouts : AppCompatActivity() {
                         Toast.makeText(this, "Erro ao carregar mensagens", Toast.LENGTH_SHORT).show()
                         return@addSnapshotListener
                     }
-
                     if (snapshot == null) return@addSnapshotListener
 
                     containerMensagensDia.removeAllViews()
-                    val inflater = LayoutInflater.from(this)
 
                     for (doc in snapshot.documents) {
                         val titulo = doc.getString("titulo") ?: "(sem título)"
@@ -90,49 +97,48 @@ class Pag_layouts : AppCompatActivity() {
 
                         item.setOnClickListener {
                             tvConteudo.visibility =
-                                if (tvConteudo.visibility == View.VISIBLE)
-                                    View.GONE
-                                else
-                                    View.VISIBLE
+                                if (tvConteudo.visibility == View.VISIBLE) View.GONE else View.VISIBLE
                         }
 
                         containerMensagensDia.addView(item)
                     }
+                }
 
-                    db.collection("mensagens")
-                        .whereEqualTo("uid", uid)
-                        .orderBy("timestamp", Query.Direction.DESCENDING)
-                        .get(com.google.firebase.firestore.Source.SERVER)
-                        .addOnSuccessListener { freshSnapshot ->
-                            if (!freshSnapshot.isEmpty) {
-                                containerMensagensDia.removeAllViews()
-                                for (doc in freshSnapshot.documents) {
-                                    val titulo = doc.getString("titulo") ?: "(sem título)"
-                                    val data = doc.getString("data") ?: "(sem data)"
-                                    val texto = doc.getString("texto") ?: ""
+            // 🔹 Listener do lema do ano (mesma lógica das mensagens)
+            listenerLema = db.collection("lemaDoAno")
+                .whereEqualTo("uid", uid)
+                .orderBy("timestamp", Query.Direction.DESCENDING)
+                .addSnapshotListener { snapshot, error ->
+                    if (error != null) {
+                        Toast.makeText(this, "Erro ao carregar lema do ano", Toast.LENGTH_SHORT).show()
+                        return@addSnapshotListener
+                    }
+                    if (snapshot == null) return@addSnapshotListener
 
-                                    val item = inflater.inflate(R.layout.card_mensagem_salva, containerMensagensDia, false)
-                                    val tvTitulo = item.findViewById<TextView>(R.id.tv_titulo_layout_salvo)
-                                    val tvInfo = item.findViewById<TextView>(R.id.tv_data_layout_salvo)
-                                    val tvConteudo = item.findViewById<TextView>(R.id.tv_conteudo_layout_salvo)
+                    containerLemaAno.removeAllViews()
 
-                                    tvTitulo.text = titulo
-                                    tvInfo.text = data
-                                    tvConteudo.text = texto
-                                    tvConteudo.visibility = View.GONE
+                    for (doc in snapshot.documents) {
+                        val titulo = doc.getString("titulo") ?: "(sem título)"
+                        val data = doc.getString("data") ?: "(sem data)"
+                        val lema = doc.getString("lema") ?: ""
 
-                                    item.setOnClickListener {
-                                        tvConteudo.visibility =
-                                            if (tvConteudo.visibility == View.VISIBLE)
-                                                View.GONE
-                                            else
-                                                View.VISIBLE
-                                    }
+                        val item = inflater.inflate(R.layout.card_mensagem_salva, containerLemaAno, false)
+                        val tvTitulo = item.findViewById<TextView>(R.id.tv_titulo_layout_salvo)
+                        val tvInfo = item.findViewById<TextView>(R.id.tv_data_layout_salvo)
+                        val tvConteudo = item.findViewById<TextView>(R.id.tv_conteudo_layout_salvo)
 
-                                    containerMensagensDia.addView(item)
-                                }
-                            }
+                        tvTitulo.text = titulo
+                        tvInfo.text = data
+                        tvConteudo.text = lema
+                        tvConteudo.visibility = View.GONE
+
+                        item.setOnClickListener {
+                            tvConteudo.visibility =
+                                if (tvConteudo.visibility == View.VISIBLE) View.GONE else View.VISIBLE
                         }
+
+                        containerLemaAno.addView(item)
+                    }
                 }
         }
 
@@ -146,6 +152,7 @@ class Pag_layouts : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         listenerRegistration?.remove()
+        listenerLema?.remove()
     }
 
     private fun mostrarSheetLateral() {
@@ -153,10 +160,7 @@ class Pag_layouts : AppCompatActivity() {
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(R.layout.bottom_sheet_layout)
         dialog.window?.apply {
-            setLayout(
-                (resources.displayMetrics.widthPixels * 0.7).toInt(),
-                WindowManager.LayoutParams.MATCH_PARENT
-            )
+            setLayout((resources.displayMetrics.widthPixels * 0.7).toInt(), WindowManager.LayoutParams.MATCH_PARENT)
             setGravity(Gravity.END)
             attributes.windowAnimations = R.style.DialogAnimationDireita
         }

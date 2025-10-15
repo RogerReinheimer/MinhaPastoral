@@ -45,7 +45,6 @@ class Pag_esqueceu_senha : AppCompatActivity() {
             enviarLinkDeRedefinicao(email)
         }
 
-
         txtVoltar.setOnClickListener {
             finish()
         }

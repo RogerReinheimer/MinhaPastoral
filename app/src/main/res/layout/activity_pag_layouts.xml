@@ -124,7 +124,7 @@
                 <LinearLayout
                     android:id="@+id/layout_lema_ano"
                     android:layout_width="match_parent"
-                    android:layout_height="80dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginLeft="16dp"
                     android:layout_marginTop="16dp"
                     android:layout_marginRight="16dp"
@@ -136,11 +136,20 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="30dp"
-                        android:text="lema do ano"
+                        android:layout_marginBottom="30dp"
+                        android:text="lemas do ano salvos"
                         android:textAlignment="center"
                         android:textColor="#FFFFFF"
                         android:textSize="14sp"
                         android:textStyle="italic" />
+
+                    <LinearLayout
+                        android:id="@+id/container_lema_ano"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="gone"
+                        android:padding="8dp" />
 
                 </LinearLayout>
 

@@ -64,7 +64,7 @@
                         android:textStyle="bold|italic" />
 
                     <LinearLayout
-                        android:id="@+id/layout_mensagem1"
+                        android:id="@+id/layout_lema"
                         android:layout_width="270dp"
                         android:layout_height="70dp"
                         android:layout_marginTop="40dp"
@@ -73,7 +73,7 @@
                         android:orientation="vertical">
 
                         <EditText
-                            android:id="@+id/editTitulo1"
+                            android:id="@+id/etTituloLema"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="5dp"
@@ -88,7 +88,7 @@
                             android:textStyle="italic" />
 
                         <EditText
-                            android:id="@+id/editData"
+                            android:id="@+id/etDataLema"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
@@ -113,7 +113,7 @@
                         android:orientation="vertical">
 
                         <EditText
-                            android:id="@+id/etEmail"
+                            android:id="@+id/etTextoLema"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_marginLeft="9dp"

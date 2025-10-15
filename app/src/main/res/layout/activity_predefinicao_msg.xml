@@ -113,7 +113,7 @@
                         android:orientation="vertical">
 
                         <EditText
-                            android:id="@+id/etEmail"
+                            android:id="@+id/editMensagem"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_marginLeft="9dp"
