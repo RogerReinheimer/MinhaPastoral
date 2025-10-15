@@ -26,46 +26,62 @@
                 android:layout_width="62dp"
                 android:layout_height="62dp"
                 android:layout_gravity="center"
+                android:layout_marginBottom="16dp"
                 app:srcCompat="@drawable/logo" />
 
             <LinearLayout
-                android:id="@+id/layout_anotacao"
+                android:id="@+id/fundo_layout_anotacao"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
                 android:layout_marginBottom="16dp"
                 android:background="@drawable/fundo_azul_escuro"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:paddingBottom="16dp">
 
                 <TextView
                     android:id="@+id/tv_titulo_principal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
+                    android:layout_marginTop="16dp"
                     android:text="Anotações"
                     android:textColor="#FFFFFF"
                     android:textSize="22sp"
                     android:textStyle="bold" />
 
                 <LinearLayout
-                    android:id="@+id/layout_anotacao_text"
+                    android:id="@+id/layout_conteudo_anotacao"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginRight="16dp"
+                    android:background="@drawable/fundo_azul"
+                    android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/tv_anotacao"
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Última anotação"
+                        android:layout_marginTop="30dp"
+                        android:layout_marginBottom="30dp"
+                        android:text="anotaçãos salvas"
+                        android:textAlignment="center"
                         android:textColor="#FFFFFF"
+                        android:textSize="14sp"
                         android:textStyle="italic" />
 
+                    <LinearLayout
+                        android:id="@+id/container_anotacao"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="gone"
+                        android:padding="8dp" />
+
                 </LinearLayout>
+
+
             </LinearLayout>
 
 

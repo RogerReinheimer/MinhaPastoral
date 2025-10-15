@@ -6,18 +6,26 @@ import android.os.Bundle
 import android.view.Gravity
 import android.view.Window
 import android.view.WindowManager
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatButton
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 
 class MainAnotacao : AppCompatActivity() {
+
+    private val db = Firebase.firestore
+    private val auth = FirebaseAuth.getInstance()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -31,41 +39,69 @@ class MainAnotacao : AppCompatActivity() {
         val btnBiblia = findViewById<ImageView>(R.id.btnMensagens7)
         val btnPagHome = findViewById<ImageView>(R.id.btnPagHome7)
         val btnCruz = findViewById<ImageView>(R.id.btnMensagensSemana7)
-
         val btnMais = findViewById<ImageView>(R.id.btnFlutuante7)
-        btnMais.setOnClickListener {
-            mostrarSheetOpcoes()
+        val btnMenu = findViewById<ImageView>(R.id.btnMenu)
+        val btnSalvar = findViewById<AppCompatButton>(R.id.btnSalvar)
+
+        val editTextTitulo = findViewById<EditText>(R.id.editTitulo)
+        val editTextTexto = findViewById<EditText>(R.id.editAnotacaoConteudo)
+
+        // ----------- BOTÃO SALVAR (FIRESTORE) -------------
+        btnSalvar.setOnClickListener {
+            val titulo = editTextTitulo.text.toString().trim()
+            val texto = editTextTexto.text.toString().trim()
+
+            if (titulo.isEmpty() || texto.isEmpty()) {
+                Toast.makeText(this, "Preencha todos os campos!", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            val usuarioAtual = auth.currentUser
+            if (usuarioAtual == null) {
+                Toast.makeText(this, "Usuário não autenticado!", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            val anotacao = hashMapOf(
+                "titulo" to titulo,
+                "texto" to texto,
+                "uid" to usuarioAtual.uid,
+                "email" to usuarioAtual.email,
+                "timestamp" to System.currentTimeMillis()
+            )
+
+            db.collection("anotacoes")
+                .add(anotacao)
+                .addOnSuccessListener {
+                    Toast.makeText(this, "Anotação salva com sucesso!", Toast.LENGTH_SHORT).show()
+                    editTextTitulo.text.clear()
+                    editTextTexto.text.clear()
+
+                    val intent = Intent(this, Pag_layouts::class.java)
+                    startActivity(intent)
+                    finish()
+                }
+                .addOnFailureListener {
+                    Toast.makeText(this, "Erro ao salvar: ${it.message}", Toast.LENGTH_SHORT).show()
+                }
         }
 
-        val btnSalvar = findViewById<androidx.appcompat.widget.AppCompatButton>(R.id.btnSalvar)
-        btnSalvar.setOnClickListener {
-            val intent = Intent(this, Pag_layouts::class.java)
-            startActivity(intent)
-        }
+        // ----------- NAVEGAÇÕES -------------
+        btnMais.setOnClickListener { mostrarSheetOpcoes() }
+        btnMenu.setOnClickListener { mostrarSheetLateral() }
 
         btnBiblia.setOnClickListener {
-            val intent = Intent(this, Mensagens::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, Mensagens::class.java))
         }
-
         btnPagHome.setOnClickListener {
-            val intent = Intent(this, Pag_home::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, Pag_home::class.java))
         }
-
         btnCruz.setOnClickListener {
-            val intent = Intent(this, Mensagens_semana::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, Mensagens_semana::class.java))
         }
+    }
 
-        //menu
-        val btnMenu = findViewById<ImageView>(R.id.btnMenu)
-        btnMenu.setOnClickListener {
-            mostrarSheetLateral()
-        }
-    }//fim oncreate
-
-    //abrir
+    // ----------- MENU LATERAL -------------
     private fun mostrarSheetLateral() {
         val dialog = Dialog(this)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -80,32 +116,24 @@ class MainAnotacao : AppCompatActivity() {
             attributes.windowAnimations = R.style.DialogAnimationDireita
         }
 
-        // Botão "Layouts"
         val opcLayout = dialog.findViewById<LinearLayout>(R.id.layoutLayout)
         opcLayout.setOnClickListener {
-            val intent = Intent(this, Pag_layouts::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, Pag_layouts::class.java))
             dialog.dismiss()
         }
 
-        // Botão "Configurações"
         val opcConfig = dialog.findViewById<LinearLayout>(R.id.layoutConfig)
         opcConfig.setOnClickListener {
-            val intent = Intent(this, Configuracoes::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, Configuracoes::class.java))
             dialog.dismiss()
         }
 
-        // Botão "Sair"
         val opcSair = dialog.findViewById<LinearLayout>(R.id.layoutSair)
         opcSair.setOnClickListener {
-            FirebaseAuth.getInstance().signOut() // Desloga do Firebase
-
-            // Vai pra tela de login e limpa o histórico
+            FirebaseAuth.getInstance().signOut()
             val intent = Intent(this, MainActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
-
             dialog.dismiss()
             Toast.makeText(this, "Você saiu da conta.", Toast.LENGTH_SHORT).show()
         }
@@ -113,6 +141,7 @@ class MainAnotacao : AppCompatActivity() {
         dialog.show()
     }
 
+    // ----------- MENU DE OPÇÕES (BOTÃO +) -------------
     private fun mostrarSheetOpcoes() {
         val bottomSheetDialog = BottomSheetDialog(this)
         val view = layoutInflater.inflate(R.layout.bottom_sheet_opcoes, null)
@@ -122,26 +151,17 @@ class MainAnotacao : AppCompatActivity() {
         val opcaoMensagem = view.findViewById<TextView>(R.id.opcaoMensagem)
 
         opcaoAnotacao.setOnClickListener {
-            //redirecionar
-            val intent = Intent(this, MainAnotacao::class.java)
-            startActivity(intent)
-            // ação para Adicionar Anotação
+            startActivity(Intent(this, MainAnotacao::class.java))
             bottomSheetDialog.dismiss()
         }
 
         opcaoLema.setOnClickListener {
-            //redirecionar
-            val intent = Intent(this, PredefinicaoLema::class.java)
-            startActivity(intent)
-            // ação para Adicionar Lema
+            startActivity(Intent(this, PredefinicaoLema::class.java))
             bottomSheetDialog.dismiss()
         }
 
         opcaoMensagem.setOnClickListener {
-            //redirecionar
-            val intent = Intent(this, PredefinicaoMsg::class.java)
-            startActivity(intent)
-            // ação para Adicionar Mensagem
+            startActivity(Intent(this, PredefinicaoMsg::class.java))
             bottomSheetDialog.dismiss()
         }
 

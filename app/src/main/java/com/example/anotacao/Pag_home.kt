@@ -56,7 +56,7 @@ class Pag_home : AppCompatActivity() {
         btnMenu.setOnClickListener { mostrarSheetLateral() }
         btnMais.setOnClickListener { mostrarSheetOpcoes() }
         btnCruz.setOnClickListener { startActivity(Intent(this, Mensagens_semana::class.java)) }
-        btnBiblia.setOnClickListener { Toast.makeText(this, "Função Bíblia ainda não implementada.", Toast.LENGTH_SHORT).show() }
+        btnBiblia.setOnClickListener { startActivity(Intent(this, Mensagens::class.java)) }
 
         buscarVersiculosDoDia()
     }

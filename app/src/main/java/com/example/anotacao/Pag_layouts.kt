@@ -73,7 +73,7 @@ class Pag_layouts : AppCompatActivity() {
                 .orderBy("timestamp", Query.Direction.DESCENDING)
                 .addSnapshotListener { snapshot, error ->
                     if (error != null) {
-                        Toast.makeText(this, "Erro ao carregar mensagens", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "Nenhuma mensagem salva", Toast.LENGTH_SHORT).show()
                         return@addSnapshotListener
                     }
                     if (snapshot == null) return@addSnapshotListener
@@ -110,7 +110,7 @@ class Pag_layouts : AppCompatActivity() {
                 .orderBy("timestamp", Query.Direction.DESCENDING)
                 .addSnapshotListener { snapshot, error ->
                     if (error != null) {
-                        Toast.makeText(this, "Erro ao carregar lema do ano", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "Nenhum lema do ano salvo", Toast.LENGTH_SHORT).show()
                         return@addSnapshotListener
                     }
                     if (snapshot == null) return@addSnapshotListener
