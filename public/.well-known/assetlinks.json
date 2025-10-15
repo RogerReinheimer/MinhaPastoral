@@ -1,0 +1,9 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.example.anotacao",
+    "sha256_cert_fingerprints":
+    ["52:D4:AC:A0:A6:F6:F9:B3:B9:DF:97:68:31:A5:24:B1:3F:26:A6:82:91:67:6F:02:2D:FE:85:69:1C:B5:22:B6"]
+  }
+}]
