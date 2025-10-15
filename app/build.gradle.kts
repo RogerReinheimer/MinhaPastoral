@@ -7,7 +7,6 @@ plugins {
 }
 android {
     namespace = "com.example.anotacao"
-    // ▼▼▼ CORRIGIDO AQUI ▼▼▼
     compileSdk = 34
 
     splits {
@@ -20,7 +19,6 @@ android {
     defaultConfig {
         applicationId = "com.example.anotacao"
         minSdk = 28
-        // ▼▼▼ CORRIGIDO AQUI ▼▼▼
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -58,7 +56,6 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
 
-    // Seção do Firebase (está correta)
     implementation(platform("com.google.firebase:firebase-bom:33.1.2"))
     implementation("com.google.firebase:firebase-auth-ktx")
     implementation("com.google.firebase:firebase-firestore-ktx")

@@ -14,6 +14,7 @@ import android.widget.TextView
 import android.widget.Toast
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 
 class Mensagens : AppCompatActivity() {
@@ -67,6 +68,49 @@ class Mensagens : AppCompatActivity() {
         val dialog = Dialog(this)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(R.layout.bottom_sheet_layout)
+
+        // --- INÍCIO DA LÓGICA PARA BUSCAR O NOME ---
+
+        // 1. Pega a referência do TextView dentro do layout do Dialog
+        val txtPerfilNome = dialog.findViewById<TextView>(R.id.txtPerfilNome)
+
+        // 2. Pega as instâncias do Firebase Auth e Firestore
+        val auth = FirebaseAuth.getInstance()
+        val db = FirebaseFirestore.getInstance()
+        val usuarioAtual = auth.currentUser
+
+        // 3. Verifica se tem um usuário logado
+        if (usuarioAtual != null) {
+            val userId = usuarioAtual.uid
+            val docRef = db.collection("usuarios").document(userId) // Assumindo coleção "usuarios"
+
+            // 4. Busca o documento no Firestore
+            docRef.get()
+                .addOnSuccessListener { document ->
+                    if (document != null && document.exists()) {
+                        val nome = document.getString("nome") // Assumindo campo "nome"
+                        if (nome != null) {
+                            // 5. Atualiza o texto do TextView
+                            txtPerfilNome.text = "Olá, $nome!"
+                        } else {
+                            txtPerfilNome.text = "Olá, Visitante!"
+                        }
+                    } else {
+                        txtPerfilNome.text = "Olá, Visitante!"
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    // Em caso de erro, mostra uma mensagem e um texto padrão
+                    Toast.makeText(this, "Erro ao buscar dados.", Toast.LENGTH_SHORT).show()
+                    txtPerfilNome.text = "Olá!"
+                }
+        } else {
+            // Caso não haja usuário logado
+            txtPerfilNome.text = "Olá, Visitante!"
+        }
+
+        // --- FIM DA LÓGICA PARA BUSCAR O NOME ---
+
 
         dialog.window?.apply {
             setLayout(
