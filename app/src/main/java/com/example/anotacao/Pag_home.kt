@@ -16,6 +16,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import retrofit2.Retrofit
@@ -79,6 +80,7 @@ class Pag_home : AppCompatActivity() {
             attributes.windowAnimations = R.style.DialogAnimationDireita
         }
 
+        // Botão "Layouts"
         val opcLayout = dialog.findViewById<LinearLayout>(R.id.layoutLayout)
         opcLayout.setOnClickListener {
             val intent = Intent(this, Pag_layouts::class.java)
@@ -86,8 +88,31 @@ class Pag_home : AppCompatActivity() {
             dialog.dismiss()
         }
 
+        // Botão "Configurações"
+        val opcConfig = dialog.findViewById<LinearLayout>(R.id.layoutConfig)
+        opcConfig.setOnClickListener {
+            val intent = Intent(this, Configuracoes::class.java)
+            startActivity(intent)
+            dialog.dismiss()
+        }
+
+        // Botão "Sair"
+        val opcSair = dialog.findViewById<LinearLayout>(R.id.layoutSair)
+        opcSair.setOnClickListener {
+            FirebaseAuth.getInstance().signOut() // Desloga do Firebase
+
+            // Vai pra tela de login e limpa o histórico
+            val intent = Intent(this, MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+
+            dialog.dismiss()
+            Toast.makeText(this, "Você saiu da conta.", Toast.LENGTH_SHORT).show()
+        }
+
         dialog.show()
     }
+
 
     private fun mostrarSheetOpcoes() {
         val bottomSheetDialog = BottomSheetDialog(this)

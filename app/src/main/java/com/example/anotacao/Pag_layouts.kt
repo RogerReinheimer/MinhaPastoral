@@ -159,15 +159,44 @@ class Pag_layouts : AppCompatActivity() {
         val dialog = Dialog(this)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(R.layout.bottom_sheet_layout)
+
         dialog.window?.apply {
-            setLayout((resources.displayMetrics.widthPixels * 0.7).toInt(), WindowManager.LayoutParams.MATCH_PARENT)
+            setLayout(
+                (resources.displayMetrics.widthPixels * 0.7).toInt(),
+                WindowManager.LayoutParams.MATCH_PARENT
+            )
             setGravity(Gravity.END)
             attributes.windowAnimations = R.style.DialogAnimationDireita
         }
 
-        dialog.findViewById<LinearLayout>(R.id.layoutLayout)?.setOnClickListener {
-            startActivity(Intent(this, Pag_layouts::class.java))
+        // Botão "Layouts"
+        val opcLayout = dialog.findViewById<LinearLayout>(R.id.layoutLayout)
+        opcLayout.setOnClickListener {
+            val intent = Intent(this, Pag_layouts::class.java)
+            startActivity(intent)
             dialog.dismiss()
+        }
+
+        // Botão "Configurações"
+        val opcConfig = dialog.findViewById<LinearLayout>(R.id.layoutConfig)
+        opcConfig.setOnClickListener {
+            val intent = Intent(this, Configuracoes::class.java)
+            startActivity(intent)
+            dialog.dismiss()
+        }
+
+        // Botão "Sair"
+        val opcSair = dialog.findViewById<LinearLayout>(R.id.layoutSair)
+        opcSair.setOnClickListener {
+            FirebaseAuth.getInstance().signOut() // Desloga do Firebase
+
+            // Vai pra tela de login e limpa o histórico
+            val intent = Intent(this, MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+
+            dialog.dismiss()
+            Toast.makeText(this, "Você saiu da conta.", Toast.LENGTH_SHORT).show()
         }
 
         dialog.show()

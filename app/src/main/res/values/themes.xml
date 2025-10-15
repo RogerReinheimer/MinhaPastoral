@@ -2,7 +2,7 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.Anotacao" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorPrimary">@color/fundo_botao_azul_escuro</item>
     </style>
 
     <style name="Theme.Anotacao" parent="Base.Theme.Anotacao" />

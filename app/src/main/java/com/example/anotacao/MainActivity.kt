@@ -1,9 +1,12 @@
 package com.example.anotacao
 
+import android.app.ProgressDialog
 import android.content.Intent
 import android.os.Bundle
+import android.text.InputType
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -11,7 +14,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.anotacao.ui.login.Pag_Cadastro
-// V IMPORTS NOVOS DO FIREBASE V
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -19,15 +21,26 @@ import com.google.firebase.ktx.Firebase
 class MainActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
+    private lateinit var progressDialog: ProgressDialog
+    private var senhaVisivel = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        // O nome do seu layout XML de login
         setContentView(R.layout.activity_pag_entrar)
 
-        // 2. INICIALIZANDO O FIREBASE AUTH
         auth = Firebase.auth
+        progressDialog = ProgressDialog(this)
+        progressDialog.setMessage("Aguarde...")
+        progressDialog.setCancelable(false)
+
+        // Se o usuário já está logado, vai direto pra home
+        val usuarioAtual = auth.currentUser
+        if (usuarioAtual != null) {
+            startActivity(Intent(this, Pag_home::class.java))
+            finish()
+            return
+        }
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -35,53 +48,71 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        // --- Sua lógica de navegação para outras telas ---
         val txtCadastrar = findViewById<TextView>(R.id.txtCadastrar)
-        txtCadastrar.setOnClickListener {
-            val intent = Intent(this, Pag_Cadastro::class.java)
-            startActivity(intent)
-        }
         val txtEsqueceuSenha = findViewById<TextView>(R.id.txtEsqueceuSenha)
-        txtEsqueceuSenha.setOnClickListener {
-            val intent = Intent(this, Pag_esqueceu_senha::class.java)
-            startActivity(intent)
-        }
-
-        // 3. PEGANDO AS REFERÊNCIAS DOS CAMPOS DE LOGIN
         val etEmail = findViewById<EditText>(R.id.etEmailUsuario)
         val etSenha = findViewById<EditText>(R.id.etSenha)
         val btnEntrar = findViewById<Button>(R.id.btnEntrar)
 
-        // 4. LÓGICA DO BOTÃO ENTRAR COM FIREBASE
-        btnEntrar.setOnClickListener {
-            val emailDigitado = etEmail.text.toString()
-            val senhaDigitada = etSenha.text.toString()
+        txtCadastrar.setOnClickListener {
+            startActivity(Intent(this, Pag_Cadastro::class.java))
+        }
 
-            if (emailDigitado.isNotEmpty() && senhaDigitada.isNotEmpty()) {
-                realizarLoginFirebase(emailDigitado, senhaDigitada)
+        txtEsqueceuSenha.setOnClickListener {
+            startActivity(Intent(this, Pag_esqueceu_senha::class.java))
+        }
+
+        btnEntrar.setOnClickListener {
+            val email = etEmail.text.toString().trim()
+            val senha = etSenha.text.toString().trim()
+
+            if (email.isEmpty() || senha.isEmpty()) {
+                Toast.makeText(this, "Preencha o e-mail e a senha.", Toast.LENGTH_SHORT).show()
             } else {
-                Toast.makeText(this, "Por favor, preencha o e-mail e a senha.", Toast.LENGTH_SHORT).show()
+                btnEntrar.isEnabled = false
+                progressDialog.show()
+                realizarLoginFirebase(email, senha, btnEntrar)
             }
         }
+
+        val btnMostrarSenha = findViewById<ImageView>(R.id.btnMostrarSenha) // botão olho
+
+        // Função do botão mostrar/ocultar senha
+        btnMostrarSenha.setOnClickListener {
+            senhaVisivel = !senhaVisivel
+            if (senhaVisivel) {
+                etSenha.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+                btnMostrarSenha.setImageResource(R.drawable.ic_visibility) // ícone olho aberto
+            } else {
+                etSenha.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+                btnMostrarSenha.setImageResource(R.drawable.ic_visibility_off) // ícone olho fechado
+            }
+            etSenha.setSelection(etSenha.text.length) // mantém o cursor no final
+        }
+
     }
 
-    // 5. NOVA FUNÇÃO PARA VERIFICAR O LOGIN COM FIREBASE
-    private fun realizarLoginFirebase(email: String, senha: String) {
+    private fun realizarLoginFirebase(email: String, senha: String, btnEntrar: Button) {
         auth.signInWithEmailAndPassword(email, senha)
             .addOnCompleteListener(this) { task ->
-                if (task.isSuccessful) {
-                    // SUCESSO! O usuário está logado.
-                    Toast.makeText(this, "Login bem-sucedido!", Toast.LENGTH_SHORT).show()
+                progressDialog.dismiss()
+                btnEntrar.isEnabled = true
 
-                    // Navega para a tela principal do app
-                    val intent = Intent(this, Pag_home::class.java)
-                    startActivity(intent)
-                    finish() // Fecha a tela de login para o usuário não poder voltar para ela
+                if (task.isSuccessful) {
+                    Toast.makeText(this, "Login realizado com sucesso!", Toast.LENGTH_SHORT).show()
+                    startActivity(Intent(this, Pag_home::class.java))
+                    finish()
                 } else {
-                    // FALHA!
-                    // A task.exception?.message dará uma mensagem útil (ex: senha errada, usuário não encontrado).
-                    val exception = task.exception
-                    Toast.makeText(baseContext, "Falha no login: ${exception?.message}", Toast.LENGTH_LONG).show()
+                    val erro = when (task.exception?.message) {
+                        "There is no user record corresponding to this identifier. The user may have been deleted." ->
+                            "Usuário não encontrado."
+                        "The password is invalid or the user does not have a password." ->
+                            "Senha incorreta."
+                        "A network error (such as timeout, interrupted connection or unreachable host) has occurred." ->
+                            "Erro de conexão. Verifique sua internet."
+                        else -> "Falha no login: ${task.exception?.message}"
+                    }
+                    Toast.makeText(this, erro, Toast.LENGTH_LONG).show()
                 }
             }
     }

@@ -351,35 +351,25 @@
 
 
         <ImageView
-
+            android:id="@+id/btnHome"
             android:layout_width="0dp"
-
             android:layout_height="30dp"
-
             android:layout_gravity="center"
-
             android:layout_weight="1"
-
             android:clickable="true"
-
             android:contentDescription="Início"
-
             android:src="@drawable/baseline_home_24" />
 
 
 
+
         <ImageView
-
+            android:id="@+id/btnBiblia"
             android:layout_width="0dp"
-
             android:layout_height="32dp"
-
             android:layout_gravity="center"
-
             android:layout_weight="1"
-
             android:contentDescription="Bíblia"
-
             android:src="@drawable/biblia" />
 
 
@@ -435,33 +425,23 @@
 
 
         <ImageView
-
+            android:id="@+id/btnCruz"
             android:layout_width="0dp"
-
             android:layout_height="30dp"
-
             android:layout_gravity="center"
-
             android:layout_weight="1"
-
             android:contentDescription="Cruz"
-
             android:src="@drawable/cruz_magra" />
 
 
 
         <ImageView
-
+            android:id="@+id/btnMenu"
             android:layout_width="1dp"
-
             android:layout_height="30dp"
-
             android:layout_gravity="center"
-
             android:layout_weight="1"
-
             android:contentDescription="Mais"
-
             android:src="@drawable/pontos" />
 
     </LinearLayout>
