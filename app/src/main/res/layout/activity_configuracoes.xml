@@ -1,479 +1,185 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-
     xmlns:tools="http://schemas.android.com/tools"
-
     android:id="@+id/main"
-
     android:layout_width="match_parent"
-
     android:layout_height="match_parent"
-
     android:background="@color/fundoTela"
+    tools:context=".Configuracoes">
 
-    tools:context=".Pag_trocar_senha">
-
-
-
+    <!-- FOTO DE PERFIL -->
     <ImageView
-
-        android:id="@+id/imageView20"
-
-        android:layout_width="171dp"
-
-        android:layout_height="171dp"
-
+        android:id="@+id/ivUsuario"
+        android:layout_width="180dp"
+        android:layout_height="180dp"
         android:layout_marginTop="50dp"
-
-        app:layout_constraintEnd_toEndOf="parent"
-
-        app:layout_constraintStart_toStartOf="parent"
-
+        android:src="@drawable/usuario_grande"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-        app:srcCompat="@drawable/usuario_grande" />
-
-
-
+    <!-- TEXTO ALTERAR FOTO -->
     <TextView
-
-        android:id="@+id/textView25"
-
+        android:id="@+id/txtAlterarFoto"
         android:layout_width="wrap_content"
-
         android:layout_height="wrap_content"
-
-        android:layout_marginTop="-4dp"
-
         android:text="Alterar foto de perfil"
-
-        android:textColor="#3C00FF"
-
+        android:textColor="@color/azul_mais_escuro"
         android:textSize="16sp"
-
         android:textStyle="italic"
-
-        app:layout_constraintEnd_toEndOf="parent"
-
+        app:layout_constraintTop_toBottomOf="@id/ivUsuario"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-        app:layout_constraintTop_toBottomOf="@+id/imageView20" />
-
-
-
+    <!-- CAMPO NOME DE USUÁRIO -->
     <androidx.constraintlayout.widget.ConstraintLayout
-
-        android:id="@+id/constraintLayout10"
-
+        android:id="@+id/campoNome"
         android:layout_width="match_parent"
-
         android:layout_height="50dp"
-
         android:layout_marginStart="24dp"
-
         android:layout_marginTop="30dp"
-
         android:layout_marginEnd="24dp"
-
         android:background="@drawable/fundo_branco"
-
-        app:layout_constraintEnd_toEndOf="parent"
-
-        app:layout_constraintHorizontal_bias="0.0"
-
+        app:layout_constraintTop_toBottomOf="@id/txtAlterarFoto"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-        app:layout_constraintTop_toBottomOf="@+id/textView25">
-
-
-
-        <TextView
-
-            android:id="@+id/textView31"
-
+        <EditText
+            android:id="@+id/etUsuario"
             android:layout_width="match_parent"
-
             android:layout_height="match_parent"
-
-            android:paddingLeft="15dp"
-
-            android:paddingTop="15dp"
-
-            android:text="Usuario"
-
-            android:textColor="@color/black"
-
-            android:textColorHint="@color/corTxtSecundario"
-
-            android:textSize="16sp"
-
-            app:layout_constraintBottom_toBottomOf="parent"
-
-            app:layout_constraintEnd_toEndOf="parent"
-
-            app:layout_constraintHorizontal_bias="0.5"
-
-            app:layout_constraintStart_toStartOf="parent"
-
-            app:layout_constraintTop_toTopOf="parent"
-
-            app:layout_constraintVertical_bias="0.5" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-
-    <TextView
-
-        android:id="@+id/textView26"
-
-        android:layout_width="wrap_content"
-
-        android:layout_height="wrap_content"
-
-        android:layout_marginStart="30dp"
-
-        android:text="Alterar nome de usuário"
-
-        android:textColor="#3C00FF"
-
-        android:textSize="12sp"
-
-        app:layout_constraintStart_toStartOf="parent"
-
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout10" />
-
-
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-
-        android:id="@+id/constraintLayout11"
-
-        android:layout_width="match_parent"
-
-        android:layout_height="50dp"
-
-        android:layout_marginStart="24dp"
-
-        android:layout_marginTop="24dp"
-
-        android:layout_marginEnd="24dp"
-
-        android:background="@drawable/fundo_branco"
-
-        app:layout_constraintEnd_toEndOf="parent"
-
-        app:layout_constraintHorizontal_bias="0.0"
-
-        app:layout_constraintStart_toStartOf="parent"
-
-        app:layout_constraintTop_toBottomOf="@+id/textView26">
-
-
-
-        <TextView
-
-            android:id="@+id/textView32"
-
-            android:layout_width="match_parent"
-
-            android:layout_height="match_parent"
-
+            android:hint="Nome de usuário"
             android:paddingStart="15dp"
-
-            android:paddingTop="15dp"
-
-            android:text="Senha"
-
             android:textColor="@color/black"
-
             android:textColorHint="@color/corTxtSecundario"
-
-            android:textSize="16sp"
-
-            app:layout_constraintBottom_toBottomOf="parent"
-
-            app:layout_constraintEnd_toEndOf="parent"
-
-            app:layout_constraintHorizontal_bias="0.5"
-
-            app:layout_constraintStart_toStartOf="parent"
-
-            app:layout_constraintTop_toTopOf="parent"
-
-            app:layout_constraintVertical_bias="0.5" />
-
+            android:background="@android:color/transparent"
+            android:textSize="16sp" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-
-    <TextView
-
-        android:id="@+id/textView27"
-
-        android:layout_width="wrap_content"
-
-        android:layout_height="wrap_content"
-
-        android:layout_marginStart="30dp"
-
-        android:text="Alterar senha"
-
-        android:textColor="#3C00FF"
-
-        android:textSize="12sp"
-
-        app:layout_constraintStart_toStartOf="parent"
-
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout11" />
-
-
-
+    <!-- CAMPO SENHA -->
     <androidx.constraintlayout.widget.ConstraintLayout
-
-        android:id="@+id/constraintLayout12"
-
+        android:id="@+id/campoSenha"
         android:layout_width="match_parent"
-
-        android:layout_height="45dp"
-
+        android:layout_height="50dp"
         android:layout_marginStart="24dp"
-
-        android:layout_marginTop="20dp"
-
+        android:layout_marginTop="24dp"
         android:layout_marginEnd="24dp"
-
         android:background="@drawable/fundo_branco"
-
-        app:layout_constraintEnd_toEndOf="parent"
-
-        app:layout_constraintHorizontal_bias="1.0"
-
+        app:layout_constraintTop_toBottomOf="@id/campoNome"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-        app:layout_constraintTop_toBottomOf="@+id/textView28">
-
-
-
-        <TextView
-
-            android:id="@+id/textView30"
-
+        <EditText
+            android:id="@+id/etSenha"
             android:layout_width="match_parent"
-
             android:layout_height="match_parent"
-
-            android:hint="Adicionar e-mail"
-
-            android:paddingLeft="15dp"
-
-            android:paddingTop="15dp"
-
+            android:hint="Digite nova senha"
+            android:inputType="textPassword"
+            android:paddingStart="15dp"
             android:textColor="@color/black"
-
             android:textColorHint="@color/corTxtSecundario"
-
-            android:textSize="14sp"
-
-            app:layout_constraintBottom_toBottomOf="parent"
-
-            app:layout_constraintEnd_toEndOf="parent"
-
-            app:layout_constraintStart_toStartOf="parent"
-
-            app:layout_constraintTop_toTopOf="parent"
-
-            app:layout_constraintVertical_bias="0.5" />
-
+            android:background="@android:color/transparent"
+            android:textSize="16sp" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-
-    <androidx.appcompat.widget.AppCompatButton
-
-        android:id="@+id/button7"
-
-        android:layout_width="273dp"
-
-        android:layout_height="52dp"
-
-        android:layout_marginTop="35dp"
-
-        android:background="@drawable/fundo_azul"
-
-        android:text="Salvar"
-
-        android:textColor="@color/white"
-
-        android:textSize="20sp"
-
-        android:textStyle="bold"
-
-        app:layout_constraintEnd_toEndOf="parent"
-
-        app:layout_constraintHorizontal_bias="0.5"
-
+    <!-- CHECKBOX DE NOTIFICAÇÕES -->
+    <CheckBox
+        android:id="@+id/cbNotificacoes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        android:text="Deseja receber notificações por e-mail?"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@id/campoSenha"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout12" />
+    <!-- BOTÃO SALVAR -->
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnSalvar"
+        android:layout_width="250dp"
+        android:layout_height="52dp"
+        android:layout_marginTop="35dp"
+        android:background="@drawable/fundo_azul"
+        android:text="Salvar"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/cbNotificacoes"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-
-
+    <!-- BARRA INFERIOR -->
     <LinearLayout
-
         android:id="@+id/bottomBar"
-
         android:layout_width="match_parent"
-
         android:layout_height="80dp"
-
-        android:layout_alignParentBottom="true"
-
-        android:background="@drawable/rodape"
-
-        android:gravity="center"
-
         android:orientation="horizontal"
-
-        android:paddingHorizontal="24dp"
-
+        android:gravity="center"
         android:weightSum="5"
-
+        android:paddingHorizontal="24dp"
+        android:background="@drawable/rodape"
         app:layout_constraintBottom_toBottomOf="parent"
-
-        app:layout_constraintEnd_toEndOf="parent"
-
-        app:layout_constraintStart_toStartOf="parent">
-
-
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <ImageView
             android:id="@+id/btnHome"
             android:layout_width="0dp"
             android:layout_height="30dp"
-            android:layout_gravity="center"
             android:layout_weight="1"
-            android:clickable="true"
             android:contentDescription="Início"
-            android:src="@drawable/baseline_home_24" />
-
-
-
+            android:src="@drawable/baseline_home_24"
+            android:clickable="true" />
 
         <ImageView
             android:id="@+id/btnBiblia"
             android:layout_width="0dp"
             android:layout_height="32dp"
-            android:layout_gravity="center"
             android:layout_weight="1"
             android:contentDescription="Bíblia"
             android:src="@drawable/biblia" />
 
-
-
         <FrameLayout
-
             android:layout_width="0dp"
-
             android:layout_height="match_parent"
-
             android:layout_weight="1"
-
             android:gravity="center">
 
-
-
-            <ImageView
-
-                android:id="@+id/btnFlutuante"
-
-                android:layout_width="64dp"
-
-                android:layout_height="64dp"
-
-                android:layout_gravity="center"
-
-                android:contentDescription="Adicionar nova mensagem"
-
-                android:elevation="8dp"
-
-                android:src="@drawable/soma" />
-
-
-
             <View
-
                 android:layout_width="64dp"
-
                 android:layout_height="64dp"
-
                 android:layout_gravity="center"
-
-                android:layout_marginTop="20dp"
-
-                android:layout_marginBottom="20dp"
-
                 android:background="@drawable/circulo_azul"
-
                 android:elevation="6dp" />
 
+            <ImageView
+                android:id="@+id/btnFlutuante"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_gravity="center"
+                android:contentDescription="Adicionar nova mensagem"
+                android:src="@drawable/soma"
+                android:elevation="8dp" />
         </FrameLayout>
-
-
 
         <ImageView
             android:id="@+id/btnCruz"
             android:layout_width="0dp"
             android:layout_height="30dp"
-            android:layout_gravity="center"
             android:layout_weight="1"
             android:contentDescription="Cruz"
             android:src="@drawable/cruz_magra" />
 
-
-
         <ImageView
             android:id="@+id/btnMenu"
-            android:layout_width="1dp"
+            android:layout_width="0dp"
             android:layout_height="30dp"
-            android:layout_gravity="center"
             android:layout_weight="1"
-            android:contentDescription="Mais"
+            android:contentDescription="Mais opções"
             android:src="@drawable/pontos" />
-
     </LinearLayout>
-
-
-
-    <TextView
-
-        android:id="@+id/textView28"
-
-        android:layout_width="334dp"
-
-        android:layout_height="26dp"
-
-        android:layout_marginTop="20dp"
-
-        android:text="Deseja receber notificações por E-mail?"
-
-        android:textColor="@color/black"
-
-        android:textSize="18sp"
-
-        android:textStyle="bold|italic"
-
-        app:layout_constraintEnd_toEndOf="parent"
-
-        app:layout_constraintHorizontal_bias="0.5"
-
-        app:layout_constraintStart_toStartOf="parent"
-
-        app:layout_constraintTop_toBottomOf="@+id/textView27" />
-
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>
