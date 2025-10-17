@@ -122,11 +122,11 @@ class MainAnotacao : AppCompatActivity() {
             dialog.dismiss()
         }
 
-        val opcConfig = dialog.findViewById<LinearLayout>(R.id.layoutConfig)
+        /*val opcConfig = dialog.findViewById<LinearLayout>(R.id.layoutConfig)
         opcConfig.setOnClickListener {
             startActivity(Intent(this, Configuracoes::class.java))
             dialog.dismiss()
-        }
+        }*/
 
         val opcSair = dialog.findViewById<LinearLayout>(R.id.layoutSair)
         opcSair.setOnClickListener {

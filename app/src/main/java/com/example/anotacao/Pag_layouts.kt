@@ -26,13 +26,16 @@ class Pag_layouts : AppCompatActivity() {
 
     private val db = Firebase.firestore
     private val auth = FirebaseAuth.getInstance()
-    private var listenerRegistration: com.google.firebase.firestore.ListenerRegistration? = null
+
+    private var listenerMensagem: com.google.firebase.firestore.ListenerRegistration? = null
     private var listenerLema: com.google.firebase.firestore.ListenerRegistration? = null
+    private var listenerAnotacao: com.google.firebase.firestore.ListenerRegistration? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_pag_layouts)
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -51,6 +54,10 @@ class Pag_layouts : AppCompatActivity() {
         val layoutLemaAno = findViewById<LinearLayout>(R.id.layout_lema_ano)
         val containerLemaAno = findViewById<LinearLayout>(R.id.container_lema_ano)
 
+        val layoutAnotacao = findViewById<LinearLayout>(R.id.layout_conteudo_anotacao)
+        val containerAnotacao = findViewById<LinearLayout>(R.id.container_anotacao)
+
+        // expandir/recolher seções
         layoutMensagemDia.setOnClickListener {
             containerMensagensDia.visibility =
                 if (containerMensagensDia.visibility == View.VISIBLE) View.GONE else View.VISIBLE
@@ -61,6 +68,11 @@ class Pag_layouts : AppCompatActivity() {
                 if (containerLemaAno.visibility == View.VISIBLE) View.GONE else View.VISIBLE
         }
 
+        layoutAnotacao.setOnClickListener {
+            containerAnotacao.visibility =
+                if (containerAnotacao.visibility == View.VISIBLE) View.GONE else View.VISIBLE
+        }
+
         val uid = auth.currentUser?.uid
         if (uid == null) {
             Toast.makeText(this, "Usuário não autenticado", Toast.LENGTH_SHORT).show()
@@ -68,16 +80,12 @@ class Pag_layouts : AppCompatActivity() {
             val inflater = LayoutInflater.from(this)
 
             // 🔹 Listener das mensagens
-            listenerRegistration = db.collection("mensagens")
+            listenerMensagem = db.collection("mensagens")
                 .whereEqualTo("uid", uid)
                 .orderBy("timestamp", Query.Direction.DESCENDING)
                 .addSnapshotListener { snapshot, error ->
-                    if (error != null) {
-                        Toast.makeText(this, "Nenhuma mensagem salva", Toast.LENGTH_SHORT).show()
-                        return@addSnapshotListener
-                    }
+                    if (error != null) return@addSnapshotListener
                     if (snapshot == null) return@addSnapshotListener
-
                     containerMensagensDia.removeAllViews()
 
                     for (doc in snapshot.documents) {
@@ -99,22 +107,17 @@ class Pag_layouts : AppCompatActivity() {
                             tvConteudo.visibility =
                                 if (tvConteudo.visibility == View.VISIBLE) View.GONE else View.VISIBLE
                         }
-
                         containerMensagensDia.addView(item)
                     }
                 }
 
-            // 🔹 Listener do lema do ano (mesma lógica das mensagens)
+            // 🔹 Listener do lema do ano
             listenerLema = db.collection("lemaDoAno")
                 .whereEqualTo("uid", uid)
                 .orderBy("timestamp", Query.Direction.DESCENDING)
                 .addSnapshotListener { snapshot, error ->
-                    if (error != null) {
-                        Toast.makeText(this, "Nenhum lema do ano salvo", Toast.LENGTH_SHORT).show()
-                        return@addSnapshotListener
-                    }
+                    if (error != null) return@addSnapshotListener
                     if (snapshot == null) return@addSnapshotListener
-
                     containerLemaAno.removeAllViews()
 
                     for (doc in snapshot.documents) {
@@ -136,12 +139,78 @@ class Pag_layouts : AppCompatActivity() {
                             tvConteudo.visibility =
                                 if (tvConteudo.visibility == View.VISIBLE) View.GONE else View.VISIBLE
                         }
-
                         containerLemaAno.addView(item)
+                    }
+                }
+
+            // 🔹 Listener das anotações (NOVO BLOCO)
+            listenerAnotacao = db.collection("anotacoes")
+                .whereEqualTo("uid", uid)
+                .orderBy("timestamp", Query.Direction.DESCENDING)
+                .addSnapshotListener { snapshot, error ->
+                    if (error != null) return@addSnapshotListener
+                    if (snapshot == null) return@addSnapshotListener
+                    containerAnotacao.removeAllViews()
+
+                    // pega o container específico onde tu quer que os favoritos entrem
+                    val caixaFavoritos = findViewById<LinearLayout>(R.id.layout_caixa1)
+
+                    for (doc in snapshot.documents) {
+                        val titulo = doc.getString("titulo") ?: "(sem título)"
+                        val texto = doc.getString("texto") ?: ""
+
+                        val item = layoutInflater.inflate(R.layout.card_anotacao_salva, containerAnotacao, false)
+                        val tvTitulo = item.findViewById<TextView>(R.id.tv_titulo_anotacao_salva)
+                        val tvConteudo = item.findViewById<TextView>(R.id.tv_conteudo_anotacao_salvo)
+                        val estrela = item.findViewById<ImageView>(R.id.iv_estrela)
+
+                        tvTitulo.text = titulo
+                        tvConteudo.text = texto
+                        tvConteudo.visibility = View.GONE
+
+                        // estado inicial da estrela (padrão desligada)
+                        var favorito = false
+                        // garante ícone e cor coerentes ao estado inicial
+                        estrela.setImageResource(android.R.drawable.btn_star_big_off)
+                        estrela.setColorFilter(android.graphics.Color.parseColor("#B0B0B0")) // cinza
+
+                        // clique no item expande/recolhe conteúdo
+                        item.setOnClickListener {
+                            tvConteudo.visibility =
+                                if (tvConteudo.visibility == View.VISIBLE) View.GONE else View.VISIBLE
+                        }
+
+                        // clique na estrela: alterna estado e MOVE o card
+                        estrela.setOnClickListener {
+                            favorito = !favorito
+
+                            // remove de qualquer parent atual antes de mover (evita crash)
+                            (item.parent as? LinearLayout)?.removeView(item)
+
+                            if (favorito) {
+                                // estrela ligada + cor dourada
+                                estrela.setImageResource(android.R.drawable.btn_star_big_on)
+                                estrela.setColorFilter(android.graphics.Color.parseColor("#FFD700"))
+                                // adiciona dentro do layout_caixa1 (substitui conteúdo anterior se quiser)
+                                // aqui eu adiciono ao final do caixaFavoritos. Se tu quiser substituir o texto
+                                // já existente do tv_titulo1 (ex.: mostrar apenas 1 favorito), dá pra ajustar.
+                                caixaFavoritos.addView(item)
+                            } else {
+                                // estrela desligada + cor cinza
+                                estrela.setImageResource(android.R.drawable.btn_star_big_off)
+                                estrela.setColorFilter(android.graphics.Color.parseColor("#B0B0B0"))
+                                // volta pro container de anotações (no topo)
+                                containerAnotacao.addView(item, 0)
+                            }
+                        }
+
+                        // adiciona inicialmente no container normal
+                        containerAnotacao.addView(item)
                     }
                 }
         }
 
+        // botoes inferiores e sheets
         btnMais.setOnClickListener { mostrarSheetOpcoes() }
         btnMenu.setOnClickListener { mostrarSheetLateral() }
         btnBiblia.setOnClickListener { startActivity(Intent(this, Mensagens::class.java)) }
@@ -151,8 +220,9 @@ class Pag_layouts : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        listenerRegistration?.remove()
+        listenerMensagem?.remove()
         listenerLema?.remove()
+        listenerAnotacao?.remove()
     }
 
     private fun mostrarSheetLateral() {
@@ -169,7 +239,6 @@ class Pag_layouts : AppCompatActivity() {
             attributes.windowAnimations = R.style.DialogAnimationDireita
         }
 
-        // Botão "Layouts"
         val opcLayout = dialog.findViewById<LinearLayout>(R.id.layoutLayout)
         opcLayout.setOnClickListener {
             val intent = Intent(this, Pag_layouts::class.java)
@@ -177,24 +246,20 @@ class Pag_layouts : AppCompatActivity() {
             dialog.dismiss()
         }
 
-        // Botão "Configurações"
+        /* Botão "Configurações"
         val opcConfig = dialog.findViewById<LinearLayout>(R.id.layoutConfig)
         opcConfig.setOnClickListener {
             val intent = Intent(this, Configuracoes::class.java)
             startActivity(intent)
             dialog.dismiss()
-        }
+        }*/
 
-        // Botão "Sair"
         val opcSair = dialog.findViewById<LinearLayout>(R.id.layoutSair)
         opcSair.setOnClickListener {
-            FirebaseAuth.getInstance().signOut() // Desloga do Firebase
-
-            // Vai pra tela de login e limpa o histórico
+            FirebaseAuth.getInstance().signOut()
             val intent = Intent(this, MainActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
-
             dialog.dismiss()
             Toast.makeText(this, "Você saiu da conta.", Toast.LENGTH_SHORT).show()
         }

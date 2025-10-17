@@ -178,7 +178,7 @@
                 android:layout_marginBottom="16dp"
                 android:background="@drawable/fundo_azul_escuro"
                 android:orientation="vertical"
-                android:paddingBottom="16dp">
+                android:paddingBottom="24dp">
 
                 <TextView
                     android:id="@+id/tv_favoritos"
@@ -194,47 +194,37 @@
                 <LinearLayout
                     android:id="@+id/layout_caixa1"
                     android:layout_width="match_parent"
-                    android:layout_height="80dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginLeft="16dp"
                     android:layout_marginTop="16dp"
                     android:layout_marginRight="16dp"
                     android:background="@drawable/fundo_azul"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:padding="8dp">
 
                     <TextView
                         android:id="@+id/tv_titulo1"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="30dp"
-                        android:text="Título da anotação"
+                        android:layout_marginBottom="30dp"
+                        android:text="Anotações favoritas"
                         android:textAlignment="center"
                         android:textColor="#FFFFFF"
                         android:textSize="14sp"
                         android:textStyle="italic" />
 
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/layout_caixa2"
-                    android:layout_width="match_parent"
-                    android:layout_height="80dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginRight="16dp"
-                    android:background="@drawable/fundo_azul"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/tv_titulo2"
+                    <!-- container invisível que aparece quando tiver favoritos -->
+                    <LinearLayout
+                        android:id="@+id/container_favoritos"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="30dp"
-                        android:text="Título da anotação"
-                        android:textAlignment="center"
-                        android:textColor="#FFFFFF"
-                        android:textSize="14sp"
-                        android:textStyle="italic" />
+                        android:orientation="vertical"
+                        android:visibility="gone"
+                        android:padding="8dp" />
+
                 </LinearLayout>
+
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

@@ -21,19 +21,35 @@
             android:layout_width="match_parent"
             android:layout_height="80dp"
             android:background="#1E3A5F"
-            android:orientation="vertical">
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="16dp">
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
 
             <TextView
                 android:id="@+id/tv_titulo_anotacao_salva"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
                 android:text="Anotação salva"
-                android:textAlignment="center"
-                android:textColor="#fff"
+                android:textColor="#FFFFFF"
                 android:textSize="14sp"
                 android:textStyle="italic" />
 
+            <View
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <ImageView
+                android:id="@+id/iv_estrela"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@android:drawable/btn_star_big_off"
+                android:contentDescription="estrela"/>
         </LinearLayout>
 
         <!-- CONTEÚDO BRANCO -->
@@ -42,7 +58,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="none"
-            android:text="texto de exemplo, texto de exemplo, texto de exemplo, texto de exemplo, texto de exemplo, texto de exemplo, texto de exemplo, texto de exemplo, texto de exemplo, texto de exemplo, texto de exemplo, texto de exemplo, texto de exemplo, texto de exemplo, texto de exemplo, texto de exemplo, texto de exemplo, texto de exemplo, texto de exemplo, texto de exemplo, texto de exemplo, "
+            android:text="texto de exemplo, texto de exemplo, texto de exemplo..."
             android:justificationMode="inter_word"
             android:lineSpacingExtra="2dp"
             android:padding="12dp"

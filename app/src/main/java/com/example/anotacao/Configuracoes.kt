@@ -1,4 +1,4 @@
-package com.example.anotacao
+/*package com.example.anotacao
 
 import android.app.Activity
 import android.app.Dialog
@@ -228,3 +228,4 @@ class Configuracoes : AppCompatActivity() {
         bottomSheetDialog.show()
     }
 }
+*/
