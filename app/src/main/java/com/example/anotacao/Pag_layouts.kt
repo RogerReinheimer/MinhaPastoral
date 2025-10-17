@@ -246,13 +246,13 @@ class Pag_layouts : AppCompatActivity() {
             dialog.dismiss()
         }
 
-        /* Botão "Configurações"
+        // Botão "Configurações"
         val opcConfig = dialog.findViewById<LinearLayout>(R.id.layoutConfig)
         opcConfig.setOnClickListener {
             val intent = Intent(this, Configuracoes::class.java)
             startActivity(intent)
             dialog.dismiss()
-        }*/
+        }
 
         val opcSair = dialog.findViewById<LinearLayout>(R.id.layoutSair)
         opcSair.setOnClickListener {

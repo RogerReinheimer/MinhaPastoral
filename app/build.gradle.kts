@@ -49,6 +49,11 @@ android {
 }
 
 dependencies {
+
+    implementation ("com.github.bumptech.glide:glide:4.15.1")
+    implementation ("com.google.firebase:firebase-storage-ktx:20.3.0")
+
+
     implementation("androidx.compose.material3:material3:1.3.2")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

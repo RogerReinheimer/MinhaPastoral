@@ -9,7 +9,6 @@
     android:background="@color/fundoTela"
     tools:context=".Configuracoes">
 
-    <!-- FOTO DE PERFIL -->
     <ImageView
         android:id="@+id/ivUsuario"
         android:layout_width="180dp"
@@ -20,7 +19,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- TEXTO ALTERAR FOTO -->
     <TextView
         android:id="@+id/txtAlterarFoto"
         android:layout_width="wrap_content"
@@ -33,10 +31,9 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- CAMPO NOME DE USUÁRIO -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/campoNome"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginStart="24dp"
         android:layout_marginTop="30dp"
@@ -52,13 +49,13 @@
             android:layout_height="match_parent"
             android:hint="Nome de usuário"
             android:paddingStart="15dp"
+            android:paddingEnd="15dp"
             android:textColor="@color/black"
             android:textColorHint="@color/corTxtSecundario"
             android:background="@android:color/transparent"
             android:textSize="16sp" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- CAMPO SENHA -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/campoSenha"
         android:layout_width="match_parent"
@@ -73,18 +70,65 @@
 
         <EditText
             android:id="@+id/etSenha"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:hint="Digite nova senha"
             android:inputType="textPassword"
             android:paddingStart="15dp"
-            android:textColor="@color/black"
-            android:textColorHint="@color/corTxtSecundario"
             android:background="@android:color/transparent"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/ivToggleSenha"/>
+
+        <ImageView
+            android:id="@+id/ivToggleSenha"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_visibility_off"
+            android:padding="8dp"
+            android:layout_marginEnd="5dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- CHECKBOX DE NOTIFICAÇÕES -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/campoSenhaAtual"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="24dp"
+        android:background="@drawable/fundo_branco"
+        app:layout_constraintTop_toBottomOf="@id/campoSenha"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <EditText
+            android:id="@+id/etSenhaAtual"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:hint="Digite sua senha atual"
+            android:inputType="textPassword"
+            android:paddingStart="15dp"
+            android:background="@android:color/transparent"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/ivToggleSenhaAtual"/>
+
+        <ImageView
+            android:id="@+id/ivToggleSenhaAtual"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_visibility_off"
+            android:padding="8dp"
+            android:layout_marginEnd="5dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
     <CheckBox
         android:id="@+id/cbNotificacoes"
         android:layout_width="wrap_content"
@@ -93,11 +137,10 @@
         android:text="Deseja receber notificações por e-mail?"
         android:textColor="@color/black"
         android:textSize="16sp"
-        app:layout_constraintTop_toBottomOf="@id/campoSenha"
+        app:layout_constraintTop_toBottomOf="@id/campoSenhaAtual"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- BOTÃO SALVAR -->
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnSalvar"
         android:layout_width="250dp"
@@ -112,7 +155,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- BARRA INFERIOR -->
     <LinearLayout
         android:id="@+id/bottomBar"
         android:layout_width="match_parent"
@@ -146,8 +188,7 @@
         <FrameLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center">
+            android:layout_weight="1">
 
             <View
                 android:layout_width="64dp"

@@ -1,21 +1,23 @@
-/*package com.example.anotacao
+package com.example.anotacao
 
-import android.app.Activity
 import android.app.Dialog
 import android.content.Intent
-import android.graphics.Bitmap
-import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
+import android.text.InputType
 import android.view.Gravity
 import android.view.Window
 import android.view.WindowManager
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.EmailAuthProvider
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
+
+
+
 
 class Configuracoes : AppCompatActivity() {
 
@@ -27,14 +29,17 @@ class Configuracoes : AppCompatActivity() {
     private lateinit var btnSalvar: Button
     private lateinit var btnMenu: ImageView
     private lateinit var btnFlutuante: ImageView
+    private lateinit var etSenhaAtual: EditText
+    private lateinit var ivToggleSenha: ImageView
+    private lateinit var ivToggleSenhaAtual: ImageView
 
-    private var imageUri: Uri? = null
-    private val PICK_IMAGE_REQUEST = 1001
+    companion object {
+        private const val REQUEST_CODE_IMAGEM = 1002
+    }
 
-    private val auth = FirebaseAuth.getInstance()
-    private val user = auth.currentUser
-    private val database = FirebaseDatabase.getInstance().reference
-    private val storage = FirebaseStorage.getInstance().reference
+    val db = FirebaseFirestore.getInstance()
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,114 +54,124 @@ class Configuracoes : AppCompatActivity() {
         btnSalvar = findViewById(R.id.btnSalvar)
         btnMenu = findViewById(R.id.btnMenu)
         btnFlutuante = findViewById(R.id.btnFlutuante)
+        etSenhaAtual = findViewById(R.id.etSenhaAtual)
+        ivToggleSenha = findViewById(R.id.ivToggleSenha)
+        ivToggleSenhaAtual = findViewById(R.id.ivToggleSenhaAtual)
 
-        // ---------- CARREGAR DADOS DO FIREBASE ----------
-        carregarDadosUsuario()
-
-        // ---------- ALTERAR FOTO ----------
-        txtAlterarFoto.setOnClickListener {
-            val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-            startActivityForResult(intent, PICK_IMAGE_REQUEST)
-        }
-
-        // ---------- SALVAR ALTERAÇÕES ----------
-        btnSalvar.setOnClickListener { salvarAlteracoes() }
+        // --------- CHAMAR FUNÇÃO MOSTRAR SENHA ------------
+        setupPasswordVisibilityToggle(etSenha, ivToggleSenha)
+        setupPasswordVisibilityToggle(etSenhaAtual, ivToggleSenhaAtual)
 
         // ---------- MENUS ----------
         btnMenu.setOnClickListener { mostrarSheetLateral() }
         btnFlutuante.setOnClickListener { mostrarSheetOpcoes() }
-    }
 
-    // ==========================================
-    // CARREGAR DADOS DO FIREBASE
-    // ==========================================
-    private fun carregarDadosUsuario() {
-        user?.uid?.let { uid ->
-            database.child("usuarios").child(uid).get().addOnSuccessListener { snapshot ->
-                if (snapshot.exists()) {
-                    val nome = snapshot.child("nome").value?.toString() ?: ""
-                    val notificacoes = snapshot.child("notificacoes").value?.toString()?.toBoolean() ?: false
-                    val fotoUrl = snapshot.child("fotoUrl").value?.toString() ?: ""
+        // --------- CARREGAR DADOS USUÁRIO (NOME E FOTO EM UMA CHAMADA) --------
+        val uid = FirebaseAuth.getInstance().currentUser?.uid
+        if (uid != null) {
+            db.collection("users").document(uid).get()
+                .addOnSuccessListener { document ->
+                    if (document != null && document.exists()) {
+                        // Carrega o nome
+                        val nome = document.getString("username")
+                        etUsuario.setText(nome ?: "")
 
-                    etUsuario.setText(nome)
-                    cbNotificacoes.isChecked = notificacoes
-
-                    if (fotoUrl.isNotEmpty()) {
-                        Picasso.get().load(fotoUrl).into(ivUsuario)
-                    }
-                }
-            }.addOnFailureListener {
-                Toast.makeText(this, "Erro ao carregar dados.", Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
-
-    // ==========================================
-    // SALVAR ALTERAÇÕES
-    // ==========================================
-    private fun salvarAlteracoes() {
-        val novoNome = etUsuario.text.toString().trim()
-        val novaSenha = etSenha.text.toString().trim()
-        val notificacoes = cbNotificacoes.isChecked
-
-        if (novoNome.isEmpty()) {
-            Toast.makeText(this, "Digite o nome de usuário.", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        user?.uid?.let { uid ->
-            val userRef = database.child("usuarios").child(uid)
-
-            // Atualiza nome e notificações
-            val updates = mapOf(
-                "nome" to novoNome,
-                "notificacoes" to notificacoes
-            )
-
-            userRef.updateChildren(updates).addOnSuccessListener {
-                // Atualiza senha se o campo não estiver vazio
-                if (novaSenha.isNotEmpty()) {
-                    user?.let { usr ->
-                        usr.updatePassword(novaSenha).addOnSuccessListener {
-                            Toast.makeText(this, "Senha atualizada.", Toast.LENGTH_SHORT).show()
-                        }.addOnFailureListener {
-                            Toast.makeText(this, "Erro ao atualizar senha.", Toast.LENGTH_SHORT).show()
+                        // Carrega a foto
+                        val urlFoto = document.getString("fotoPerfil")
+                        if (!urlFoto.isNullOrEmpty()) {
+                            Glide.with(this).load(urlFoto).into(ivUsuario)
                         }
                     }
                 }
+                .addOnFailureListener {
+                    Toast.makeText(this, "Erro ao carregar dados do usuário", Toast.LENGTH_SHORT).show()
+                }
+        }
 
-                // Upload da foto (se houver)
-                if (imageUri != null) {
-                    val storageRef = storage.child("fotos_perfil/$uid.jpg")
-                    storageRef.putFile(imageUri!!)
-                        .addOnSuccessListener {
-                            storageRef.downloadUrl.addOnSuccessListener { uri ->
-                                userRef.child("fotoUrl").setValue(uri.toString())
-                                Toast.makeText(this, "Dados atualizados com sucesso!", Toast.LENGTH_SHORT).show()
+        // -------- SALVAR ALTERAÇÕES -----------
+        btnSalvar.setOnClickListener {
+            val novoNome = etUsuario.text.toString().trim()
+            val novaSenha = etSenha.text.toString()
+            val senhaAtual = etSenhaAtual.text.toString()
+            val usuario = FirebaseAuth.getInstance().currentUser
+
+            // Atualizar nome no Firestore
+            if (usuario != null && novoNome.isNotEmpty()) {
+                val dados = hashMapOf("username" to novoNome)
+                db.collection("users").document(usuario.uid).update(dados as Map<String, Any>)
+                    .addOnSuccessListener {
+                        Toast.makeText(this, "Nome atualizado!", Toast.LENGTH_SHORT).show()
+                    }
+                    .addOnFailureListener {
+                        Toast.makeText(this, "Erro ao atualizar nome.", Toast.LENGTH_SHORT).show()
+                    }
+            }
+
+            // Atualizar senha com reautenticação
+            val emailNaoNulo = usuario?.email
+            if (novaSenha.isNotEmpty() && senhaAtual.isNotEmpty() && emailNaoNulo != null && usuario != null) {
+                val credential = EmailAuthProvider.getCredential(emailNaoNulo, senhaAtual)
+                usuario.reauthenticate(credential).addOnCompleteListener { authTask ->
+                    if (authTask.isSuccessful) {
+                        usuario.updatePassword(novaSenha).addOnCompleteListener { updateTask ->
+                            if (updateTask.isSuccessful) {
+                                Toast.makeText(this, "Senha atualizada com sucesso!", Toast.LENGTH_SHORT).show()
+                                etSenha.text.clear()
+                                etSenhaAtual.text.clear()
+                            } else {
+                                Toast.makeText(this, "Erro ao atualizar senha.", Toast.LENGTH_SHORT).show()
                             }
                         }
-                        .addOnFailureListener {
-                            Toast.makeText(this, "Erro ao enviar imagem.", Toast.LENGTH_SHORT).show()
-                        }
-                } else {
-                    Toast.makeText(this, "Dados atualizados com sucesso!", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(this, "Senha atual incorreta.", Toast.LENGTH_SHORT).show()
+                    }
                 }
-            }.addOnFailureListener {
-                Toast.makeText(this, "Erro ao salvar alterações.", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        txtAlterarFoto.setOnClickListener {
+            val intent = Intent(Intent.ACTION_PICK)
+            intent.type = "image/*"
+            startActivityForResult(intent, REQUEST_CODE_IMAGEM)
+        }
+    } // fim do oncreate
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_CODE_IMAGEM && resultCode == RESULT_OK) {
+            val imagemUri = data?.data
+            // Verificação segura (sem o crash do !!)
+            imagemUri?.let { uri ->
+                ivUsuario.setImageURI(uri)
+                val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
+                val storageRef = FirebaseStorage.getInstance().reference.child("fotos_perfil/$uid.jpg")
+
+                storageRef.putFile(uri)
+                    .addOnSuccessListener {
+                        storageRef.downloadUrl.addOnSuccessListener { downloadUrl ->
+                            salvarUrlFotoNoFirestore(uid, downloadUrl.toString())
+                        }
+                    }
+                    .addOnFailureListener {
+                        Toast.makeText(this, "Erro ao enviar foto.", Toast.LENGTH_SHORT).show()
+                    }
             }
         }
     }
 
-    // ==========================================
-    // RESULTADO AO SELECIONAR IMAGEM
-    // ==========================================
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK && data != null) {
-            imageUri = data.data
-            ivUsuario.setImageURI(imageUri)
-        }
+    private fun salvarUrlFotoNoFirestore(uid: String, url: String) {
+        db.collection("users").document(uid)
+            .update("fotoPerfil", url)
+            .addOnSuccessListener {
+                Toast.makeText(this, "Foto atualizada com sucesso!", Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener {
+                Toast.makeText(this, "Erro ao salvar URL da foto.", Toast.LENGTH_SHORT).show()
+            }
     }
+
+
 
     // ==========================================
     // ----------- MENU LATERAL -------------
@@ -227,5 +242,25 @@ class Configuracoes : AppCompatActivity() {
         bottomSheetDialog.setContentView(view)
         bottomSheetDialog.show()
     }
+
+    private fun setupPasswordVisibilityToggle(editText: EditText, toggleIcon: ImageView) {
+        toggleIcon.setOnClickListener {
+            // Salva a posição atual do cursor
+            val selection = editText.selectionEnd
+
+            // Verifica se a senha está visível ou oculta
+            if (editText.inputType == (InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD)) {
+                // Se estiver OCULTA, torna VISÍVEL
+                editText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+                toggleIcon.setImageResource(R.drawable.ic_visibility) // Ícone de olho aberto
+            } else {
+                // Se estiver VISÍVEL, torna OCULTA
+                editText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+                toggleIcon.setImageResource(R.drawable.ic_visibility_off) // Ícone de olho fechado
+            }
+
+            // Restaura a posição do cursor para não voltar ao início
+            editText.setSelection(selection)
+        }
+    }
 }
-*/

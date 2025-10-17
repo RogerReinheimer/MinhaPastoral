@@ -89,12 +89,12 @@ class Pag_home : AppCompatActivity() {
         }
 
         // Botão "Configurações"
-        /*val opcConfig = dialog.findViewById<LinearLayout>(R.id.layoutConfig)
+        val opcConfig = dialog.findViewById<LinearLayout>(R.id.layoutConfig)
         opcConfig.setOnClickListener {
             val intent = Intent(this, Configuracoes::class.java)
             startActivity(intent)
             dialog.dismiss()
-        }*/
+        }
 
         // Botão "Sair"
         val opcSair = dialog.findViewById<LinearLayout>(R.id.layoutSair)

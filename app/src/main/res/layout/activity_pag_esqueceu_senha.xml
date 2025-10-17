@@ -73,7 +73,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:text="Insira seu e-mail e enviaremos um código para recuperação da conta."
+            android:text="Insira seu e-mail e enviaremos um código para recuperação da conta. Por favor, verifique no SPAM, caso não encontre na caixa de entrada."
             android:textAlignment="center"
             android:textColor="@color/corTxtSecundario"
             android:textSize="18sp"
