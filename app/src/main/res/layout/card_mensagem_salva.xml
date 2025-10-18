@@ -19,41 +19,80 @@
         <LinearLayout
             android:id="@+id/tv_cabecario_layout_salvo"
             android:layout_width="match_parent"
-            android:layout_height="80dp"
+            android:layout_height="wrap_content"
             android:background="#1E3A5F"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="10dp">
 
-            <TextView
-                android:id="@+id/tv_titulo_layout_salvo"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="Mensagem salva"
-                android:textAlignment="center"
-                android:textColor="#fff"
-                android:textSize="14sp"
-                android:textStyle="italic" />
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/tv_data_layout_salvo"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:text="00/00/0000"
-                android:textAlignment="center"
-                android:textColor="#FFFFFF"
-                android:textSize="14sp"
-                android:textStyle="italic" />
+                <TextView
+                    android:id="@+id/tv_titulo_layout_salvo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="Mensagem salva"
+                    android:textAlignment="center"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"
+                    android:textStyle="italic" />
 
+                <TextView
+                    android:id="@+id/tv_data_layout_salvo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="00/00/0000"
+                    android:textAlignment="center"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"
+                    android:textStyle="italic" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:layout_marginTop="8dp">
+
+                    <Button
+                        android:id="@+id/btn_excluir"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:text="Excluir"
+                        android:textSize="12sp"
+                        android:textColor="#FFFFFF"
+                        android:backgroundTint="#2C4E78"
+                        android:stateListAnimator="@null"
+                        android:elevation="0dp"
+                        android:layout_marginEnd="10dp"/>
+
+                    <Button
+                        android:id="@+id/btn_postar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:text="Postar"
+                        android:textSize="12sp"
+                        android:textColor="#FFFFFF"
+                        android:backgroundTint="#2C4E78"
+                        android:stateListAnimator="@null"
+                        android:elevation="0dp"/>
+                </LinearLayout>
+
+            </LinearLayout>
         </LinearLayout>
 
-        <!-- CONTEÚDO BRANCO -->
         <TextView
             android:id="@+id/tv_conteudo_layout_salvo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="none"
-            android:text="texto de exemplo, texto de exemplo, texto de exemplo, texto de exemplo, texto de exemplo, texto de exemplo, texto de exemplo, texto de exemplo, texto de exemplo, texto de exemplo, texto de exemplo, texto de exemplo, texto de exemplo, texto de exemplo, texto de exemplo, texto de exemplo, texto de exemplo, texto de exemplo, texto de exemplo, texto de exemplo, texto de exemplo, "
+            android:text="texto de exemplo, texto de exemplo, texto de exemplo..."
             android:justificationMode="inter_word"
             android:lineSpacingExtra="2dp"
             android:padding="12dp"

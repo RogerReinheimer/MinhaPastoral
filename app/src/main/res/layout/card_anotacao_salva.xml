@@ -16,43 +16,81 @@
         android:orientation="vertical"
         android:background="#FFFFFF">
 
+        <!-- Cabeçalho -->
         <LinearLayout
             android:id="@+id/tv_cabecario_anotacao_salva"
             android:layout_width="match_parent"
-            android:layout_height="80dp"
+            android:layout_height="wrap_content"
             android:background="#1E3A5F"
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:gravity="center_vertical"
-            android:paddingHorizontal="16dp">
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="10dp">
 
-            <View
-                android:layout_width="0dp"
+            <!-- Agrupa título e estrela + botão dentro -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1" />
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/tv_titulo_anotacao_salva"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Anotação salva"
-                android:textColor="#FFFFFF"
-                android:textSize="14sp"
-                android:textStyle="italic" />
+                <!-- Linha do título + estrela -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
 
-            <View
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" />
 
-            <ImageView
-                android:id="@+id/iv_estrela"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@android:drawable/btn_star_big_off"
-                android:contentDescription="estrela"/>
+                    <TextView
+                        android:id="@+id/tv_titulo_anotacao_salva"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Anotação salva"
+                        android:textColor="#FFFFFF"
+                        android:textSize="14sp"
+                        android:textStyle="italic" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" />
+
+                    <ImageView
+                        android:id="@+id/iv_estrela"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@android:drawable/btn_star_big_off"
+                        android:contentDescription="estrela"/>
+                </LinearLayout>
+
+                <!-- Linha do botão -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:layout_marginTop="8dp">
+
+                    <Button
+                        android:id="@+id/btn_excluir"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:text="Excluir"
+                        android:textSize="12sp"
+                        android:textColor="#FFFFFF"
+                        android:backgroundTint="#2C4E78"
+                        android:stateListAnimator="@null"
+                        android:elevation="0dp" />
+                </LinearLayout>
+
+            </LinearLayout>
         </LinearLayout>
 
-        <!-- CONTEÚDO BRANCO -->
+        <!-- Conteúdo escondido -->
         <TextView
             android:id="@+id/tv_conteudo_anotacao_salvo"
             android:layout_width="match_parent"

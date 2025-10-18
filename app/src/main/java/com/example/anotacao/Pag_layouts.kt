@@ -57,7 +57,6 @@ class Pag_layouts : AppCompatActivity() {
         val layoutAnotacao = findViewById<LinearLayout>(R.id.layout_conteudo_anotacao)
         val containerAnotacao = findViewById<LinearLayout>(R.id.container_anotacao)
 
-        // expandir/recolher seções
         layoutMensagemDia.setOnClickListener {
             containerMensagensDia.visibility =
                 if (containerMensagensDia.visibility == View.VISIBLE) View.GONE else View.VISIBLE
@@ -79,7 +78,6 @@ class Pag_layouts : AppCompatActivity() {
         } else {
             val inflater = LayoutInflater.from(this)
 
-            // 🔹 Listener das mensagens
             listenerMensagem = db.collection("mensagens")
                 .whereEqualTo("uid", uid)
                 .orderBy("timestamp", Query.Direction.DESCENDING)
@@ -111,7 +109,6 @@ class Pag_layouts : AppCompatActivity() {
                     }
                 }
 
-            // 🔹 Listener do lema do ano
             listenerLema = db.collection("lemaDoAno")
                 .whereEqualTo("uid", uid)
                 .orderBy("timestamp", Query.Direction.DESCENDING)
@@ -143,23 +140,27 @@ class Pag_layouts : AppCompatActivity() {
                     }
                 }
 
-            // 🔹 Listener das anotações (NOVO BLOCO)
             listenerAnotacao = db.collection("anotacoes")
                 .whereEqualTo("uid", uid)
                 .orderBy("timestamp", Query.Direction.DESCENDING)
                 .addSnapshotListener { snapshot, error ->
                     if (error != null) return@addSnapshotListener
                     if (snapshot == null) return@addSnapshotListener
-                    containerAnotacao.removeAllViews()
 
-                    // pega o container específico onde tu quer que os favoritos entrem
+                    containerAnotacao.removeAllViews()
                     val caixaFavoritos = findViewById<LinearLayout>(R.id.layout_caixa1)
 
                     for (doc in snapshot.documents) {
                         val titulo = doc.getString("titulo") ?: "(sem título)"
                         val texto = doc.getString("texto") ?: ""
+                        val favoritoFirestore = doc.getBoolean("favorito") ?: false
 
-                        val item = layoutInflater.inflate(R.layout.card_anotacao_salva, containerAnotacao, false)
+                        val item = layoutInflater.inflate(
+                            R.layout.card_anotacao_salva,
+                            containerAnotacao,
+                            false
+                        )
+
                         val tvTitulo = item.findViewById<TextView>(R.id.tv_titulo_anotacao_salva)
                         val tvConteudo = item.findViewById<TextView>(R.id.tv_conteudo_anotacao_salvo)
                         val estrela = item.findViewById<ImageView>(R.id.iv_estrela)
@@ -168,49 +169,65 @@ class Pag_layouts : AppCompatActivity() {
                         tvConteudo.text = texto
                         tvConteudo.visibility = View.GONE
 
-                        // estado inicial da estrela (padrão desligada)
-                        var favorito = false
-                        // garante ícone e cor coerentes ao estado inicial
-                        estrela.setImageResource(android.R.drawable.btn_star_big_off)
-                        estrela.setColorFilter(android.graphics.Color.parseColor("#B0B0B0")) // cinza
+                        var favorito = favoritoFirestore
 
-                        // clique no item expande/recolhe conteúdo
+                        if (favorito) {
+                            estrela.setImageResource(android.R.drawable.btn_star_big_on)
+                            estrela.setColorFilter(android.graphics.Color.parseColor("#FFD700"))
+                            caixaFavoritos.addView(item)
+                        } else {
+                            estrela.setImageResource(android.R.drawable.btn_star_big_off)
+                            estrela.setColorFilter(android.graphics.Color.parseColor("#B0B0B0"))
+                            containerAnotacao.addView(item)
+                        }
+
                         item.setOnClickListener {
                             tvConteudo.visibility =
                                 if (tvConteudo.visibility == View.VISIBLE) View.GONE else View.VISIBLE
                         }
 
-                        // clique na estrela: alterna estado e MOVE o card
                         estrela.setOnClickListener {
                             favorito = !favorito
 
-                            // remove de qualquer parent atual antes de mover (evita crash)
-                            (item.parent as? LinearLayout)?.removeView(item)
-
                             if (favorito) {
-                                // estrela ligada + cor dourada
                                 estrela.setImageResource(android.R.drawable.btn_star_big_on)
                                 estrela.setColorFilter(android.graphics.Color.parseColor("#FFD700"))
-                                // adiciona dentro do layout_caixa1 (substitui conteúdo anterior se quiser)
-                                // aqui eu adiciono ao final do caixaFavoritos. Se tu quiser substituir o texto
-                                // já existente do tv_titulo1 (ex.: mostrar apenas 1 favorito), dá pra ajustar.
-                                caixaFavoritos.addView(item)
                             } else {
-                                // estrela desligada + cor cinza
                                 estrela.setImageResource(android.R.drawable.btn_star_big_off)
                                 estrela.setColorFilter(android.graphics.Color.parseColor("#B0B0B0"))
-                                // volta pro container de anotações (no topo)
+                            }
+
+                            db.collection("anotacoes").document(doc.id)
+                                .update("favorito", favorito)
+                                .addOnFailureListener {
+                                    Toast.makeText(
+                                        this,
+                                        "Erro ao atualizar favorito",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+
+                            // move entre layouts
+                            val parent = item.parent as? LinearLayout
+                            parent?.removeView(item)
+
+                            if (favorito) {
+                                caixaFavoritos.addView(item)
+                            } else {
                                 containerAnotacao.addView(item, 0)
                             }
-                        }
 
-                        // adiciona inicialmente no container normal
-                        containerAnotacao.addView(item)
+                            caixaFavoritos.visibility =
+                                if (caixaFavoritos.childCount > 1) View.VISIBLE else View.GONE
+                        }
                     }
+
+                    caixaFavoritos.visibility =
+                        if (caixaFavoritos.childCount > 1) View.VISIBLE else View.GONE
                 }
+
         }
 
-        // botoes inferiores e sheets
         btnMais.setOnClickListener { mostrarSheetOpcoes() }
         btnMenu.setOnClickListener { mostrarSheetLateral() }
         btnBiblia.setOnClickListener { startActivity(Intent(this, Mensagens::class.java)) }

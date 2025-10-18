@@ -65,7 +65,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="30dp"
                         android:layout_marginBottom="30dp"
-                        android:text="anotaçãos salvas"
+                        android:text="Anotaçãos alvas"
                         android:textAlignment="center"
                         android:textColor="#FFFFFF"
                         android:textSize="14sp"
@@ -121,7 +121,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="30dp"
                         android:layout_marginBottom="30dp"
-                        android:text="mensagens do dia salvas"
+                        android:text="Mensagens do Dia Salvas"
                         android:textAlignment="center"
                         android:textColor="#FFFFFF"
                         android:textSize="14sp"
@@ -153,7 +153,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="30dp"
                         android:layout_marginBottom="30dp"
-                        android:text="lemas do ano salvos"
+                        android:text="Lemas do Ano Salvos"
                         android:textAlignment="center"
                         android:textColor="#FFFFFF"
                         android:textSize="14sp"
@@ -208,13 +208,12 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="30dp"
                         android:layout_marginBottom="30dp"
-                        android:text="Anotações favoritas"
+                        android:text="Anotações Favoritas"
                         android:textAlignment="center"
                         android:textColor="#FFFFFF"
                         android:textSize="14sp"
                         android:textStyle="italic" />
 
-                    <!-- container invisível que aparece quando tiver favoritos -->
                     <LinearLayout
                         android:id="@+id/container_favoritos"
                         android:layout_width="match_parent"
@@ -224,7 +223,6 @@
                         android:padding="8dp" />
 
                 </LinearLayout>
-
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
