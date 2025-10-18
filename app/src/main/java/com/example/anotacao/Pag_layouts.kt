@@ -12,6 +12,7 @@ import android.view.Window
 import android.view.WindowManager
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -105,6 +106,20 @@ class Pag_layouts : AppCompatActivity() {
                             tvConteudo.visibility =
                                 if (tvConteudo.visibility == View.VISIBLE) View.GONE else View.VISIBLE
                         }
+
+                        val btnExcluir = item.findViewById<Button>(R.id.btn_excluir)
+                        btnExcluir.setOnClickListener {
+                            db.collection("mensagens").document(doc.id)
+                                .delete()
+                                .addOnSuccessListener {
+                                    containerMensagensDia.removeView(item)
+                                    Toast.makeText(this, "Mensagem excluída com sucesso!", Toast.LENGTH_SHORT).show()
+                                }
+                                .addOnFailureListener {
+                                    Toast.makeText(this, "Erro ao excluir mensagem.", Toast.LENGTH_SHORT).show()
+                                }
+                        }
+
                         containerMensagensDia.addView(item)
                     }
                 }
@@ -136,6 +151,20 @@ class Pag_layouts : AppCompatActivity() {
                             tvConteudo.visibility =
                                 if (tvConteudo.visibility == View.VISIBLE) View.GONE else View.VISIBLE
                         }
+
+                        val btnExcluir = item.findViewById<Button>(R.id.btn_excluir)
+                        btnExcluir.setOnClickListener {
+                            db.collection("lemaDoAno").document(doc.id)
+                                .delete()
+                                .addOnSuccessListener {
+                                    containerLemaAno.removeView(item)
+                                    Toast.makeText(this, "Lema excluído!", Toast.LENGTH_SHORT).show()
+                                }
+                                .addOnFailureListener {
+                                    Toast.makeText(this, "Erro ao excluir lema.", Toast.LENGTH_SHORT).show()
+                                }
+                        }
+
                         containerLemaAno.addView(item)
                     }
                 }
@@ -150,12 +179,14 @@ class Pag_layouts : AppCompatActivity() {
                     containerAnotacao.removeAllViews()
                     val caixaFavoritos = findViewById<LinearLayout>(R.id.layout_caixa1)
 
+                    val inflater = LayoutInflater.from(this)
+
                     for (doc in snapshot.documents) {
                         val titulo = doc.getString("titulo") ?: "(sem título)"
                         val texto = doc.getString("texto") ?: ""
                         val favoritoFirestore = doc.getBoolean("favorito") ?: false
 
-                        val item = layoutInflater.inflate(
+                        val item = inflater.inflate(
                             R.layout.card_anotacao_salva,
                             containerAnotacao,
                             false
@@ -164,6 +195,7 @@ class Pag_layouts : AppCompatActivity() {
                         val tvTitulo = item.findViewById<TextView>(R.id.tv_titulo_anotacao_salva)
                         val tvConteudo = item.findViewById<TextView>(R.id.tv_conteudo_anotacao_salvo)
                         val estrela = item.findViewById<ImageView>(R.id.iv_estrela)
+                        val btnExcluir = item.findViewById<Button>(R.id.btn_excluir) // botão de excluir
 
                         tvTitulo.text = titulo
                         tvConteudo.text = texto
@@ -171,6 +203,7 @@ class Pag_layouts : AppCompatActivity() {
 
                         var favorito = favoritoFirestore
 
+                        // Define aparência inicial da estrela e posição
                         if (favorito) {
                             estrela.setImageResource(android.R.drawable.btn_star_big_on)
                             estrela.setColorFilter(android.graphics.Color.parseColor("#FFD700"))
@@ -207,7 +240,6 @@ class Pag_layouts : AppCompatActivity() {
                                     ).show()
                                 }
 
-                            // move entre layouts
                             val parent = item.parent as? LinearLayout
                             parent?.removeView(item)
 
@@ -219,6 +251,21 @@ class Pag_layouts : AppCompatActivity() {
 
                             caixaFavoritos.visibility =
                                 if (caixaFavoritos.childCount > 1) View.VISIBLE else View.GONE
+                        }
+
+                        btnExcluir.setOnClickListener {
+                            db.collection("anotacoes").document(doc.id)
+                                .delete()
+                                .addOnSuccessListener {
+                                    val parent = item.parent as? LinearLayout
+                                    parent?.removeView(item)
+                                    Toast.makeText(this, "Anotação excluída com sucesso!", Toast.LENGTH_SHORT)
+                                        .show()
+                                }
+                                .addOnFailureListener {
+                                    Toast.makeText(this, "Erro ao excluir anotação.", Toast.LENGTH_SHORT)
+                                        .show()
+                                }
                         }
                     }
 
