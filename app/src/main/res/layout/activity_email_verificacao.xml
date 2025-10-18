@@ -5,144 +5,114 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/fundoTela"
+    android:background="@android:color/white"
     tools:context=".Email_verificacao">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <ImageView
+        android:id="@+id/imageView11"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginTop="40dp"
+        android:src="@drawable/logo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/txtVoltar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="Voltar"
+        android:textColor="@color/corTxtSecundario"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/imgVoltar"
+        app:layout_constraintStart_toEndOf="@+id/imgVoltar"
+        app:layout_constraintTop_toTopOf="@+id/imgVoltar" />
+
+    <ImageView
+        android:id="@+id/imgVoltar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:src="@drawable/maiorr"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView11"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/imageView11"
+        app:tint="@color/corTxtSecundario" />
+
+    <TextView
+        android:id="@+id/textView13"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
+        android:text="Código de verificação!"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textSize="28sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/imageView11" />
 
-        <ImageView
-            android:id="@+id/imageView11"
-            android:layout_width="62dp"
-            android:layout_height="62dp"
-            android:layout_marginTop="16dp"
-            android:src="@drawable/logo"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/txtVoltar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="85dp"
-            android:layout_marginEnd="322dp"
-            android:text="Voltar"
-            android:textColor="@color/corTxtSecundario"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <ImageView
-            android:id="@+id/imgVoltar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="87dp"
-            android:src="@drawable/maiorr"
-            app:layout_constraintEnd_toStartOf="@+id/txtVoltar"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="100dp"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
+    <TextView
+        android:id="@+id/textView14"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="32dp"
+        android:layout_marginTop="16dp"
+        android:text="Verifique seu e-mail e insira o código enviado"
+        android:textAlignment="center"
+        android:textColor="@color/corTxtSecundario"
+        android:textSize="16sp"
+        android:textStyle="italic"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.5">
+        app:layout_constraintTop_toBottomOf="@+id/textView13" />
 
-        <TextView
-            android:id="@+id/textView13"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="100dp"
-            android:text="Código de verificação!"
-            android:textAlignment="center"
-            android:textColor="@color/black"
-            android:textSize="30sp"
-            android:textStyle="bold|italic" />
+    <EditText
+        android:id="@+id/etCodigoVerificacao"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:layout_marginHorizontal="32dp"
+        android:layout_marginTop="32dp"
+        android:background="@drawable/fundo_branco"
+        android:ems="10"
+        android:hint="Digite o código"
+        android:inputType="number"
+        android:paddingHorizontal="16dp"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textColorHint="@color/corTxtSecundario"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView14" />
 
-        <TextView
-            android:id="@+id/textView14"
-            android:layout_width="278dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="30dp"
-            android:text="Verifique seu e-mail e insira o código enviado"
-            android:textAlignment="center"
-            android:textColor="@color/corTxtSecundario"
-            android:textSize="20dp"
-            android:textStyle="bold|italic" />
+    <TextView
+        android:id="@+id/textView18"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="____"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/etCodigoVerificacao"
+        app:layout_constraintEnd_toEndOf="@+id/etCodigoVerificacao"
+        app:layout_constraintStart_toStartOf="@+id/etCodigoVerificacao"
+        app:layout_constraintTop_toTopOf="@+id/etCodigoVerificacao" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="60dp"
-            android:layout_marginEnd="24dp"
-            android:background="@drawable/fundo_branco">
-
-            <EditText
-                android:id="@+id/etCodigoVerificacao"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginStart="48dp"
-                android:background="@drawable/fundo_branco"
-                android:ems="10"
-                android:inputType="text"
-                android:textColor="@color/black"
-                android:textColorHint="@color/corTxtSecundario"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.5" />
-
-            <TextView
-                android:id="@+id/textView18"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="25dp"
-                android:layout_marginTop="25dp"
-                android:text="_______________________________________________"
-                android:textColor="@color/black"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.5" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btnEnviar"
-            android:layout_width="273dp"
-            android:layout_height="52dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="90dp"
-            android:background="@drawable/fundo_azul"
-            android:text="Enviar"
-            android:textColor="@color/white"
-            android:textSize="20dp"
-            android:textStyle="bold" />
-
-    </LinearLayout>
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnEnviar"
+        android:layout_width="0dp"
+        android:layout_height="52dp"
+        android:layout_marginTop="32dp"
+        android:background="@drawable/fundo_azul"
+        android:text="Enviar"
+        android:textColor="@color/white"
+        android:textSize="18dp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@+id/etCodigoVerificacao"
+        app:layout_constraintStart_toStartOf="@+id/etCodigoVerificacao"
+        app:layout_constraintTop_toBottomOf="@+id/etCodigoVerificacao" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
