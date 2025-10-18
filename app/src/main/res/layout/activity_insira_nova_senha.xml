@@ -5,24 +5,25 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/fundoTela"
+    android:background="@android:color/white"
     tools:context=".Insira sua nova senha">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/headerSection"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
             android:id="@+id/imageView15"
-            android:layout_width="61dp"
-            android:layout_height="61dp"
-            android:layout_marginTop="16dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/logo" />
@@ -31,182 +32,148 @@
             android:id="@+id/txtVoltar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="85dp"
-            android:layout_marginEnd="322dp"
+            android:layout_marginStart="8dp"
             android:text="Voltar"
             android:textColor="@color/corTxtSecundario"
             android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@+id/imgVoltar"
+            app:layout_constraintStart_toEndOf="@+id/imgVoltar"
+            app:layout_constraintTop_toTopOf="@+id/imgVoltar" />
 
         <ImageView
             android:id="@+id/imgVoltar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="87dp"
-            app:layout_constraintEnd_toStartOf="@+id/txtVoltar"
+            android:layout_marginStart="16dp"
+            app:layout_constraintBottom_toBottomOf="@+id/imageView15"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/maiorr" />
+            app:layout_constraintTop_toTopOf="@+id/imageView15"
+            app:srcCompat="@drawable/maiorr"
+            app:tint="@color/corTxtSecundario" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="100dp"
+        android:layout_height="0dp"
         android:orientation="vertical"
+        android:paddingHorizontal="32dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.5">
-
-        <TextView
-            android:id="@+id/textView20"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="100dp"
-            android:gravity="center_horizontal"
-            android:text="Insira sua nova senha"
-            android:textColor="@color/black"
-            android:textSize="30dp"
-            android:textStyle="bold|italic" />
+        app:layout_constraintTop_toBottomOf="@+id/headerSection"> <TextView
+        android:id="@+id/textView20"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
+        android:gravity="center_horizontal"
+        android:text="Insira sua nova senha"
+        android:textColor="@color/black"
+        android:textSize="28sp"
+        android:textStyle="bold" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="35dp"
-            android:layout_marginEnd="24dp"
-            android:background="@drawable/fundo_branco"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.5"
-            tools:layout_editor_absoluteY="70dp">
+            android:layout_marginTop="32dp"
+            android:background="@drawable/fundo_branco">
 
             <ImageView
                 android:id="@+id/imageView17"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="26dp"
-                android:layout_marginBottom="22dp"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_marginStart="12dp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/etSenhaNova"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/senhamedio" />
+                app:srcCompat="@drawable/senhamedio"
+                app:tint="@color/corTxtSecundario" />
 
             <EditText
                 android:id="@+id/etSenhaNova"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_marginStart="48dp"
-                android:background="@drawable/fundo_branco"
+                android:layout_marginStart="12dp"
+                android:background="@android:color/transparent"
                 android:ems="10"
                 android:hint="Senha"
-                android:inputType="text|textPassword"
+                android:inputType="textPassword"
                 android:textColor="@color/black"
                 android:textColorHint="@color/corTxtSecundario"
+                android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/imageView17"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/textView21"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="25dp"
-                android:text="_______________________________________________"
-                android:textColor="@color/black"
-                android:textStyle="bold"
+                android:text="____"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.5" />
+                app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="31dp"
-            android:layout_marginEnd="24dp"
-            android:background="@drawable/fundo_branco"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.5"
-            tools:layout_editor_absoluteY="135dp">
+            android:layout_marginTop="16dp"
+            android:background="@drawable/fundo_branco">
 
             <EditText
                 android:id="@+id/etConfirmaSenha"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_marginStart="48dp"
-                android:background="@drawable/fundo_branco"
+                android:layout_marginStart="12dp"
+                android:background="@android:color/transparent"
                 android:ems="10"
-                android:hint="Confirme a Senha "
-                android:inputType="text|textPassword"
-                android:textColor="@color/corTxtSecundario"
+                android:hint="Confirme a Senha"
+                android:inputType="textPassword"
+                android:textColor="@color/black"
+                android:textColorHint="@color/corTxtSecundario"
+                android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/imageView18"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
                 android:id="@+id/imageView18"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="26dp"
-                android:layout_marginBottom="22dp"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_marginStart="12dp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/etConfirmaSenha"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/senhamedio" />
+                app:srcCompat="@drawable/senhamedio"
+                app:tint="@color/corTxtSecundario" />
 
             <TextView
                 android:id="@+id/textView22"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="25dp"
-                android:text="_______________________________________________"
-                android:textColor="@color/black"
-                android:textStyle="bold"
+                android:text="____"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.5" />
+                app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnEnviar"
-            android:layout_width="273dp"
+            android:layout_width="match_parent"
             android:layout_height="52dp"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="90dp"
+            android:layout_marginTop="32dp"
             android:background="@drawable/fundo_azul"
             android:text="Enviar"
             android:textColor="@color/white"
-            android:textSize="20dp"
+            android:textSize="18sp"
             android:textStyle="bold" />
 
     </LinearLayout>

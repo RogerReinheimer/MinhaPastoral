@@ -5,15 +5,14 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/fundoTela"
+    android:background="@android:color/white"
     tools:context=".Pag_esqueceu_senha">
 
-    <!-- Topo com logo e botão voltar -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/topSection"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="40dp"
+        android:paddingTop="16dp"
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
@@ -21,107 +20,102 @@
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:src="@drawable/logo"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <ImageView
-            android:id="@+id/imgVoltarLogin"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:src="@drawable/maiorr"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <TextView
-            android:id="@+id/txtVoltarParaLogin"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:text="Voltar"
-            android:textColor="@color/corTxtSecundario"
-            android:textStyle="bold"
-            app:layout_constraintStart_toEndOf="@+id/imgVoltarLogin"
-            app:layout_constraintTop_toTopOf="@+id/imgVoltarLogin"
-            app:layout_constraintBottom_toBottomOf="@+id/imgVoltarLogin" />
+            app:layout_constraintBottom_toBottomOf="parent" /> <ImageView
+        android:id="@+id/imgVoltarLogin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:src="@drawable/maiorr"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView9"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/imageView9"
+        app:tint="@color/corTxtSecundario" /> <TextView
+        android:id="@+id/txtVoltarParaLogin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="Voltar"
+        android:textColor="@color/corTxtSecundario"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/imgVoltarLogin"
+        app:layout_constraintStart_toEndOf="@+id/imgVoltarLogin"
+        app:layout_constraintTop_toTopOf="@+id/imgVoltarLogin" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- Conteúdo principal -->
     <LinearLayout
         android:id="@+id/contentSection"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="vertical"
-        android:paddingHorizontal="24dp"
-        app:layout_constraintTop_toBottomOf="@+id/topSection"
-        app:layout_constraintBottom_toBottomOf="parent">
+        android:paddingHorizontal="32dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/topSection">
 
         <TextView
             android:id="@+id/textView15"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="60dp"
+            android:layout_marginTop="48dp"
             android:text="Esqueceu a senha?"
             android:textAlignment="center"
             android:textColor="@color/black"
-            android:textSize="30sp"
-            android:textStyle="bold|italic" />
+            android:textSize="28sp"
+            android:textStyle="bold" /> <TextView
+        android:id="@+id/textView16"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Insira seu e-mail e enviaremos um código para recuperação da conta. Por favor, verifique no SPAM, caso não encontre na caixa de entrada."
+        android:textAlignment="center"
+        android:textColor="@color/corTxtSecundario"
+        android:textSize="16sp"
+        android:textStyle="italic" /> <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginTop="32dp"
+        android:background="@drawable/fundo_branco">
 
-        <TextView
-            android:id="@+id/textView16"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="Insira seu e-mail e enviaremos um código para recuperação da conta. Por favor, verifique no SPAM, caso não encontre na caixa de entrada."
-            android:textAlignment="center"
-            android:textColor="@color/corTxtSecundario"
-            android:textSize="18sp"
-            android:textStyle="bold|italic" />
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_marginTop="50dp"
-            android:background="@drawable/fundo_branco">
-
-            <ImageView
-                android:id="@+id/imageView13"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_marginStart="10dp"
-                android:src="@drawable/email_medio"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent" />
-
-            <EditText
-                android:id="@+id/etEmailNS"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginStart="12dp"
-                android:background="@drawable/fundo_branco"
-                android:hint="E-mail"
-                android:inputType="textEmailAddress"
-                android:textColor="@color/black"
-                android:textColorHint="@color/corTxtSecundario"
-                app:layout_constraintStart_toEndOf="@+id/imageView13"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        <ImageView
+            android:id="@+id/imageView13"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="12dp"
+            android:src="@drawable/email_medio"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/corTxtSecundario" /> <EditText
+        android:id="@+id/etEmailNS"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginStart="12dp"
+        android:background="@android:color/transparent"
+        android:hint="E-mail"
+        android:inputType="textEmailAddress"
+        android:textColor="@color/black"
+        android:textColorHint="@color/corTxtSecundario"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/imageView13"
+        app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnEnviar"
-            android:layout_width="250dp"
+            android:layout_width="match_parent"
             android:layout_height="52dp"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="70dp"
-            android:layout_marginBottom="50dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="32dp"
             android:background="@drawable/fundo_azul"
             android:text="Enviar"
             android:textColor="@color/white"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:textStyle="bold" />
 
     </LinearLayout>
