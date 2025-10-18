@@ -25,6 +25,7 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 import java.util.Calendar
 import java.util.Random
+import com.google.firebase.firestore.FirebaseFirestore
 
 class Pag_home : AppCompatActivity() {
 
@@ -33,6 +34,8 @@ class Pag_home : AppCompatActivity() {
     private lateinit var tvNumeroVersiculoAntigo: TextView
     private lateinit var tvTextVersiculoNovo: TextView
     private lateinit var tvNumeroVersiculoNovo: TextView
+
+    private val db = FirebaseFirestore.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,6 +62,7 @@ class Pag_home : AppCompatActivity() {
         btnBiblia.setOnClickListener { startActivity(Intent(this, Mensagens::class.java)) }
 
         buscarVersiculosDoDia()
+        carregarMensagemDoDia()
     }
 
     private fun alternarVisibilidade(id: Int) {
@@ -174,6 +178,46 @@ class Pag_home : AppCompatActivity() {
             }
         }
     }
+
+    private fun carregarMensagemDoDia() {
+        val tvTitulo = findViewById<TextView>(R.id.tvSubtitulo)
+        val tvData = findViewById<TextView>(R.id.tvData)
+        val tvTexto = findViewById<TextView>(R.id.Conteudo_MD)
+        val cabecario = findViewById<LinearLayout>(R.id.Cabecario_MD)
+
+        db.collection("mensagemDoDia")
+            .document("atual")
+            .addSnapshotListener { snapshot, e ->
+                if (e != null) {
+                    Log.e("Pag_home", "Erro ao buscar mensagem do dia: ${e.message}")
+                    Toast.makeText(this, "Falha ao carregar mensagem do dia.", Toast.LENGTH_SHORT).show()
+                    return@addSnapshotListener
+                }
+
+                if (snapshot != null && snapshot.exists()) {
+                    val titulo = snapshot.getString("titulo") ?: "Sem título"
+                    val data = snapshot.getString("data") ?: "--/--/----"
+                    val texto = snapshot.getString("texto") ?: "Nenhum texto disponível."
+
+                    tvTitulo.text = titulo
+                    tvData.text = data
+                    tvTexto.text = texto
+                    tvTexto.visibility = View.VISIBLE
+
+                    cabecario.setOnClickListener {
+                        tvTexto.visibility =
+                            if (tvTexto.visibility == View.VISIBLE) View.GONE else View.VISIBLE
+                    }
+                } else {
+                    tvTitulo.text = "Sem mensagem do dia"
+                    tvData.text = ""
+                    tvTexto.text = ""
+                    tvTexto.visibility = View.GONE
+                }
+            }
+    }
+
+
 
     private suspend fun getVersiculoDoDiaParaTestamento(testamento: String): DisplayVerse? {
         return try {

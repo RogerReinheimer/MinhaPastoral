@@ -19,9 +19,13 @@ import android.widget.TextView
 import android.widget.Toast
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class Pag_layouts : AppCompatActivity() {
 
@@ -117,6 +121,39 @@ class Pag_layouts : AppCompatActivity() {
                                 }
                                 .addOnFailureListener {
                                     Toast.makeText(this, "Erro ao excluir mensagem.", Toast.LENGTH_SHORT).show()
+                                }
+                        }
+
+                        val btnPostar = item.findViewById<Button>(R.id.btn_postar)
+                        btnPostar.setOnClickListener {
+                            val tituloMensagem = doc.getString("titulo") ?: "(sem título)"
+                            val dataMensagem = doc.getString("data") ?: "(sem data)"
+                            val dataAtual = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date())
+                            val textoMensagem = doc.getString("texto") ?: ""
+
+                            val mensagemMap = hashMapOf(
+                                "titulo" to titulo,
+                                "data" to dataAtual,
+                                "texto" to texto,
+                                "timestamp" to FieldValue.serverTimestamp()
+                            )
+
+                            db.collection("mensagemDoDia").document("atual")
+                                .set(mensagemMap)
+                                .addOnSuccessListener {
+                                    Toast.makeText(this, "Mensagem do dia atualizada!", Toast.LENGTH_SHORT).show()
+                                }
+                                .addOnFailureListener {
+                                    Toast.makeText(this, "Erro ao postar mensagem do dia.", Toast.LENGTH_SHORT).show()
+                                }
+
+                            db.collection("mensagensPostadas")
+                                .add(mensagemMap)
+                                .addOnSuccessListener {
+                                    Toast.makeText(this, "Mensagem postada com sucesso!", Toast.LENGTH_SHORT).show()
+                                }
+                                .addOnFailureListener {
+                                    Toast.makeText(this, "Erro ao salvar nas mensagens postadas.", Toast.LENGTH_SHORT).show()
                                 }
                         }
 
