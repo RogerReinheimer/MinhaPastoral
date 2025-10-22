@@ -29,7 +29,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 class Pag_home : AppCompatActivity() {
 
-    // --- Sua lógica de UI original (sem mudanças) ---
     private lateinit var tvTextVersiculoAntigo: TextView
     private lateinit var tvNumeroVersiculoAntigo: TextView
     private lateinit var tvTextVersiculoNovo: TextView
@@ -63,6 +62,7 @@ class Pag_home : AppCompatActivity() {
 
         buscarVersiculosDoDia()
         carregarMensagemDoDia()
+        carregarLemaDoAno()
     }
 
     private fun alternarVisibilidade(id: Int) {
@@ -84,7 +84,6 @@ class Pag_home : AppCompatActivity() {
             attributes.windowAnimations = R.style.DialogAnimationDireita
         }
 
-        // Botão "Layouts"
         val opcLayout = dialog.findViewById<LinearLayout>(R.id.layoutLayout)
         opcLayout.setOnClickListener {
             val intent = Intent(this, Pag_layouts::class.java)
@@ -92,7 +91,6 @@ class Pag_home : AppCompatActivity() {
             dialog.dismiss()
         }
 
-        // Botão "Configurações"
         val opcConfig = dialog.findViewById<LinearLayout>(R.id.layoutConfig)
         opcConfig.setOnClickListener {
             val intent = Intent(this, Configuracoes::class.java)
@@ -100,12 +98,10 @@ class Pag_home : AppCompatActivity() {
             dialog.dismiss()
         }
 
-        // Botão "Sair"
         val opcSair = dialog.findViewById<LinearLayout>(R.id.layoutSair)
         opcSair.setOnClickListener {
-            FirebaseAuth.getInstance().signOut() // Desloga do Firebase
+            FirebaseAuth.getInstance().signOut()
 
-            // Vai pra tela de login e limpa o histórico
             val intent = Intent(this, MainActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
@@ -177,6 +173,27 @@ class Pag_home : AppCompatActivity() {
                 Toast.makeText(this@Pag_home, "Falha ao carregar versículos.", Toast.LENGTH_LONG).show()
             }
         }
+    }
+
+    private fun carregarLemaDoAno() {
+        val tvConteudo = findViewById<TextView>(R.id.Conteudo_LA)
+
+        db.collection("lemaAtual")
+            .document("atual")
+            .addSnapshotListener { snapshot, e ->
+                if (e != null) {
+                    Log.e("Pag_home", "Erro ao buscar lema do ano: ${e.message}")
+                    Toast.makeText(this, "Falha ao carregar lema do ano.", Toast.LENGTH_SHORT).show()
+                    return@addSnapshotListener
+                }
+
+                if (snapshot != null && snapshot.exists()) {
+                    val lema = snapshot.getString("lema") ?: "Nenhum lema disponível."
+                    tvConteudo.text = lema
+                } else {
+                    tvConteudo.text = "Lema do ano não definido."
+                }
+            }
     }
 
     private fun carregarMensagemDoDia() {

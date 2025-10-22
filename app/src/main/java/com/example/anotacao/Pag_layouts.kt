@@ -127,33 +127,30 @@ class Pag_layouts : AppCompatActivity() {
                         val btnPostar = item.findViewById<Button>(R.id.btn_postar)
                         btnPostar.setOnClickListener {
                             val tituloMensagem = doc.getString("titulo") ?: "(sem título)"
-                            val dataMensagem = doc.getString("data") ?: "(sem data)"
-                            val dataAtual = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date())
                             val textoMensagem = doc.getString("texto") ?: ""
+                            val dataAtual = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date())
 
                             val mensagemMap = hashMapOf(
-                                "titulo" to titulo,
+                                "titulo" to tituloMensagem,
                                 "data" to dataAtual,
-                                "texto" to texto,
+                                "texto" to textoMensagem,
                                 "timestamp" to FieldValue.serverTimestamp()
                             )
 
                             db.collection("mensagemDoDia").document("atual")
                                 .set(mensagemMap)
                                 .addOnSuccessListener {
-                                    Toast.makeText(this, "Mensagem do dia atualizada!", Toast.LENGTH_SHORT).show()
+                                    db.collection("mensagensPostadas")
+                                        .add(mensagemMap)
+                                        .addOnSuccessListener {
+                                            Toast.makeText(this, "Mensagem postada com sucesso!", Toast.LENGTH_SHORT).show()
+                                        }
+                                        .addOnFailureListener {
+                                            Toast.makeText(this, "Erro ao salvar histórico.", Toast.LENGTH_SHORT).show()
+                                        }
                                 }
                                 .addOnFailureListener {
                                     Toast.makeText(this, "Erro ao postar mensagem do dia.", Toast.LENGTH_SHORT).show()
-                                }
-
-                            db.collection("mensagensPostadas")
-                                .add(mensagemMap)
-                                .addOnSuccessListener {
-                                    Toast.makeText(this, "Mensagem postada com sucesso!", Toast.LENGTH_SHORT).show()
-                                }
-                                .addOnFailureListener {
-                                    Toast.makeText(this, "Erro ao salvar nas mensagens postadas.", Toast.LENGTH_SHORT).show()
                                 }
                         }
 
@@ -202,9 +199,33 @@ class Pag_layouts : AppCompatActivity() {
                                 }
                         }
 
+                        val btnPostar = item.findViewById<Button>(R.id.btn_postar)
+                        btnPostar.setOnClickListener {
+                            val dataAtual = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date())
+
+                            val lemaMap = hashMapOf(
+                                "titulo" to titulo,
+                                "data" to dataAtual,
+                                "lema" to lema,
+                                "timestamp" to FieldValue.serverTimestamp()
+                            )
+
+                            // Atualiza o lema atual (mostrado na tela de Home)
+                            db.collection("lemaAtual").document("atual")
+                                .set(lemaMap)
+                                .addOnSuccessListener {
+                                    Toast.makeText(this, "Lema do ano atualizado!", Toast.LENGTH_SHORT).show()
+
+                                }
+                                .addOnFailureListener {
+                                    Toast.makeText(this, "Erro ao postar lema do ano.", Toast.LENGTH_SHORT).show()
+                                }
+                        }
+
                         containerLemaAno.addView(item)
                     }
                 }
+
 
             listenerAnotacao = db.collection("anotacoes")
                 .whereEqualTo("uid", uid)
