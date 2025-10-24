@@ -50,6 +50,8 @@ android {
 
 dependencies {
 
+    implementation ("androidx.core:core-splashscreen:1.0.1")
+
     implementation ("com.github.bumptech.glide:glide:4.15.1")
     implementation ("com.google.firebase:firebase-storage-ktx:20.3.0")
 
