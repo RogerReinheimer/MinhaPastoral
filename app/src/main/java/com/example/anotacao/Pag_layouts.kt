@@ -17,6 +17,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
@@ -361,6 +362,40 @@ class Pag_layouts : AppCompatActivity() {
             attributes.windowAnimations = R.style.DialogAnimationDireita
         }
 
+        // ======== ATUALIZA FOTO DE PERFIL E NOME ========
+        val imgPerfil = dialog.findViewById<ImageView>(R.id.imgPerfil)
+        val txtPerfilNome = dialog.findViewById<TextView>(R.id.txtPerfilNome)
+
+        // Carrega nome do Firestore
+        val uid = FirebaseAuth.getInstance().currentUser?.uid
+        if (uid != null) {
+            db.collection("users").document(uid).get()
+                .addOnSuccessListener { document ->
+                    if (document != null && document.exists()) {
+                        val nome = document.getString("username")
+                        txtPerfilNome.text = "Olá, ${nome ?: "usuário"}!"
+                    }
+                }
+        }
+
+        // Carrega imagem local salva
+        val prefs = getSharedPreferences("user_prefs", MODE_PRIVATE)
+        val caminhoFoto = prefs.getString("foto_local", null)
+        if (caminhoFoto != null) {
+            val file = java.io.File(caminhoFoto)
+            if (file.exists()) {
+                Glide.with(this)
+                    .load(android.net.Uri.fromFile(file))
+                    .circleCrop()
+                    .into(imgPerfil)
+            } else {
+                imgPerfil.setImageResource(R.drawable.img_3) // imagem padrão
+            }
+        } else {
+            imgPerfil.setImageResource(R.drawable.img_3)
+        }
+
+        // ======== AÇÕES DOS BOTÕES ========
         val opcLayout = dialog.findViewById<LinearLayout>(R.id.layoutLayout)
         opcLayout.setOnClickListener {
             val intent = Intent(this, Pag_layouts::class.java)
@@ -368,7 +403,6 @@ class Pag_layouts : AppCompatActivity() {
             dialog.dismiss()
         }
 
-        // Botão "Configurações"
         val opcConfig = dialog.findViewById<LinearLayout>(R.id.layoutConfig)
         opcConfig.setOnClickListener {
             val intent = Intent(this, Configuracoes::class.java)
@@ -388,6 +422,7 @@ class Pag_layouts : AppCompatActivity() {
 
         dialog.show()
     }
+
 
     private fun mostrarSheetOpcoes() {
         val bottomSheetDialog = BottomSheetDialog(this)

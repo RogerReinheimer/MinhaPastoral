@@ -12,6 +12,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -69,49 +70,6 @@ class Mensagens : AppCompatActivity() {
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(R.layout.bottom_sheet_layout)
 
-        // --- INÍCIO DA LÓGICA PARA BUSCAR O NOME ---
-
-        // 1. Pega a referência do TextView dentro do layout do Dialog
-        val txtPerfilNome = dialog.findViewById<TextView>(R.id.txtPerfilNome)
-
-        // 2. Pega as instâncias do Firebase Auth e Firestore
-        val auth = FirebaseAuth.getInstance()
-        val db = FirebaseFirestore.getInstance()
-        val usuarioAtual = auth.currentUser
-
-        // 3. Verifica se tem um usuário logado
-        if (usuarioAtual != null) {
-            val userId = usuarioAtual.uid
-            val docRef = db.collection("usuarios").document(userId) // Assumindo coleção "usuarios"
-
-            // 4. Busca o documento no Firestore
-            docRef.get()
-                .addOnSuccessListener { document ->
-                    if (document != null && document.exists()) {
-                        val nome = document.getString("nome") // Assumindo campo "nome"
-                        if (nome != null) {
-                            // 5. Atualiza o texto do TextView
-                            txtPerfilNome.text = "Olá, $nome!"
-                        } else {
-                            txtPerfilNome.text = "Olá, Visitante!"
-                        }
-                    } else {
-                        txtPerfilNome.text = "Olá, Visitante!"
-                    }
-                }
-                .addOnFailureListener { exception ->
-                    // Em caso de erro, mostra uma mensagem e um texto padrão
-                    Toast.makeText(this, "Erro ao buscar dados.", Toast.LENGTH_SHORT).show()
-                    txtPerfilNome.text = "Olá!"
-                }
-        } else {
-            // Caso não haja usuário logado
-            txtPerfilNome.text = "Olá, Visitante!"
-        }
-
-        // --- FIM DA LÓGICA PARA BUSCAR O NOME ---
-
-
         dialog.window?.apply {
             setLayout(
                 (resources.displayMetrics.widthPixels * 0.7).toInt(),
@@ -121,7 +79,42 @@ class Mensagens : AppCompatActivity() {
             attributes.windowAnimations = R.style.DialogAnimationDireita
         }
 
-        // Botão "Layouts"
+        val db = FirebaseFirestore.getInstance()
+
+        // ======== ATUALIZA FOTO DE PERFIL E NOME ========
+        val imgPerfil = dialog.findViewById<ImageView>(R.id.imgPerfil)
+        val txtPerfilNome = dialog.findViewById<TextView>(R.id.txtPerfilNome)
+
+        // Carrega nome do Firestore
+        val uid = FirebaseAuth.getInstance().currentUser?.uid
+        if (uid != null) {
+            db.collection("users").document(uid).get()
+                .addOnSuccessListener { document ->
+                    if (document != null && document.exists()) {
+                        val nome = document.getString("username")
+                        txtPerfilNome.text = "Olá, ${nome ?: "usuário"}!"
+                    }
+                }
+        }
+
+        // Carrega imagem local salva
+        val prefs = getSharedPreferences("user_prefs", MODE_PRIVATE)
+        val caminhoFoto = prefs.getString("foto_local", null)
+        if (caminhoFoto != null) {
+            val file = java.io.File(caminhoFoto)
+            if (file.exists()) {
+                Glide.with(this)
+                    .load(android.net.Uri.fromFile(file))
+                    .circleCrop()
+                    .into(imgPerfil)
+            } else {
+                imgPerfil.setImageResource(R.drawable.img_3) // imagem padrão
+            }
+        } else {
+            imgPerfil.setImageResource(R.drawable.img_3)
+        }
+
+        // ======== AÇÕES DOS BOTÕES ========
         val opcLayout = dialog.findViewById<LinearLayout>(R.id.layoutLayout)
         opcLayout.setOnClickListener {
             val intent = Intent(this, Pag_layouts::class.java)
@@ -129,7 +122,6 @@ class Mensagens : AppCompatActivity() {
             dialog.dismiss()
         }
 
-        // Botão "Configurações"
         val opcConfig = dialog.findViewById<LinearLayout>(R.id.layoutConfig)
         opcConfig.setOnClickListener {
             val intent = Intent(this, Configuracoes::class.java)
@@ -137,22 +129,19 @@ class Mensagens : AppCompatActivity() {
             dialog.dismiss()
         }
 
-        // Botão "Sair"
         val opcSair = dialog.findViewById<LinearLayout>(R.id.layoutSair)
         opcSair.setOnClickListener {
-            FirebaseAuth.getInstance().signOut() // Desloga do Firebase
-
-            // Vai pra tela de login e limpa o histórico
+            FirebaseAuth.getInstance().signOut()
             val intent = Intent(this, MainActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
-
             dialog.dismiss()
             Toast.makeText(this, "Você saiu da conta.", Toast.LENGTH_SHORT).show()
         }
 
         dialog.show()
     }
+
 
     //função opções
     private fun mostrarSheetOpcoes() {

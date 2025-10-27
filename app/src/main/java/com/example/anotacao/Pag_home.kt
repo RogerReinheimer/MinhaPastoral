@@ -2,6 +2,7 @@ package com.example.anotacao
 
 import android.app.Dialog
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.text.Html
 import android.util.Log
@@ -15,6 +16,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.async
@@ -26,6 +28,13 @@ import retrofit2.http.Path
 import java.util.Calendar
 import java.util.Random
 import com.google.firebase.firestore.FirebaseFirestore
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+
 
 class Pag_home : AppCompatActivity() {
 
@@ -35,6 +44,47 @@ class Pag_home : AppCompatActivity() {
     private lateinit var tvNumeroVersiculoNovo: TextView
 
     private val db = FirebaseFirestore.getInstance()
+
+
+    private fun enviarNotificacao(title: String, body: String) {
+        val channelId = "canal_geral"
+        val notificationId = 100
+
+        // Criar canal de notificação (necessário no Android 8+)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = "Canal Geral"
+            val descriptionText = "Canal para notificações gerais"
+            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val channel = NotificationChannel(channelId, name, importance).apply {
+                description = descriptionText
+            }
+            val notificationManager: NotificationManager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
+
+        // Intent que abre a app ao clicar na notificação
+        val intent = Intent(this, Pag_home::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+        val pendingIntent: PendingIntent = PendingIntent.getActivity(
+            this, 0, intent,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
+
+        val builder = NotificationCompat.Builder(this, channelId)
+            .setSmallIcon(R.drawable.logo) // você precisa criar esse drawable
+            .setContentTitle(title)
+            .setContentText(body)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
+
+        with(NotificationManagerCompat.from(this)) {
+            notify(notificationId, builder.build())
+        }
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,7 +113,44 @@ class Pag_home : AppCompatActivity() {
         buscarVersiculosDoDia()
         carregarMensagemDoDia()
         carregarLemaDoAno()
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS)
+                != android.content.pm.PackageManager.PERMISSION_GRANTED
+            ) {
+                requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 1001)
+            } else {
+                enviarNotificacaoSegura()
+            }
+        } else {
+            enviarNotificacaoSegura()
+        }
     }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == 1001) {
+            if (grantResults.isNotEmpty() && grantResults[0] == android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "Permissão concedida!", Toast.LENGTH_SHORT).show()
+                enviarNotificacaoSegura()
+            } else {
+                Toast.makeText(this, "Permissão negada. Notificações não funcionarão.", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    // Função que envia notificação de forma segura
+    private fun enviarNotificacaoSegura() {
+        val title = "Título de teste"
+        val body = "Mensagem de teste"
+        enviarNotificacao(title, body)
+    }
+
 
     private fun alternarVisibilidade(id: Int) {
         val view = findViewById<View>(id)
@@ -84,6 +171,40 @@ class Pag_home : AppCompatActivity() {
             attributes.windowAnimations = R.style.DialogAnimationDireita
         }
 
+        // ======== ATUALIZA FOTO DE PERFIL E NOME ========
+        val imgPerfil = dialog.findViewById<ImageView>(R.id.imgPerfil)
+        val txtPerfilNome = dialog.findViewById<TextView>(R.id.txtPerfilNome)
+
+        // Carrega nome do Firestore
+        val uid = FirebaseAuth.getInstance().currentUser?.uid
+        if (uid != null) {
+            db.collection("users").document(uid).get()
+                .addOnSuccessListener { document ->
+                    if (document != null && document.exists()) {
+                        val nome = document.getString("username")
+                        txtPerfilNome.text = "Olá, ${nome ?: "usuário"}!"
+                    }
+                }
+        }
+
+        // Carrega imagem local salva
+        val prefs = getSharedPreferences("user_prefs", MODE_PRIVATE)
+        val caminhoFoto = prefs.getString("foto_local", null)
+        if (caminhoFoto != null) {
+            val file = java.io.File(caminhoFoto)
+            if (file.exists()) {
+                Glide.with(this)
+                    .load(android.net.Uri.fromFile(file))
+                    .circleCrop()
+                    .into(imgPerfil)
+            } else {
+                imgPerfil.setImageResource(R.drawable.img_3) // imagem padrão
+            }
+        } else {
+            imgPerfil.setImageResource(R.drawable.img_3)
+        }
+
+        // ======== AÇÕES DOS BOTÕES ========
         val opcLayout = dialog.findViewById<LinearLayout>(R.id.layoutLayout)
         opcLayout.setOnClickListener {
             val intent = Intent(this, Pag_layouts::class.java)
@@ -101,17 +222,16 @@ class Pag_home : AppCompatActivity() {
         val opcSair = dialog.findViewById<LinearLayout>(R.id.layoutSair)
         opcSair.setOnClickListener {
             FirebaseAuth.getInstance().signOut()
-
             val intent = Intent(this, MainActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
-
             dialog.dismiss()
             Toast.makeText(this, "Você saiu da conta.", Toast.LENGTH_SHORT).show()
         }
 
         dialog.show()
     }
+
 
 
     private fun mostrarSheetOpcoes() {

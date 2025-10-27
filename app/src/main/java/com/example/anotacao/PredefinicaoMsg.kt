@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
@@ -144,7 +145,40 @@ class PredefinicaoMsg : AppCompatActivity() {
             attributes.windowAnimations = R.style.DialogAnimationDireita
         }
 
-        // Botão "Layouts"
+        // ======== ATUALIZA FOTO DE PERFIL E NOME ========
+        val imgPerfil = dialog.findViewById<ImageView>(R.id.imgPerfil)
+        val txtPerfilNome = dialog.findViewById<TextView>(R.id.txtPerfilNome)
+
+        // Carrega nome do Firestore
+        val uid = FirebaseAuth.getInstance().currentUser?.uid
+        if (uid != null) {
+            db.collection("users").document(uid).get()
+                .addOnSuccessListener { document ->
+                    if (document != null && document.exists()) {
+                        val nome = document.getString("username")
+                        txtPerfilNome.text = "Olá, ${nome ?: "usuário"}!"
+                    }
+                }
+        }
+
+        // Carrega imagem local salva
+        val prefs = getSharedPreferences("user_prefs", MODE_PRIVATE)
+        val caminhoFoto = prefs.getString("foto_local", null)
+        if (caminhoFoto != null) {
+            val file = java.io.File(caminhoFoto)
+            if (file.exists()) {
+                Glide.with(this)
+                    .load(android.net.Uri.fromFile(file))
+                    .circleCrop()
+                    .into(imgPerfil)
+            } else {
+                imgPerfil.setImageResource(R.drawable.img_3) // imagem padrão
+            }
+        } else {
+            imgPerfil.setImageResource(R.drawable.img_3)
+        }
+
+        // ======== AÇÕES DOS BOTÕES ========
         val opcLayout = dialog.findViewById<LinearLayout>(R.id.layoutLayout)
         opcLayout.setOnClickListener {
             val intent = Intent(this, Pag_layouts::class.java)
@@ -152,7 +186,6 @@ class PredefinicaoMsg : AppCompatActivity() {
             dialog.dismiss()
         }
 
-        // Botão "Configurações"
         val opcConfig = dialog.findViewById<LinearLayout>(R.id.layoutConfig)
         opcConfig.setOnClickListener {
             val intent = Intent(this, Configuracoes::class.java)
@@ -160,22 +193,19 @@ class PredefinicaoMsg : AppCompatActivity() {
             dialog.dismiss()
         }
 
-        // Botão "Sair"
         val opcSair = dialog.findViewById<LinearLayout>(R.id.layoutSair)
         opcSair.setOnClickListener {
-            FirebaseAuth.getInstance().signOut() // Desloga do Firebase
-
-            // Vai pra tela de login e limpa o histórico
+            FirebaseAuth.getInstance().signOut()
             val intent = Intent(this, MainActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
-
             dialog.dismiss()
             Toast.makeText(this, "Você saiu da conta.", Toast.LENGTH_SHORT).show()
         }
 
         dialog.show()
     }
+
 
     // ----------- MENU DE OPÇÕES (BOTÃO +) -------------
     private fun mostrarSheetOpcoes() {
