@@ -101,7 +101,7 @@ class Insira_nova_senha : AppCompatActivity() {
 
                     // Envia o usuário para a tela de login, limpando as telas anteriores
                     // Certifique-se de que 'LoginActivity::class.java' aponta para sua tela de login correta
-                    val intent = Intent(this, MainActivity::class.java).apply {
+                    val intent = Intent(this, Pag_entrar::class.java).apply {
                         flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     }
                     startActivity(intent)

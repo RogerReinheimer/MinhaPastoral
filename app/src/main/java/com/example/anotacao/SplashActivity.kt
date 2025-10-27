@@ -36,7 +36,7 @@ class SplashActivity : AppCompatActivity() {
             } else {
                 // Usuário está DESLOGADO
                 // Envia para a tela de login (MainActivity)
-                val intent = Intent(this, MainActivity::class.java)
+                val intent = Intent(this, Pag_entrar::class.java)
                 startActivity(intent)
             }
 

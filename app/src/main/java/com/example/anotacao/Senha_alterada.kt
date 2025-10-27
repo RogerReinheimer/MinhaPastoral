@@ -21,7 +21,7 @@ class Senha_alterada : AppCompatActivity() {
 
         val btnVoltar = findViewById<Button>(R.id.btnVoltar)
         btnVoltar.setOnClickListener {
-            val intent = Intent(this, MainActivity::class.java)
+            val intent = Intent(this, Pag_entrar::class.java)
             startActivity(intent)
         }
 

@@ -45,12 +45,10 @@ class Pag_home : AppCompatActivity() {
 
     private val db = FirebaseFirestore.getInstance()
 
-
     private fun enviarNotificacao(title: String, body: String) {
         val channelId = "canal_geral"
         val notificationId = 100
 
-        // Criar canal de notificação (necessário no Android 8+)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name = "Canal Geral"
             val descriptionText = "Canal para notificações gerais"
@@ -63,7 +61,6 @@ class Pag_home : AppCompatActivity() {
             notificationManager.createNotificationChannel(channel)
         }
 
-        // Intent que abre a app ao clicar na notificação
         val intent = Intent(this, Pag_home::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
@@ -73,7 +70,7 @@ class Pag_home : AppCompatActivity() {
         )
 
         val builder = NotificationCompat.Builder(this, channelId)
-            .setSmallIcon(R.drawable.logo) // você precisa criar esse drawable
+            .setSmallIcon(R.drawable.logo)
             .setContentTitle(title)
             .setContentText(body)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
@@ -85,9 +82,24 @@ class Pag_home : AppCompatActivity() {
         }
     }
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // VERIFICA LOGIN
+
+        val user = FirebaseAuth.getInstance().currentUser
+        if (user == null) {
+            val intentLogin = Intent(this, Pag_entrar::class.java)
+            intentLogin.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intentLogin)
+            finish()
+            return
+        } else {
+            // Atualiza token FCM do usuário logado
+            atualizarTokenFCM(user.uid)
+        }
+
+
         setContentView(R.layout.activity_pag_home)
 
         tvTextVersiculoAntigo = findViewById(R.id.tv_text_versiculo_antigo)
@@ -113,20 +125,39 @@ class Pag_home : AppCompatActivity() {
         buscarVersiculosDoDia()
         carregarMensagemDoDia()
         carregarLemaDoAno()
+        monitorarNovaMensagem(user.uid)
 
-
+        // PERMISSÃO PARA NOTIFICAÇÃO (SEM ENVIO DE TESTE)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS)
                 != android.content.pm.PackageManager.PERMISSION_GRANTED
             ) {
                 requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 1001)
-            } else {
-                enviarNotificacaoSegura()
             }
-        } else {
-            enviarNotificacaoSegura()
         }
     }
+
+
+    private fun atualizarTokenFCM(uid: String) {
+        com.google.firebase.messaging.FirebaseMessaging.getInstance().token
+            .addOnSuccessListener { token ->
+                val db = FirebaseFirestore.getInstance()
+                db.collection("users")
+                    .document(uid)
+                    .update("fcmToken", token)
+                    .addOnSuccessListener {
+                        Log.d("Pag_home", "Token FCM atualizado com sucesso")
+                    }
+                    .addOnFailureListener { e ->
+                        Log.e("Pag_home", "Erro ao atualizar token FCM: ${e.message}")
+                    }
+            }
+            .addOnFailureListener { e ->
+                Log.e("Pag_home", "Falha ao pegar token FCM: ${e.message}")
+            }
+    }
+
+
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -137,19 +168,36 @@ class Pag_home : AppCompatActivity() {
         if (requestCode == 1001) {
             if (grantResults.isNotEmpty() && grantResults[0] == android.content.pm.PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "Permissão concedida!", Toast.LENGTH_SHORT).show()
-                enviarNotificacaoSegura()
             } else {
                 Toast.makeText(this, "Permissão negada. Notificações não funcionarão.", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    // Função que envia notificação de forma segura
-    private fun enviarNotificacaoSegura() {
-        val title = "Título de teste"
-        val body = "Mensagem de teste"
-        enviarNotificacao(title, body)
+
+    private fun monitorarNovaMensagem(uid: String) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection("mensagemDoDia")
+            .document("atual")
+            .addSnapshotListener { snapshot, e ->
+                if (e != null) {
+                    Log.e("Pag_home", "Erro ao monitorar mensagem do dia: ${e.message}")
+                    return@addSnapshotListener
+                }
+
+                if (snapshot != null && snapshot.exists()) {
+                    val titulo = snapshot.getString("titulo") ?: "Nova mensagem"
+                    val texto = snapshot.getString("texto") ?: ""
+
+                    // Envia notificação sempre que houver atualização
+                    enviarNotificacao(titulo, texto)
+                }
+            }
     }
+
+
+
+
 
 
     private fun alternarVisibilidade(id: Int) {
@@ -222,7 +270,7 @@ class Pag_home : AppCompatActivity() {
         val opcSair = dialog.findViewById<LinearLayout>(R.id.layoutSair)
         opcSair.setOnClickListener {
             FirebaseAuth.getInstance().signOut()
-            val intent = Intent(this, MainActivity::class.java)
+            val intent = Intent(this, Pag_entrar::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
             dialog.dismiss()

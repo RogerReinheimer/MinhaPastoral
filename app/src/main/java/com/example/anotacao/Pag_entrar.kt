@@ -4,6 +4,7 @@ import android.app.ProgressDialog
 import android.content.Intent
 import android.os.Bundle
 import android.text.InputType
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
@@ -18,7 +19,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
-class MainActivity : AppCompatActivity() {
+class Pag_entrar : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
     private lateinit var progressDialog: ProgressDialog
@@ -99,9 +100,39 @@ class MainActivity : AppCompatActivity() {
                 btnEntrar.isEnabled = true
 
                 if (task.isSuccessful) {
-                    Toast.makeText(this, "Login realizado com sucesso!", Toast.LENGTH_SHORT).show()
-                    startActivity(Intent(this, Pag_home::class.java))
-                    finish()
+                    if (task.isSuccessful) {
+                        Toast.makeText(this, "Login realizado com sucesso!", Toast.LENGTH_SHORT).show()
+
+                        val user = auth.currentUser
+                        if (user != null) {
+                            com.google.firebase.messaging.FirebaseMessaging.getInstance().token
+                                .addOnSuccessListener { token ->
+                                    // Salva token no Firestore
+                                    val uid = user.uid
+                                    com.google.firebase.firestore.FirebaseFirestore.getInstance()
+                                        .collection("users")
+                                        .document(uid)
+                                        .update("fcmToken", token)
+                                        .addOnSuccessListener {
+                                            Log.d("Pag_entrar", "Token FCM salvo no Firestore")
+                                            // SÓ AGORA ABRE A PAG_HOME
+                                            startActivity(Intent(this, Pag_home::class.java))
+                                            finish()
+                                        }
+                                        .addOnFailureListener { e ->
+                                            Log.e("Pag_entrar", "Erro ao salvar token FCM: ${e.message}")
+                                            // Mesmo se falhar, podemos abrir a home
+                                            startActivity(Intent(this, Pag_home::class.java))
+                                            finish()
+                                        }
+                                }
+                        } else {
+                            // Caso não tenha usuário (não deveria acontecer)
+                            startActivity(Intent(this, Pag_home::class.java))
+                            finish()
+                        }
+                    }
+
                 } else {
                     val erro = when (task.exception?.message) {
                         "There is no user record corresponding to this identifier. The user may have been deleted." ->
