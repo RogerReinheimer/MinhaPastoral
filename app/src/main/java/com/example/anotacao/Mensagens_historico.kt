@@ -17,38 +17,13 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
-class Mensagens_semana : AppCompatActivity() {
+class Mensagens_historico : AppCompatActivity() {
 
-    private var isExpanded1 = false
-    private var isExpanded2 = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.mensagens_semana)
+        setContentView(R.layout.mensagens_historico)
 
-        val Cabecario_MD = findViewById<View>(R.id.Cabecario_MD)
-        val Conteudo_MD = findViewById<View>(R.id.Conteudo_MD)
-
-        val Cabecario_MDI = findViewById<View>(R.id.Cabecario_MDI)
-        val Conteudo_MDI = findViewById<View>(R.id.Conteudo_MDI)
-
-        Cabecario_MD.setOnClickListener {
-            if (isExpanded1) {
-                Conteudo_MD.visibility = View.GONE
-            } else {
-                Conteudo_MD.visibility = View.VISIBLE
-            }
-            isExpanded1 = !isExpanded1
-        }
-
-        Cabecario_MDI.setOnClickListener {
-            if (isExpanded2) {
-                Conteudo_MDI.visibility = View.GONE
-            } else {
-                Conteudo_MDI.visibility = View.VISIBLE
-            }
-            isExpanded2 = !isExpanded2
-        }
 
         val btnHome = findViewById<ImageView>(R.id.btnPagHome3)
         val btnBiblia = findViewById<ImageView>(R.id.btnMensagens3)
@@ -76,7 +51,69 @@ class Mensagens_semana : AppCompatActivity() {
             mostrarSheetLateral()
         }
 
+        val db = com.google.firebase.firestore.FirebaseFirestore.getInstance()
+        val containerHistorico = findViewById<LinearLayout>(R.id.container_historico)
+        val inflater = layoutInflater
+
+        db.collection("mensagensPostadas")
+            .orderBy("timestamp", com.google.firebase.firestore.Query.Direction.DESCENDING)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    Toast.makeText(this, "Erro ao carregar histórico", Toast.LENGTH_SHORT).show()
+                    return@addSnapshotListener
+                }
+
+                containerHistorico.removeAllViews()
+
+                if (snapshot != null && !snapshot.isEmpty) {
+                    for (doc in snapshot.documents) {
+                        val titulo = doc.getString("titulo") ?: "(sem título)"
+                        val data = doc.getString("data") ?: ""
+                        val texto = doc.getString("texto") ?: ""
+
+                        val item = inflater.inflate(R.layout.card_mensagem_interno, containerHistorico, false)
+
+                        val tvTitulo = item.findViewById<TextView>(R.id.tv_titulo1)
+                        val tvData = item.findViewById<TextView>(R.id.tv_info1)
+                        val tvConteudo = item.findViewById<TextView>(R.id.Conteudo_MDI)
+                        val cabecario = item.findViewById<LinearLayout>(R.id.Cabecario_MDI)
+
+                        tvTitulo.text = titulo
+                        tvData.text = data
+                        tvConteudo.text = texto
+
+                        cabecario.setOnClickListener {
+                            tvConteudo.visibility =
+                                if (tvConteudo.visibility == View.VISIBLE) View.GONE else View.VISIBLE
+                        }
+
+                        cabecario.setOnLongClickListener {
+                            db.collection("mensagensPostadas").document(doc.id)
+                                .delete()
+                                .addOnSuccessListener {
+                                    Toast.makeText(this, "Mensagem excluída com sucesso!", Toast.LENGTH_SHORT).show()
+                                }
+                                .addOnFailureListener {
+                                    Toast.makeText(this, "Erro ao excluir mensagem.", Toast.LENGTH_SHORT).show()
+                                }
+                            true
+                        }
+
+                        containerHistorico.addView(item)
+                    }
+                } else {
+                    val vazio = TextView(this)
+                    vazio.text = "Nenhuma mensagem postada ainda."
+                    vazio.textAlignment = View.TEXT_ALIGNMENT_CENTER
+                    vazio.setTextColor(android.graphics.Color.WHITE)
+                    vazio.setPadding(0, 24, 0, 24)
+                    containerHistorico.addView(vazio)
+                }
+            }
+
     }//oncreate
+
+
 
     private fun mostrarSheetLateral() {
         val dialog = Dialog(this)

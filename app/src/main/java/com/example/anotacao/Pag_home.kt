@@ -119,7 +119,7 @@ class Pag_home : AppCompatActivity() {
 
         btnMenu.setOnClickListener { mostrarSheetLateral() }
         btnMais.setOnClickListener { mostrarSheetOpcoes() }
-        btnCruz.setOnClickListener { startActivity(Intent(this, Mensagens_semana::class.java)) }
+        btnCruz.setOnClickListener { startActivity(Intent(this, Mensagens_historico::class.java)) }
         btnBiblia.setOnClickListener { startActivity(Intent(this, Mensagens::class.java)) }
 
         buscarVersiculosDoDia()

@@ -50,7 +50,8 @@
                     android:background="@drawable/fundo_azul_claro"
                     android:drawableStart="@android:drawable/ic_menu_search"
                     android:padding="10dp"
-                    android:text="Pesquise uma mensagem"
+                    android:hint="Pesquise uma mensagem"
+                    android:textColorHint="#FDFDFD"
                     android:textColor="#FDFDFD"
                     android:textSize="10sp" />
 
@@ -65,39 +66,22 @@
                     android:textSize="22sp"
                     android:textStyle="bold" />
 
-                <!-- caixa de conteudo -->
-                <include layout="@layout/card_mensagem_interno"/>
-
-                <!-- caixa de conteudo -->
-                <include layout="@layout/card_mensagem_interno"/>
-
-                <!-- caixa de conteudo -->
-                <include layout="@layout/card_mensagem_interno"/>
-
-                <!-- caixa de conteudo -->
-                <include layout="@layout/card_mensagem_interno"/>
-
-                <!-- caixa de conteudo -->
-                <include layout="@layout/card_mensagem_interno"/>
-
-                <!-- caixa de conteudo -->
-                <include layout="@layout/card_mensagem_interno"/>
-
-                <!-- caixa de conteudo -->
-                <include layout="@layout/card_mensagem_interno"/>
+                <LinearLayout
+                    android:id="@+id/container_historico"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="12dp"
+                    android:layout_marginTop="8dp" />
 
             </LinearLayout>
 
-            <!-- botao de apagar -->
-            <Button
-                android:id="@+id/btnApagarMensagens"
+            <!-- espaçamento no final -->
+            <View
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="24dp"
-                android:layout_marginBottom="24dp"
-                android:backgroundTint="#1E3A5F"
-                android:text="Apagar Mensagens"
-                android:textColor="#fff" />
+                android:layout_height="12dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="12dp" />
 
         </LinearLayout>
     </ScrollView>

@@ -37,7 +37,7 @@
             android:name=".Configuracoes"
             android:exported="false" />
         <activity
-            android:name=".Mensagens_semana"
+            android:name=".Mensagens_historico"
             android:exported="false" />
         <activity
             android:name=".Pag_layouts"

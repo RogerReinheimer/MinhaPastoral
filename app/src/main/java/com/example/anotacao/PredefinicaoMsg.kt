@@ -125,7 +125,7 @@ class PredefinicaoMsg : AppCompatActivity() {
             startActivity(intent)
         }
         btnCruz.setOnClickListener {
-            val intent = Intent(this, Mensagens_semana::class.java)
+            val intent = Intent(this, Mensagens_historico::class.java)
             startActivity(intent)
         }
     }

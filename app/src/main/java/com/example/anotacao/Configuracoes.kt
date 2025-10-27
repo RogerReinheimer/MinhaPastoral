@@ -73,7 +73,7 @@ class Configuracoes : AppCompatActivity() {
             startActivity(Intent(this, Pag_home::class.java))
         }
         btnCruz.setOnClickListener {
-            startActivity(Intent(this, Mensagens_semana::class.java))
+            startActivity(Intent(this, Mensagens_historico::class.java))
         }
 
         // --------- CARREGAR DADOS USUÁRIO --------

@@ -338,7 +338,7 @@ class Pag_layouts : AppCompatActivity() {
         btnMenu.setOnClickListener { mostrarSheetLateral() }
         btnBiblia.setOnClickListener { startActivity(Intent(this, Mensagens::class.java)) }
         btnPagHome.setOnClickListener { startActivity(Intent(this, Pag_home::class.java)) }
-        btnCruz.setOnClickListener { startActivity(Intent(this, Mensagens_semana::class.java)) }
+        btnCruz.setOnClickListener { startActivity(Intent(this, Mensagens_historico::class.java)) }
     }
 
     override fun onDestroy() {
