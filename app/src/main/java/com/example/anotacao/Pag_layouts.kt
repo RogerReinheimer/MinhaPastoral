@@ -149,6 +149,8 @@ class Pag_layouts : AppCompatActivity() {
                                         .addOnFailureListener {
                                             Toast.makeText(this, "Erro ao salvar histórico.", Toast.LENGTH_SHORT).show()
                                         }
+                                    db.collection("mensagensAdmin")
+                                        .add(mensagemMap)
                                 }
                                 .addOnFailureListener {
                                     Toast.makeText(this, "Erro ao postar mensagem do dia.", Toast.LENGTH_SHORT).show()

@@ -50,45 +50,13 @@
                     android:textSize="22sp"
                     android:textStyle="bold" />
 
-                <include layout="@layout/card_mensagem_interno" />
-
-                <Button
-                    android:id="@+id/btnExcluir1"
-                    android:layout_width="150dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:backgroundTint="@color/corBtnAzul"
-                    android:text="Excluir" />
-
-                <include layout="@layout/card_mensagem_interno" />
-
-                <Button
-                    android:id="@+id/btnExcluir2"
-                    android:layout_width="150dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:backgroundTint="@color/corBtnAzul"
-                    android:text="Excluir" />
-
-                <include layout="@layout/card_mensagem_interno" />
-
-                <Button
-                    android:id="@+id/btnExcluir3"
-                    android:layout_width="150dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:backgroundTint="@color/corBtnAzul"
-                    android:text="Excluir" />
-
-                <include layout="@layout/card_mensagem_interno" />
-
-                <Button
-                    android:id="@+id/btnExcluir4"
-                    android:layout_width="150dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:backgroundTint="@color/corBtnAzul"
-                    android:text="Excluir" />
+                <!-- container para os cards -->
+                <LinearLayout
+                    android:id="@+id/container_historico"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="8dp" />
 
             </LinearLayout>
 
