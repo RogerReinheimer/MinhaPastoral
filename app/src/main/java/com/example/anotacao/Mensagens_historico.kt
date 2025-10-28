@@ -4,6 +4,7 @@ import android.app.Dialog
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import android.content.Intent
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.Window
@@ -18,7 +19,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
 class Mensagens_historico : AppCompatActivity() {
-
+    private val db = FirebaseFirestore.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -111,9 +112,47 @@ class Mensagens_historico : AppCompatActivity() {
                 }
             }
 
+        carregarMensagemDoDia()
+
     }//oncreate
 
+    private fun carregarMensagemDoDia() {
+        val tvTitulo = findViewById<TextView>(R.id.tvSubtitulo)
+        val tvData = findViewById<TextView>(R.id.tvData)
+        val tvTexto = findViewById<TextView>(R.id.Conteudo_MD)
+        val cabecario = findViewById<LinearLayout>(R.id.Cabecario_MD)
 
+        db.collection("mensagemDoDia")
+            .document("atual")
+            .addSnapshotListener { snapshot, e ->
+                if (e != null) {
+                    Log.e("Pag_home", "Erro ao buscar mensagem do dia: ${e.message}")
+                    Toast.makeText(this, "Falha ao carregar mensagem do dia.", Toast.LENGTH_SHORT).show()
+                    return@addSnapshotListener
+                }
+
+                if (snapshot != null && snapshot.exists()) {
+                    val titulo = snapshot.getString("titulo") ?: "Sem título"
+                    val data = snapshot.getString("data") ?: "--/--/----"
+                    val texto = snapshot.getString("texto") ?: "Nenhum texto disponível."
+
+                    tvTitulo.text = titulo
+                    tvData.text = data
+                    tvTexto.text = texto
+                    tvTexto.visibility = View.VISIBLE
+
+                    cabecario.setOnClickListener {
+                        tvTexto.visibility =
+                            if (tvTexto.visibility == View.VISIBLE) View.GONE else View.VISIBLE
+                    }
+                } else {
+                    tvTitulo.text = "Sem mensagem do dia"
+                    tvData.text = ""
+                    tvTexto.text = ""
+                    tvTexto.visibility = View.GONE
+                }
+            }
+    }
 
     private fun mostrarSheetLateral() {
         val dialog = Dialog(this)
