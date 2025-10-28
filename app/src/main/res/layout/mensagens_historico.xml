@@ -47,20 +47,21 @@
                     android:layout_marginLeft="16dp"
                     android:layout_marginTop="16dp"
                     android:layout_marginRight="16dp"
-                    android:background="@drawable/fundo_azul_claro"
+                    android:background="@drawable/fundo_azul"
                     android:drawableStart="@android:drawable/ic_menu_search"
+                    android:drawableTint="#FFFFFF"
                     android:padding="10dp"
                     android:hint="Pesquise uma mensagem"
                     android:textColorHint="#FDFDFD"
                     android:textColor="#FDFDFD"
-                    android:textSize="10sp" />
+                    android:textSize="13sp" />
 
                 <TextView
                     android:id="@+id/tv_layout_predefinido"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:text="Última Semana"
+                    android:text="Últimas Mensagens"
                     android:textAlignment="center"
                     android:textColor="@color/white"
                     android:textSize="22sp"

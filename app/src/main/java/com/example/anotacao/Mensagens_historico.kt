@@ -9,10 +9,12 @@ import android.view.Gravity
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.widget.addTextChangedListener
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.auth.FirebaseAuth
@@ -113,6 +115,113 @@ class Mensagens_historico : AppCompatActivity() {
             }
 
         carregarMensagemDoDia()
+
+        // --- PESQUISA ---
+        val etPesquisa = findViewById<EditText>(R.id.et_caixa_pesquisa)
+        val listaMensagens = mutableListOf<Map<String, String>>() // vai armazenar os dados originais
+
+        db.collection("mensagensPostadas")
+            .orderBy("timestamp", com.google.firebase.firestore.Query.Direction.DESCENDING)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    Toast.makeText(this, "Erro ao carregar histórico", Toast.LENGTH_SHORT).show()
+                    return@addSnapshotListener
+                }
+
+                containerHistorico.removeAllViews()
+                listaMensagens.clear()
+
+                if (snapshot != null && !snapshot.isEmpty) {
+                    for (doc in snapshot.documents) {
+                        val titulo = doc.getString("titulo") ?: "(sem título)"
+                        val data = doc.getString("data") ?: ""
+                        val texto = doc.getString("texto") ?: ""
+
+                        // guarda os dados
+                        listaMensagens.add(
+                            mapOf("titulo" to titulo, "data" to data, "texto" to texto)
+                        )
+
+                        // cria o card normal
+                        val item = inflater.inflate(R.layout.card_mensagem_interno, containerHistorico, false)
+                        val tvTitulo = item.findViewById<TextView>(R.id.tv_titulo1)
+                        val tvData = item.findViewById<TextView>(R.id.tv_info1)
+                        val tvConteudo = item.findViewById<TextView>(R.id.Conteudo_MDI)
+                        val cabecario = item.findViewById<LinearLayout>(R.id.Cabecario_MDI)
+
+                        tvTitulo.text = titulo
+                        tvData.text = data
+                        tvConteudo.text = texto
+
+                        cabecario.setOnClickListener {
+                            tvConteudo.visibility =
+                                if (tvConteudo.visibility == View.VISIBLE) View.GONE else View.VISIBLE
+                        }
+
+                        cabecario.setOnLongClickListener {
+                            db.collection("mensagensPostadas").document(doc.id)
+                                .delete()
+                                .addOnSuccessListener {
+                                    Toast.makeText(this, "Mensagem excluída com sucesso!", Toast.LENGTH_SHORT).show()
+                                }
+                                .addOnFailureListener {
+                                    Toast.makeText(this, "Erro ao excluir mensagem.", Toast.LENGTH_SHORT).show()
+                                }
+                            true
+                        }
+
+                        containerHistorico.addView(item)
+                    }
+                } else {
+                    val vazio = TextView(this)
+                    vazio.text = "Nenhuma mensagem postada ainda."
+                    vazio.textAlignment = View.TEXT_ALIGNMENT_CENTER
+                    vazio.setTextColor(android.graphics.Color.WHITE)
+                    vazio.setPadding(0, 24, 0, 24)
+                    containerHistorico.addView(vazio)
+                }
+            }
+
+// --- FILTRAR AO DIGITAR ---
+        etPesquisa.addTextChangedListener { texto ->
+            val filtro = texto.toString().trim().lowercase()
+
+            containerHistorico.removeAllViews()
+
+            val filtradas = if (filtro.isEmpty()) listaMensagens else
+                listaMensagens.filter {
+                    it["titulo"]!!.lowercase().contains(filtro) ||
+                            it["data"]!!.lowercase().contains(filtro)
+                }
+
+            if (filtradas.isEmpty()) {
+                val vazio = TextView(this)
+                vazio.text = "Nenhuma mensagem encontrada."
+                vazio.textAlignment = View.TEXT_ALIGNMENT_CENTER
+                vazio.setTextColor(android.graphics.Color.WHITE)
+                vazio.setPadding(0, 24, 0, 24)
+                containerHistorico.addView(vazio)
+            } else {
+                for (msg in filtradas) {
+                    val item = inflater.inflate(R.layout.card_mensagem_interno, containerHistorico, false)
+                    val tvTitulo = item.findViewById<TextView>(R.id.tv_titulo1)
+                    val tvData = item.findViewById<TextView>(R.id.tv_info1)
+                    val tvConteudo = item.findViewById<TextView>(R.id.Conteudo_MDI)
+                    val cabecario = item.findViewById<LinearLayout>(R.id.Cabecario_MDI)
+
+                    tvTitulo.text = msg["titulo"]
+                    tvData.text = msg["data"]
+                    tvConteudo.text = msg["texto"]
+
+                    cabecario.setOnClickListener {
+                        tvConteudo.visibility =
+                            if (tvConteudo.visibility == View.VISIBLE) View.GONE else View.VISIBLE
+                    }
+
+                    containerHistorico.addView(item)
+                }
+            }
+        }
 
     }//oncreate
 
