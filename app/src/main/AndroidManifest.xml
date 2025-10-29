@@ -2,10 +2,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- Permissões -->
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
-
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:allowBackup="true"
@@ -16,8 +19,7 @@
         android:networkSecurityConfig="@xml/network_security_config"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Anotacao"
-        tools:targetApi="31">
+        android:theme="@style/Theme.Anotacao">
 
         <activity
             android:name=".SplashActivity"
@@ -29,72 +31,43 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".Pag_entrar"
-            android:exported="false" />
+        <activity android:name=".Pag_entrar" android:exported="false" />
+        <activity android:name=".Configuracoes" android:exported="false" />
+        <activity android:name=".Mensagens_historico" android:exported="false" />
+        <activity android:name=".Pag_layouts" android:exported="false" />
+        <activity android:name=".Pag_home" android:exported="false" />
+        <activity android:name=".Senha_alterada" android:exported="false" />
 
-        <activity
-            android:name=".Configuracoes"
-            android:exported="false" />
-        <activity
-            android:name=".Mensagens_historico"
-            android:exported="false" />
-        <activity
-            android:name=".Pag_layouts"
-            android:exported="false" />
-        <activity
-            android:name=".Pag_home"
-            android:exported="false" />
-        <activity
-            android:name=".Senha_alterada"
-            android:exported="false" />
         <activity
             android:name=".Insira_nova_senha"
             android:exported="true"
             android:theme="@style/Theme.Anotacao">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-
                 <data
                     android:host="minhapastoral-d4189.firebaseapp.com"
                     android:pathPrefix="/__/auth/action"
                     android:scheme="https" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".Email_verificacao"
-            android:exported="false" />
-        <activity
-            android:name=".Pag_esqueceu_senha"
-            android:exported="false" />
-        <activity
-            android:name=".ui.login.Pag_Cadastro"
-            android:exported="true" />
-        <activity
-            android:name=".Mensagens"
-            android:exported="false" />
-        <activity
-            android:name=".PredefinicaoLema"
-            android:exported="false" />
-        <activity
-            android:name=".PredefinicaoMsg"
-            android:exported="false" />
-        <activity
-            android:name=".MainAnotacao"
-            android:exported="false" />
+
+        <activity android:name=".Email_verificacao" android:exported="false" />
+        <activity android:name=".Pag_esqueceu_senha" android:exported="false" />
+        <activity android:name=".ui.login.Pag_Cadastro" android:exported="true" />
+        <activity android:name=".Mensagens" android:exported="false" />
+        <activity android:name=".PredefinicaoLema" android:exported="false" />
+        <activity android:name=".PredefinicaoMsg" android:exported="false" />
+        <activity android:name=".MainAnotacao" android:exported="false" />
 
         <service
             android:name=".MyFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
 
-
     </application>
-
 </manifest>
