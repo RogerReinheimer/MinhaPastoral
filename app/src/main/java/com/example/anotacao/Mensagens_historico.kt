@@ -7,9 +7,11 @@ import androidx.appcompat.app.AppCompatActivity
 import android.content.Intent
 import android.util.Log
 import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
+import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -19,213 +21,297 @@ import androidx.core.widget.addTextChangedListener
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import java.io.File
 
 class Mensagens_historico : AppCompatActivity() {
     private val db = FirebaseFirestore.getInstance()
 
+    // Variáveis para paginação
+    private var lastVisible: DocumentSnapshot? = null
+    private val ITEMS_PER_PAGE = 7
+    private var isLoading = false
+    private var hasMoreData = true
+    private val listaMensagensCarregadas = mutableListOf<Map<String, Any>>()
+    private var estaPesquisando = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.mensagens_historico)
 
-
         val btnHome = findViewById<ImageView>(R.id.btnPagHome3)
         val btnBiblia = findViewById<ImageView>(R.id.btnMensagens3)
-
+        val btnMais = findViewById<ImageView>(R.id.btnFlutuante)
+        val btnMenu = findViewById<ImageView>(R.id.btnMenu)
 
         btnHome.setOnClickListener {
-            val intent = Intent(this, Pag_home::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, Pag_home::class.java))
         }
 
         btnBiblia.setOnClickListener {
-            val intent = Intent(this, Mensagens::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, Mensagens::class.java))
         }
 
-        //botao mais
-
-        val btnMais = findViewById<ImageView>(R.id.btnFlutuante)
         btnMais.setOnClickListener {
             mostrarSheetOpcoes()
         }
 
-        val btnMenu = findViewById<ImageView>(R.id.btnMenu)
         btnMenu.setOnClickListener {
             mostrarSheetLateral()
         }
 
-        val db = com.google.firebase.firestore.FirebaseFirestore.getInstance()
+        carregarMensagemDoDia()
+        configurarPesquisa()
+        carregarMensagens(false)
+    }
+
+    private fun carregarMensagens(isLoadMore: Boolean) {
+        if (isLoading) return
+
+        if (!isLoadMore) {
+            listaMensagensCarregadas.clear()
+            lastVisible = null
+            hasMoreData = true
+        }
+
+        isLoading = true
+
+        var query = db.collection("mensagensPostadas")
+            .orderBy("timestamp", Query.Direction.DESCENDING)
+            .limit(ITEMS_PER_PAGE.toLong())
+
+        if (isLoadMore && lastVisible != null) {
+            query = query.startAfter(lastVisible!!)
+        }
+
+        query.get().addOnSuccessListener { snapshot ->
+            if (snapshot.isEmpty) {
+                hasMoreData = false
+                if (isLoadMore) {
+                    Toast.makeText(this, "Não há mais mensagens", Toast.LENGTH_SHORT).show()
+                }
+                isLoading = false
+                atualizarListaMensagens()
+                return@addOnSuccessListener
+            }
+
+            lastVisible = snapshot.documents[snapshot.size() - 1]
+
+            for (doc in snapshot.documents) {
+                val titulo = doc.getString("titulo") ?: "(sem título)"
+                val data = doc.getString("data") ?: ""
+                val texto = doc.getString("texto") ?: ""
+
+                listaMensagensCarregadas.add(
+                    mapOf(
+                        "id" to doc.id,
+                        "titulo" to titulo,
+                        "data" to data,
+                        "texto" to texto
+                    )
+                )
+            }
+
+            if (snapshot.size() < ITEMS_PER_PAGE) {
+                hasMoreData = false
+            }
+
+            isLoading = false
+            atualizarListaMensagens()
+
+        }.addOnFailureListener {
+            Toast.makeText(this, "Erro ao carregar mensagens", Toast.LENGTH_SHORT).show()
+            isLoading = false
+        }
+    }
+
+    private fun atualizarListaMensagens() {
+        val containerHistorico = findViewById<LinearLayout>(R.id.container_historico)
+        val inflater = layoutInflater
+
+        containerHistorico.removeAllViews()
+
+        if (listaMensagensCarregadas.isEmpty()) {
+            val vazio = TextView(this)
+            vazio.text = "Nenhuma mensagem postada ainda."
+            vazio.textAlignment = View.TEXT_ALIGNMENT_CENTER
+            vazio.setTextColor(android.graphics.Color.WHITE)
+            vazio.setPadding(0, 24, 0, 24)
+            containerHistorico.addView(vazio)
+            return
+        }
+
+        for ((index, msg) in listaMensagensCarregadas.withIndex()) {
+            adicionarCardMensagem(msg, index, containerHistorico, inflater)
+        }
+
+        if (!estaPesquisando) {
+            adicionarBotoesNavegacao(containerHistorico)
+        }
+    }
+
+    private fun adicionarCardMensagem(
+        msg: Map<String, Any>,
+        index: Int,
+        container: LinearLayout,
+        inflater: LayoutInflater
+    ) {
+        val item = inflater.inflate(R.layout.card_mensagem_interno, container, false)
+
+        val tvTitulo = item.findViewById<TextView>(R.id.tv_titulo1)
+        val tvData = item.findViewById<TextView>(R.id.tv_info1)
+        val tvConteudo = item.findViewById<TextView>(R.id.Conteudo_MDI)
+        val cabecario = item.findViewById<LinearLayout>(R.id.Cabecario_MDI)
+
+        tvTitulo.text = msg["titulo"] as String
+        tvData.text = msg["data"] as String
+        tvConteudo.text = msg["texto"] as String
+
+        cabecario.setOnClickListener {
+            tvConteudo.visibility =
+                if (tvConteudo.visibility == View.VISIBLE) View.GONE else View.VISIBLE
+        }
+
+        cabecario.setOnLongClickListener {
+            val docId = msg["id"] as String
+            db.collection("mensagensPostadas").document(docId)
+                .delete()
+                .addOnSuccessListener {
+                    Toast.makeText(this, "Mensagem excluída!", Toast.LENGTH_SHORT).show()
+                    if (estaPesquisando) {
+                        val etPesquisa = findViewById<EditText>(R.id.et_caixa_pesquisa)
+                        pesquisarTodasMensagens(etPesquisa.text.toString())
+                    } else {
+                        carregarMensagens(false)
+                    }
+                }
+                .addOnFailureListener {
+                    Toast.makeText(this, "Erro ao excluir.", Toast.LENGTH_SHORT).show()
+                }
+            true
+        }
+
+        container.addView(item)
+    }
+
+    private fun adicionarBotoesNavegacao(container: LinearLayout) {
+        // Botão "Mostrar Mais"
+        if (hasMoreData && !isLoading) {
+            val btnMostrarMais = TextView(this)
+            btnMostrarMais.text = "▼ Mostrar mais mensagens"
+            btnMostrarMais.textAlignment = View.TEXT_ALIGNMENT_CENTER
+            btnMostrarMais.setTextColor(android.graphics.Color.WHITE)
+            btnMostrarMais.textSize = 15f
+            btnMostrarMais.setTypeface(null, android.graphics.Typeface.BOLD)
+            btnMostrarMais.setPadding(16, 32, 16, 16)
+
+            btnMostrarMais.setOnClickListener {
+                carregarMensagens(true)
+            }
+
+            container.addView(btnMostrarMais)
+        }
+
+        // Botão "Esconder"
+        if (listaMensagensCarregadas.size > ITEMS_PER_PAGE) {
+            val btnEsconder = TextView(this)
+            btnEsconder.text = "▲ Esconder mensagens extras"
+            btnEsconder.textAlignment = View.TEXT_ALIGNMENT_CENTER
+            btnEsconder.setTextColor(android.graphics.Color.parseColor("#90CAF9"))
+            btnEsconder.textSize = 15f
+            btnEsconder.setTypeface(null, android.graphics.Typeface.BOLD)
+            btnEsconder.setPadding(16, 16, 16, 32)
+
+            btnEsconder.setOnClickListener {
+                carregarMensagens(false)
+            }
+
+            container.addView(btnEsconder)
+        }
+    }
+
+    private fun configurarPesquisa() {
+        val etPesquisa = findViewById<EditText>(R.id.et_caixa_pesquisa)
+
+        etPesquisa.addTextChangedListener { texto ->
+            val filtro = texto.toString().trim()
+
+            // Se o campo está vazio OU tem apenas espaços, volta para modo normal
+            if (filtro.isEmpty() || filtro.isBlank()) {
+                if (estaPesquisando) {  // Só recarrega se estava pesquisando
+                    estaPesquisando = false
+                    carregarMensagens(false)
+                }
+                return@addTextChangedListener
+            }
+
+            // Ativa modo pesquisa
+            estaPesquisando = true
+            pesquisarTodasMensagens(filtro)
+        }
+    }
+
+    private fun pesquisarTodasMensagens(termoPesquisa: String) {
         val containerHistorico = findViewById<LinearLayout>(R.id.container_historico)
         val inflater = layoutInflater
 
         db.collection("mensagensPostadas")
-            .orderBy("timestamp", com.google.firebase.firestore.Query.Direction.DESCENDING)
-            .addSnapshotListener { snapshot, error ->
-                if (error != null) {
-                    Toast.makeText(this, "Erro ao carregar histórico", Toast.LENGTH_SHORT).show()
-                    return@addSnapshotListener
-                }
-
+            .orderBy("timestamp", Query.Direction.DESCENDING)
+            .get()
+            .addOnSuccessListener { snapshot ->
                 containerHistorico.removeAllViews()
 
-                if (snapshot != null && !snapshot.isEmpty) {
-                    for (doc in snapshot.documents) {
-                        val titulo = doc.getString("titulo") ?: "(sem título)"
-                        val data = doc.getString("data") ?: ""
-                        val texto = doc.getString("texto") ?: ""
+                val resultadosFiltrados = mutableListOf<Map<String, Any>>()
+                val filtroLower = termoPesquisa.lowercase()
 
-                        val item = inflater.inflate(R.layout.card_mensagem_interno, containerHistorico, false)
+                for (doc in snapshot.documents) {
+                    val titulo = doc.getString("titulo") ?: ""
+                    val data = doc.getString("data") ?: ""
+                    val texto = doc.getString("texto") ?: ""
 
-                        val tvTitulo = item.findViewById<TextView>(R.id.tv_titulo1)
-                        val tvData = item.findViewById<TextView>(R.id.tv_info1)
-                        val tvConteudo = item.findViewById<TextView>(R.id.Conteudo_MDI)
-                        val cabecario = item.findViewById<LinearLayout>(R.id.Cabecario_MDI)
+                    if (titulo.lowercase().contains(filtroLower) ||
+                        data.lowercase().contains(filtroLower) ||
+                        texto.lowercase().contains(filtroLower)) {
 
-                        tvTitulo.text = titulo
-                        tvData.text = data
-                        tvConteudo.text = texto
-
-                        cabecario.setOnClickListener {
-                            tvConteudo.visibility =
-                                if (tvConteudo.visibility == View.VISIBLE) View.GONE else View.VISIBLE
-                        }
-
-                        cabecario.setOnLongClickListener {
-                            db.collection("mensagensPostadas").document(doc.id)
-                                .delete()
-                                .addOnSuccessListener {
-                                    Toast.makeText(this, "Mensagem excluída com sucesso!", Toast.LENGTH_SHORT).show()
-                                }
-                                .addOnFailureListener {
-                                    Toast.makeText(this, "Erro ao excluir mensagem.", Toast.LENGTH_SHORT).show()
-                                }
-                            true
-                        }
-
-                        containerHistorico.addView(item)
-                    }
-                } else {
-                    val vazio = TextView(this)
-                    vazio.text = "Nenhuma mensagem postada ainda."
-                    vazio.textAlignment = View.TEXT_ALIGNMENT_CENTER
-                    vazio.setTextColor(android.graphics.Color.WHITE)
-                    vazio.setPadding(0, 24, 0, 24)
-                    containerHistorico.addView(vazio)
-                }
-            }
-
-        carregarMensagemDoDia()
-
-        // --- PESQUISA ---
-        val etPesquisa = findViewById<EditText>(R.id.et_caixa_pesquisa)
-        val listaMensagens = mutableListOf<Map<String, String>>() // vai armazenar os dados originais
-
-        db.collection("mensagensPostadas")
-            .orderBy("timestamp", com.google.firebase.firestore.Query.Direction.DESCENDING)
-            .addSnapshotListener { snapshot, error ->
-                if (error != null) {
-                    Toast.makeText(this, "Erro ao carregar histórico", Toast.LENGTH_SHORT).show()
-                    return@addSnapshotListener
-                }
-
-                containerHistorico.removeAllViews()
-                listaMensagens.clear()
-
-                if (snapshot != null && !snapshot.isEmpty) {
-                    for (doc in snapshot.documents) {
-                        val titulo = doc.getString("titulo") ?: "(sem título)"
-                        val data = doc.getString("data") ?: ""
-                        val texto = doc.getString("texto") ?: ""
-
-                        // guarda os dados
-                        listaMensagens.add(
-                            mapOf("titulo" to titulo, "data" to data, "texto" to texto)
+                        resultadosFiltrados.add(
+                            mapOf(
+                                "id" to doc.id,
+                                "titulo" to titulo,
+                                "data" to data,
+                                "texto" to texto
+                            )
                         )
-
-                        // cria o card normal
-                        val item = inflater.inflate(R.layout.card_mensagem_interno, containerHistorico, false)
-                        val tvTitulo = item.findViewById<TextView>(R.id.tv_titulo1)
-                        val tvData = item.findViewById<TextView>(R.id.tv_info1)
-                        val tvConteudo = item.findViewById<TextView>(R.id.Conteudo_MDI)
-                        val cabecario = item.findViewById<LinearLayout>(R.id.Cabecario_MDI)
-
-                        tvTitulo.text = titulo
-                        tvData.text = data
-                        tvConteudo.text = texto
-
-                        cabecario.setOnClickListener {
-                            tvConteudo.visibility =
-                                if (tvConteudo.visibility == View.VISIBLE) View.GONE else View.VISIBLE
-                        }
-
-                        cabecario.setOnLongClickListener {
-                            db.collection("mensagensPostadas").document(doc.id)
-                                .delete()
-                                .addOnSuccessListener {
-                                    Toast.makeText(this, "Mensagem excluída com sucesso!", Toast.LENGTH_SHORT).show()
-                                }
-                                .addOnFailureListener {
-                                    Toast.makeText(this, "Erro ao excluir mensagem.", Toast.LENGTH_SHORT).show()
-                                }
-                            true
-                        }
-
-                        containerHistorico.addView(item)
                     }
-                } else {
+                }
+
+                if (resultadosFiltrados.isEmpty()) {
                     val vazio = TextView(this)
-                    vazio.text = "Nenhuma mensagem postada ainda."
+                    vazio.text = "Nenhuma mensagem encontrada"
                     vazio.textAlignment = View.TEXT_ALIGNMENT_CENTER
                     vazio.setTextColor(android.graphics.Color.WHITE)
-                    vazio.setPadding(0, 24, 0, 24)
+                    vazio.setPadding(16, 24, 16, 24)
                     containerHistorico.addView(vazio)
-                }
-            }
+                } else {
+                    val tvResultados = TextView(this)
+                    tvResultados.text = "${resultadosFiltrados.size} mensagem(ns) encontrada(s)"
+                    tvResultados.textAlignment = View.TEXT_ALIGNMENT_CENTER
+                    tvResultados.setTextColor(android.graphics.Color.parseColor("#90CAF9"))
+                    tvResultados.textSize = 13f
+                    tvResultados.setTypeface(null, android.graphics.Typeface.ITALIC)
+                    tvResultados.setPadding(0, 16, 0, 16)
+                    containerHistorico.addView(tvResultados)
 
-// --- FILTRAR AO DIGITAR ---
-        etPesquisa.addTextChangedListener { texto ->
-            val filtro = texto.toString().trim().lowercase()
-
-            containerHistorico.removeAllViews()
-
-            val filtradas = if (filtro.isEmpty()) listaMensagens else
-                listaMensagens.filter {
-                    it["titulo"]!!.lowercase().contains(filtro) ||
-                            it["data"]!!.lowercase().contains(filtro)
-                }
-
-            if (filtradas.isEmpty()) {
-                val vazio = TextView(this)
-                vazio.text = "Nenhuma mensagem encontrada."
-                vazio.textAlignment = View.TEXT_ALIGNMENT_CENTER
-                vazio.setTextColor(android.graphics.Color.WHITE)
-                vazio.setPadding(0, 24, 0, 24)
-                containerHistorico.addView(vazio)
-            } else {
-                for (msg in filtradas) {
-                    val item = inflater.inflate(R.layout.card_mensagem_interno, containerHistorico, false)
-                    val tvTitulo = item.findViewById<TextView>(R.id.tv_titulo1)
-                    val tvData = item.findViewById<TextView>(R.id.tv_info1)
-                    val tvConteudo = item.findViewById<TextView>(R.id.Conteudo_MDI)
-                    val cabecario = item.findViewById<LinearLayout>(R.id.Cabecario_MDI)
-
-                    tvTitulo.text = msg["titulo"]
-                    tvData.text = msg["data"]
-                    tvConteudo.text = msg["texto"]
-
-                    cabecario.setOnClickListener {
-                        tvConteudo.visibility =
-                            if (tvConteudo.visibility == View.VISIBLE) View.GONE else View.VISIBLE
+                    for ((index, msg) in resultadosFiltrados.withIndex()) {
+                        adicionarCardMensagem(msg, index, containerHistorico, inflater)
                     }
-
-                    containerHistorico.addView(item)
                 }
             }
-        }
-
-    }//oncreate
+            .addOnFailureListener {
+                Toast.makeText(this, "Erro ao pesquisar mensagens", Toast.LENGTH_SHORT).show()
+            }
+    }
 
     private fun carregarMensagemDoDia() {
         val tvTitulo = findViewById<TextView>(R.id.tvSubtitulo)
@@ -237,19 +323,13 @@ class Mensagens_historico : AppCompatActivity() {
             .document("atual")
             .addSnapshotListener { snapshot, e ->
                 if (e != null) {
-                    Log.e("Pag_home", "Erro ao buscar mensagem do dia: ${e.message}")
-                    Toast.makeText(this, "Falha ao carregar mensagem do dia.", Toast.LENGTH_SHORT).show()
                     return@addSnapshotListener
                 }
 
                 if (snapshot != null && snapshot.exists()) {
-                    val titulo = snapshot.getString("titulo") ?: "Sem título"
-                    val data = snapshot.getString("data") ?: "--/--/----"
-                    val texto = snapshot.getString("texto") ?: "Nenhum texto disponível."
-
-                    tvTitulo.text = titulo
-                    tvData.text = data
-                    tvTexto.text = texto
+                    tvTitulo.text = snapshot.getString("titulo") ?: "Sem título"
+                    tvData.text = snapshot.getString("data") ?: "--/--/----"
+                    tvTexto.text = snapshot.getString("texto") ?: "Nenhum texto disponível."
                     tvTexto.visibility = View.VISIBLE
 
                     cabecario.setOnClickListener {
@@ -265,7 +345,6 @@ class Mensagens_historico : AppCompatActivity() {
             }
     }
 
-    // ----------- MENU LATERAL -------------
     private fun mostrarSheetLateral() {
         val dialog = Dialog(this)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -283,7 +362,6 @@ class Mensagens_historico : AppCompatActivity() {
         val imgPerfil = dialog.findViewById<ImageView>(R.id.imgPerfil)
         val txtPerfilNome = dialog.findViewById<TextView>(R.id.txtPerfilNome)
 
-        // Carregar nome do usuário
         val uid = FirebaseAuth.getInstance().currentUser?.uid
         if (uid != null) {
             db.collection("users").document(uid).get()
@@ -292,30 +370,24 @@ class Mensagens_historico : AppCompatActivity() {
                 }
         }
 
-        // Carregar foto local (mesma lógica da tela de configurações)
         val prefs = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val caminhoFoto = prefs.getString("foto_local", null)
 
         if (caminhoFoto != null) {
             val file = File(caminhoFoto)
             if (file.exists() && file.length() > 0) {
-                // Foto existe, carregar com Glide (SEM CACHE)
                 Glide.with(this)
                     .load(file)
-                    .skipMemoryCache(true) // Desabilita cache de memória
-                    .diskCacheStrategy(com.bumptech.glide.load.engine.DiskCacheStrategy.NONE) // Desabilita cache de disco
+                    .skipMemoryCache(true)
+                    .diskCacheStrategy(com.bumptech.glide.load.engine.DiskCacheStrategy.NONE)
                     .circleCrop()
-                    .placeholder(R.drawable.img_3) // Imagem temporária enquanto carrega
-                    .error(R.drawable.img_3)       // Imagem caso falhe
+                    .placeholder(R.drawable.img_3)
+                    .error(R.drawable.img_3)
                     .into(imgPerfil)
-                Log.d(TAG, "Foto carregada no menu: $caminhoFoto")
             } else {
-                // Arquivo não existe ou está vazio
-                Log.w(TAG, "Foto não encontrada no menu, usando padrão")
                 imgPerfil.setImageResource(R.drawable.img_3)
             }
         } else {
-            // Sem foto salva, usar padrão
             imgPerfil.setImageResource(R.drawable.img_3)
         }
 
@@ -339,7 +411,6 @@ class Mensagens_historico : AppCompatActivity() {
         dialog.show()
     }
 
-    //função opções
     private fun mostrarSheetOpcoes() {
         val bottomSheetDialog = BottomSheetDialog(this)
         val view = layoutInflater.inflate(R.layout.bottom_sheet_opcoes, null)
@@ -349,30 +420,24 @@ class Mensagens_historico : AppCompatActivity() {
         val opcaoMensagem = view.findViewById<TextView>(R.id.opcaoMensagem)
 
         opcaoAnotacao.setOnClickListener {
-            //redirecionar
             val intent = Intent(this, MainAnotacao::class.java)
             startActivity(intent)
-            // ação para Adicionar Anotação
             bottomSheetDialog.dismiss()
         }
 
         opcaoLema.setOnClickListener {
-            //redirecionar
             val intent = Intent(this, PredefinicaoLema::class.java)
             startActivity(intent)
-            // ação para Adicionar Lema
             bottomSheetDialog.dismiss()
         }
 
         opcaoMensagem.setOnClickListener {
-            //redirecionar
             val intent = Intent(this, PredefinicaoMsg::class.java)
             startActivity(intent)
-            // ação para Adicionar Mensagem
             bottomSheetDialog.dismiss()
         }
 
         bottomSheetDialog.setContentView(view)
         bottomSheetDialog.show()
     }
-}//fim da class
+}

@@ -5,11 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.InputType
 import android.util.Log
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -17,7 +13,9 @@ import androidx.core.view.WindowInsetsCompat
 import com.example.anotacao.ui.login.Pag_Cadastro
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.FirebaseMessaging
 
 class Pag_entrar : AppCompatActivity() {
 
@@ -35,7 +33,6 @@ class Pag_entrar : AppCompatActivity() {
         progressDialog.setMessage("Aguarde...")
         progressDialog.setCancelable(false)
 
-        // Se o usuário já está logado, vai direto pra home
         val usuarioAtual = auth.currentUser
         if (usuarioAtual != null) {
             startActivity(Intent(this, Pag_home::class.java))
@@ -54,6 +51,7 @@ class Pag_entrar : AppCompatActivity() {
         val etEmail = findViewById<EditText>(R.id.etEmailUsuario)
         val etSenha = findViewById<EditText>(R.id.etSenha)
         val btnEntrar = findViewById<Button>(R.id.btnEntrar)
+        val btnMostrarSenha = findViewById<ImageView>(R.id.btnMostrarSenha)
 
         txtCadastrar.setOnClickListener {
             startActivity(Intent(this, Pag_Cadastro::class.java))
@@ -76,21 +74,17 @@ class Pag_entrar : AppCompatActivity() {
             }
         }
 
-        val btnMostrarSenha = findViewById<ImageView>(R.id.btnMostrarSenha) // botão olho
-
-        // Função do botão mostrar/ocultar senha
         btnMostrarSenha.setOnClickListener {
             senhaVisivel = !senhaVisivel
             if (senhaVisivel) {
                 etSenha.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
-                btnMostrarSenha.setImageResource(R.drawable.ic_visibility) // ícone olho aberto
+                btnMostrarSenha.setImageResource(R.drawable.ic_visibility)
             } else {
                 etSenha.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-                btnMostrarSenha.setImageResource(R.drawable.ic_visibility_off) // ícone olho fechado
+                btnMostrarSenha.setImageResource(R.drawable.ic_visibility_off)
             }
-            etSenha.setSelection(etSenha.text.length) // mantém o cursor no final
+            etSenha.setSelection(etSenha.text.length)
         }
-
     }
 
     private fun realizarLoginFirebase(email: String, senha: String, btnEntrar: Button) {
@@ -100,37 +94,30 @@ class Pag_entrar : AppCompatActivity() {
                 btnEntrar.isEnabled = true
 
                 if (task.isSuccessful) {
-                    if (task.isSuccessful) {
-                        Toast.makeText(this, "Login realizado com sucesso!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Login realizado com sucesso!", Toast.LENGTH_SHORT).show()
 
-                        val user = auth.currentUser
-                        if (user != null) {
-                            com.google.firebase.messaging.FirebaseMessaging.getInstance().token
-                                .addOnSuccessListener { token ->
-                                    // Salva token no Firestore
-                                    val uid = user.uid
-                                    com.google.firebase.firestore.FirebaseFirestore.getInstance()
-                                        .collection("users")
-                                        .document(uid)
-                                        .update("fcmToken", token)
-                                        .addOnSuccessListener {
-                                            Log.d("Pag_entrar", "Token FCM salvo no Firestore")
-                                            // SÓ AGORA ABRE A PAG_HOME
-                                            startActivity(Intent(this, Pag_home::class.java))
-                                            finish()
-                                        }
-                                        .addOnFailureListener { e ->
-                                            Log.e("Pag_entrar", "Erro ao salvar token FCM: ${e.message}")
-                                            // Mesmo se falhar, podemos abrir a home
-                                            startActivity(Intent(this, Pag_home::class.java))
-                                            finish()
-                                        }
+                    val user = auth.currentUser
+                    if (user != null) {
+                        FirebaseMessaging.getInstance().token.addOnSuccessListener { token ->
+                            val db = FirebaseFirestore.getInstance()
+                            val dados = hashMapOf("token" to token)
+
+                            db.collection("tokens").document(user.uid)
+                                .set(dados)
+                                .addOnSuccessListener {
+                                    Log.d("Pag_entrar", "Token FCM salvo em 'tokens'")
                                 }
-                        } else {
-                            // Caso não tenha usuário (não deveria acontecer)
-                            startActivity(Intent(this, Pag_home::class.java))
-                            finish()
+                                .addOnFailureListener { e ->
+                                    Log.e("Pag_entrar", "Erro ao salvar token: ${e.message}")
+                                }
+                                .addOnCompleteListener {
+                                    startActivity(Intent(this, Pag_home::class.java))
+                                    finish()
+                                }
                         }
+                    } else {
+                        startActivity(Intent(this, Pag_home::class.java))
+                        finish()
                     }
 
                 } else {
