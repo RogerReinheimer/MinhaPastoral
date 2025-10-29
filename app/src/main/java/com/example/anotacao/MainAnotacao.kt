@@ -1,8 +1,10 @@
 package com.example.anotacao
 
 import android.app.Dialog
+import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.Window
 import android.view.WindowManager
@@ -21,6 +23,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import java.io.File
 
 class MainAnotacao : AppCompatActivity() {
 
@@ -117,56 +120,54 @@ class MainAnotacao : AppCompatActivity() {
             attributes.windowAnimations = R.style.DialogAnimationDireita
         }
 
-        // ======== ATUALIZA FOTO DE PERFIL E NOME ========
         val imgPerfil = dialog.findViewById<ImageView>(R.id.imgPerfil)
         val txtPerfilNome = dialog.findViewById<TextView>(R.id.txtPerfilNome)
 
-        // Carrega nome do Firestore
+        // Carregar nome do usuário
         val uid = FirebaseAuth.getInstance().currentUser?.uid
         if (uid != null) {
             db.collection("users").document(uid).get()
                 .addOnSuccessListener { document ->
-                    if (document != null && document.exists()) {
-                        val nome = document.getString("username")
-                        txtPerfilNome.text = "Olá, ${nome ?: "usuário"}!"
-                    }
+                    txtPerfilNome.text = "Olá, ${document.getString("username") ?: "usuário"}!"
                 }
         }
 
-        // Carrega imagem local salva
+        // Carregar foto local (mesma lógica da tela de configurações)
         val prefs = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val caminhoFoto = prefs.getString("foto_local", null)
+
         if (caminhoFoto != null) {
-            val file = java.io.File(caminhoFoto)
-            if (file.exists()) {
+            val file = File(caminhoFoto)
+            if (file.exists() && file.length() > 0) {
+                // Foto existe, carregar com Glide (SEM CACHE)
                 Glide.with(this)
-                    .load(android.net.Uri.fromFile(file))
+                    .load(file)
+                    .skipMemoryCache(true) // Desabilita cache de memória
+                    .diskCacheStrategy(com.bumptech.glide.load.engine.DiskCacheStrategy.NONE) // Desabilita cache de disco
                     .circleCrop()
+                    .placeholder(R.drawable.img_3) // Imagem temporária enquanto carrega
+                    .error(R.drawable.img_3)       // Imagem caso falhe
                     .into(imgPerfil)
+                Log.d(TAG, "Foto carregada no menu: $caminhoFoto")
             } else {
-                imgPerfil.setImageResource(R.drawable.img_3) // imagem padrão
+                // Arquivo não existe ou está vazio
+                Log.w(TAG, "Foto não encontrada no menu, usando padrão")
+                imgPerfil.setImageResource(R.drawable.img_3)
             }
         } else {
+            // Sem foto salva, usar padrão
             imgPerfil.setImageResource(R.drawable.img_3)
         }
 
-        // ======== AÇÕES DOS BOTÕES ========
-        val opcLayout = dialog.findViewById<LinearLayout>(R.id.layoutLayout)
-        opcLayout.setOnClickListener {
-            val intent = Intent(this, Pag_layouts::class.java)
-            startActivity(intent)
+        dialog.findViewById<LinearLayout>(R.id.layoutLayout).setOnClickListener {
+            startActivity(Intent(this, Pag_layouts::class.java))
             dialog.dismiss()
         }
-
-        val opcConfig = dialog.findViewById<LinearLayout>(R.id.layoutConfig)
-        opcConfig.setOnClickListener {
-            val intent = Intent(this, Configuracoes::class.java)
-            startActivity(intent)
+        dialog.findViewById<LinearLayout>(R.id.layoutConfig).setOnClickListener {
+            startActivity(Intent(this, Configuracoes::class.java))
             dialog.dismiss()
         }
-
-        val opcSair = dialog.findViewById<LinearLayout>(R.id.layoutSair)
-        opcSair.setOnClickListener {
+        dialog.findViewById<LinearLayout>(R.id.layoutSair).setOnClickListener {
             FirebaseAuth.getInstance().signOut()
             val intent = Intent(this, Pag_entrar::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK

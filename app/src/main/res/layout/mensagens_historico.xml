@@ -17,6 +17,7 @@
             android:id="@+id/layout_fundo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="#FFFFFF"
             android:orientation="vertical"
             android:padding="16dp">
 
@@ -28,7 +29,7 @@
                 app:srcCompat="@drawable/logo" />
 
             <!-- mensagem do dia -->
-            <include layout="@layout/card_mensagem_dia"/>
+            <include layout="@layout/card_mensagem_dia" />
 
             <!-- fundo azul escuro -->
             <LinearLayout
@@ -50,10 +51,10 @@
                     android:background="@drawable/fundo_azul"
                     android:drawableStart="@android:drawable/ic_menu_search"
                     android:drawableTint="#FFFFFF"
-                    android:padding="10dp"
                     android:hint="Pesquise uma mensagem"
-                    android:textColorHint="#FDFDFD"
+                    android:padding="10dp"
                     android:textColor="#FDFDFD"
+                    android:textColorHint="#FDFDFD"
                     android:textSize="13sp" />
 
                 <TextView
@@ -71,9 +72,9 @@
                     android:id="@+id/container_historico"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
                     android:orientation="vertical"
-                    android:paddingHorizontal="12dp"
-                    android:layout_marginTop="8dp" />
+                    android:paddingHorizontal="12dp" />
 
             </LinearLayout>
 
