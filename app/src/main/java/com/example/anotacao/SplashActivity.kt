@@ -5,12 +5,14 @@ import android.os.Bundle
 import android.os.Handler // 1. IMPORTAR O HANDLER
 import android.os.Looper  // 2. IMPORTAR O LOOPER
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.google.firebase.auth.FirebaseAuth
 
 class SplashActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         // Instala a splash (mantém o que fizemos, para evitar a tela branca)
         installSplashScreen()
 

@@ -33,6 +33,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.ContentValues.TAG
 import android.content.Context
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import java.io.File
@@ -85,6 +86,7 @@ class Pag_home : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         super.onCreate(savedInstanceState)
 
         // VERIFICA LOGIN
