@@ -106,18 +106,18 @@
             android:layout_height="30dp"
             android:layout_gravity="center"
             android:layout_weight="1"
-            android:contentDescription="Início"
             android:clickable="true"
+            android:contentDescription="Início"
             android:src="@drawable/baseline_home_24" />
 
         <ImageView
             android:id="@+id/btnMensagens3"
             android:layout_width="0dp"
-            android:layout_height="32dp"
+            android:layout_height="30dp"
             android:layout_gravity="center"
             android:layout_weight="1"
-            android:contentDescription="Bíblia"
             android:clickable="true"
+            android:contentDescription="Bíblia"
             android:src="@drawable/biblia" />
 
         <FrameLayout
