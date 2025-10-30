@@ -45,8 +45,8 @@
 
                 <ImageView
                     android:id="@+id/btnRemoverFoto"
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
                     android:layout_gravity="top|end"
                     android:layout_margin="8dp"
                     android:padding="4dp"

@@ -1,22 +1,21 @@
 package com.example.anotacao
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.app.Dialog
-import android.content.ContentValues.TAG
-import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import android.content.Intent
-import android.util.Log
+import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
-import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.widget.addTextChangedListener
 import com.bumptech.glide.Glide
@@ -28,9 +27,15 @@ import com.google.firebase.firestore.Query
 import java.io.File
 
 class Mensagens_historico : AppCompatActivity() {
-    private val db = FirebaseFirestore.getInstance()
 
-    // Variáveis para paginação
+    private lateinit var btnHome: ImageView
+    private lateinit var btnBiblia: ImageView
+    private lateinit var btnMais: ImageView
+    private lateinit var btnMenu: ImageView
+
+    private val db = FirebaseFirestore.getInstance()
+    private val auth = FirebaseAuth.getInstance()
+
     private var lastVisible: DocumentSnapshot? = null
     private val ITEMS_PER_PAGE = 7
     private var isLoading = false
@@ -43,24 +48,54 @@ class Mensagens_historico : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.mensagens_historico)
 
-        val btnHome = findViewById<ImageView>(R.id.btnPagHome3)
-        val btnBiblia = findViewById<ImageView>(R.id.btnMensagens3)
-        val btnMais = findViewById<ImageView>(R.id.btnFlutuante)
-        val btnMenu = findViewById<ImageView>(R.id.btnMenu)
+        // ---------- FINDVIEWBYID ----------
+        btnHome = findViewById(R.id.btnPagHome3)
+        btnBiblia = findViewById(R.id.btnMensagens3)
+        btnMais = findViewById(R.id.btnFlutuante)
+        btnMenu = findViewById(R.id.btnMenu)
 
+        // ---------- BOTÕES DE NAVEGAÇÃO (300ms, 0.8) ----------
         btnHome.setOnClickListener {
+            val scaleX = ObjectAnimator.ofFloat(btnHome, "scaleX", 1f, 0.8f, 1f)
+            val scaleY = ObjectAnimator.ofFloat(btnHome, "scaleY", 1f, 0.8f, 1f)
+            AnimatorSet().apply {
+                playTogether(scaleX, scaleY)
+                duration = 300
+                start()
+            }
             startActivity(Intent(this, Pag_home::class.java))
         }
 
         btnBiblia.setOnClickListener {
+            val scaleX = ObjectAnimator.ofFloat(btnBiblia, "scaleX", 1f, 0.8f, 1f)
+            val scaleY = ObjectAnimator.ofFloat(btnBiblia, "scaleY", 1f, 0.8f, 1f)
+            AnimatorSet().apply {
+                playTogether(scaleX, scaleY)
+                duration = 300
+                start()
+            }
             startActivity(Intent(this, Mensagens::class.java))
         }
 
         btnMais.setOnClickListener {
+            val scaleX = ObjectAnimator.ofFloat(btnMais, "scaleX", 1f, 0.8f, 1f)
+            val scaleY = ObjectAnimator.ofFloat(btnMais, "scaleY", 1f, 0.8f, 1f)
+            AnimatorSet().apply {
+                playTogether(scaleX, scaleY)
+                duration = 300
+                start()
+            }
             mostrarSheetOpcoes()
         }
 
         btnMenu.setOnClickListener {
+            val scaleX = ObjectAnimator.ofFloat(btnMenu, "scaleX", 1f, 0.8f, 1f)
+            val scaleY = ObjectAnimator.ofFloat(btnMenu, "scaleY", 1f, 0.8f, 1f)
+            AnimatorSet().apply {
+                playTogether(scaleX, scaleY)
+                duration = 300
+                start()
+            }
             mostrarSheetLateral()
         }
 
@@ -199,7 +234,7 @@ class Mensagens_historico : AppCompatActivity() {
     }
 
     private fun adicionarBotoesNavegacao(container: LinearLayout) {
-        // Botão "Mostrar Mais"
+        // ---------- BOTÃO MOSTRAR MAIS (200ms, 0.9) ----------
         if (hasMoreData && !isLoading) {
             val btnMostrarMais = TextView(this)
             btnMostrarMais.text = "▼ Mostrar mais mensagens"
@@ -210,13 +245,20 @@ class Mensagens_historico : AppCompatActivity() {
             btnMostrarMais.setPadding(16, 32, 16, 16)
 
             btnMostrarMais.setOnClickListener {
+                val scaleX = ObjectAnimator.ofFloat(btnMostrarMais, "scaleX", 1f, 0.9f, 1f)
+                val scaleY = ObjectAnimator.ofFloat(btnMostrarMais, "scaleY", 1f, 0.9f, 1f)
+                AnimatorSet().apply {
+                    playTogether(scaleX, scaleY)
+                    duration = 200
+                    start()
+                }
                 carregarMensagens(true)
             }
 
             container.addView(btnMostrarMais)
         }
 
-        // Botão "Esconder"
+        // ---------- BOTÃO ESCONDER (200ms, 0.9) ----------
         if (listaMensagensCarregadas.size > ITEMS_PER_PAGE) {
             val btnEsconder = TextView(this)
             btnEsconder.text = "▲ Esconder mensagens extras"
@@ -227,6 +269,13 @@ class Mensagens_historico : AppCompatActivity() {
             btnEsconder.setPadding(16, 16, 16, 32)
 
             btnEsconder.setOnClickListener {
+                val scaleX = ObjectAnimator.ofFloat(btnEsconder, "scaleX", 1f, 0.9f, 1f)
+                val scaleY = ObjectAnimator.ofFloat(btnEsconder, "scaleY", 1f, 0.9f, 1f)
+                AnimatorSet().apply {
+                    playTogether(scaleX, scaleY)
+                    duration = 200
+                    start()
+                }
                 carregarMensagens(false)
             }
 
@@ -240,16 +289,14 @@ class Mensagens_historico : AppCompatActivity() {
         etPesquisa.addTextChangedListener { texto ->
             val filtro = texto.toString().trim()
 
-            // Se o campo está vazio OU tem apenas espaços, volta para modo normal
             if (filtro.isEmpty() || filtro.isBlank()) {
-                if (estaPesquisando) {  // Só recarrega se estava pesquisando
+                if (estaPesquisando) {
                     estaPesquisando = false
                     carregarMensagens(false)
                 }
                 return@addTextChangedListener
             }
 
-            // Ativa modo pesquisa
             estaPesquisando = true
             pesquisarTodasMensagens(filtro)
         }
@@ -324,9 +371,7 @@ class Mensagens_historico : AppCompatActivity() {
         db.collection("mensagemDoDia")
             .document("atual")
             .addSnapshotListener { snapshot, e ->
-                if (e != null) {
-                    return@addSnapshotListener
-                }
+                if (e != null) return@addSnapshotListener
 
                 if (snapshot != null && snapshot.exists()) {
                     tvTitulo.text = snapshot.getString("titulo") ?: "Sem título"
@@ -364,7 +409,7 @@ class Mensagens_historico : AppCompatActivity() {
         val imgPerfil = dialog.findViewById<ImageView>(R.id.imgPerfil)
         val txtPerfilNome = dialog.findViewById<TextView>(R.id.txtPerfilNome)
 
-        val uid = FirebaseAuth.getInstance().currentUser?.uid
+        val uid = auth.currentUser?.uid
         if (uid != null) {
             db.collection("users").document(uid).get()
                 .addOnSuccessListener { document ->
@@ -397,12 +442,14 @@ class Mensagens_historico : AppCompatActivity() {
             startActivity(Intent(this, Pag_layouts::class.java))
             dialog.dismiss()
         }
+
         dialog.findViewById<LinearLayout>(R.id.layoutConfig).setOnClickListener {
             startActivity(Intent(this, Configuracoes::class.java))
             dialog.dismiss()
         }
+
         dialog.findViewById<LinearLayout>(R.id.layoutSair).setOnClickListener {
-            FirebaseAuth.getInstance().signOut()
+            auth.signOut()
             val intent = Intent(this, Pag_entrar::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
@@ -417,25 +464,18 @@ class Mensagens_historico : AppCompatActivity() {
         val bottomSheetDialog = BottomSheetDialog(this)
         val view = layoutInflater.inflate(R.layout.bottom_sheet_opcoes, null)
 
-        val opcaoAnotacao = view.findViewById<TextView>(R.id.opcaoAnotacao)
-        val opcaoLema = view.findViewById<TextView>(R.id.opcaoLema)
-        val opcaoMensagem = view.findViewById<TextView>(R.id.opcaoMensagem)
-
-        opcaoAnotacao.setOnClickListener {
-            val intent = Intent(this, MainAnotacao::class.java)
-            startActivity(intent)
+        view.findViewById<TextView>(R.id.opcaoAnotacao)?.setOnClickListener {
+            startActivity(Intent(this, MainAnotacao::class.java))
             bottomSheetDialog.dismiss()
         }
 
-        opcaoLema.setOnClickListener {
-            val intent = Intent(this, PredefinicaoLema::class.java)
-            startActivity(intent)
+        view.findViewById<TextView>(R.id.opcaoLema)?.setOnClickListener {
+            startActivity(Intent(this, PredefinicaoLema::class.java))
             bottomSheetDialog.dismiss()
         }
 
-        opcaoMensagem.setOnClickListener {
-            val intent = Intent(this, PredefinicaoMsg::class.java)
-            startActivity(intent)
+        view.findViewById<TextView>(R.id.opcaoMensagem)?.setOnClickListener {
+            startActivity(Intent(this, PredefinicaoMsg::class.java))
             bottomSheetDialog.dismiss()
         }
 

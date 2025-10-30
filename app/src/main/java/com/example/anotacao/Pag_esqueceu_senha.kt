@@ -1,5 +1,7 @@
 package com.example.anotacao
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.os.Bundle
 import android.util.Patterns
 import android.widget.Button
@@ -10,12 +12,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 
 class Pag_esqueceu_senha : AppCompatActivity() {
 
-    // 1. Declaração das variáveis para os componentes da UI e para o Firebase Auth
     private lateinit var auth: FirebaseAuth
     private lateinit var etEmail: EditText
     private lateinit var btnEnviar: Button
@@ -27,37 +26,58 @@ class Pag_esqueceu_senha : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_pag_esqueceu_senha)
 
+        auth = FirebaseAuth.getInstance()
 
-        auth = Firebase.auth
-
-        // 3. Conexão das variáveis com os componentes do XML pelos seus IDs
+        // ---------- FINDVIEWBYID ----------
         etEmail = findViewById(R.id.etEmailNS)
         btnEnviar = findViewById(R.id.btnEnviar)
         txtVoltar = findViewById(R.id.txtVoltarParaLogin)
         imgVoltar = findViewById(R.id.imgVoltarLogin)
 
-
         setupClickListeners()
     }
 
     private fun setupClickListeners() {
-        // Ação para o botão "Enviar"
+        // ---------- BOTÃO ENVIAR (200ms, 0.9) ----------
         btnEnviar.setOnClickListener {
+            val scaleX = ObjectAnimator.ofFloat(btnEnviar, "scaleX", 1f, 0.9f, 1f)
+            val scaleY = ObjectAnimator.ofFloat(btnEnviar, "scaleY", 1f, 0.9f, 1f)
+            AnimatorSet().apply {
+                playTogether(scaleX, scaleY)
+                duration = 200
+                start()
+            }
+
             val email = etEmail.text.toString().trim()
             enviarLinkDeRedefinicao(email)
         }
 
+        // ---------- BOTÃO VOLTAR TEXTO (200ms, 0.9) ----------
         txtVoltar.setOnClickListener {
+            val scaleX = ObjectAnimator.ofFloat(txtVoltar, "scaleX", 1f, 0.9f, 1f)
+            val scaleY = ObjectAnimator.ofFloat(txtVoltar, "scaleY", 1f, 0.9f, 1f)
+            AnimatorSet().apply {
+                playTogether(scaleX, scaleY)
+                duration = 200
+                start()
+            }
             finish()
         }
 
+        // ---------- BOTÃO VOLTAR IMAGEM (200ms, 0.9) ----------
         imgVoltar.setOnClickListener {
+            val scaleX = ObjectAnimator.ofFloat(imgVoltar, "scaleX", 1f, 0.9f, 1f)
+            val scaleY = ObjectAnimator.ofFloat(imgVoltar, "scaleY", 1f, 0.9f, 1f)
+            AnimatorSet().apply {
+                playTogether(scaleX, scaleY)
+                duration = 200
+                start()
+            }
             finish()
         }
     }
 
     private fun enviarLinkDeRedefinicao(email: String) {
-        // 5. Validação do campo de e-mail
         if (email.isEmpty()) {
             etEmail.error = "O campo de e-mail é obrigatório."
             etEmail.requestFocus()
@@ -70,10 +90,8 @@ class Pag_esqueceu_senha : AppCompatActivity() {
             return
         }
 
-        // Desativa o botão para evitar múltiplos cliques enquanto a operação ocorre
         btnEnviar.isEnabled = false
 
-        // 6. Chamada da função do Firebase para enviar o e-mail
         auth.sendPasswordResetEmail(email)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {

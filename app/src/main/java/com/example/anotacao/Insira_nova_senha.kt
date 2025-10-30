@@ -1,5 +1,7 @@
 package com.example.anotacao
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
@@ -10,70 +12,86 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 
-// Renomeie a classe para o nome que você deu à sua Activity
 class Insira_nova_senha : AppCompatActivity() {
 
-    // 1. Declaração das variáveis
     private lateinit var auth: FirebaseAuth
     private lateinit var etSenhaNova: EditText
     private lateinit var etConfirmaSenha: EditText
-    private lateinit var btnEnviar: Button // AppCompatButton é um tipo de Button
+    private lateinit var btnEnviar: Button
     private lateinit var txtVoltar: TextView
     private lateinit var imgVoltar: ImageView
 
-    // Variável para guardar o código que vem no link do e-mail
     private var actionCode: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         super.onCreate(savedInstanceState)
-        // Certifique-se de que o nome do seu arquivo XML está correto aqui
         setContentView(R.layout.activity_insira_nova_senha)
 
-        auth = Firebase.auth
+        auth = FirebaseAuth.getInstance()
 
-        // 2. Conectando as variáveis com os componentes do XML pelos seus IDs
+        // ---------- FINDVIEWBYID ----------
         etSenhaNova = findViewById(R.id.etSenhaNova)
         etConfirmaSenha = findViewById(R.id.etConfirmaSenha)
         btnEnviar = findViewById(R.id.btnEnviar)
         txtVoltar = findViewById(R.id.txtVoltar)
         imgVoltar = findViewById(R.id.imgVoltar)
 
-        // 3. Captura o código de ação do link que abriu esta activity
         handleIntent()
-
-        // 4. Configura os cliques dos botões
         setupClickListeners()
     }
 
     private fun handleIntent() {
         actionCode = intent.data?.getQueryParameter("oobCode")
 
-        // Se a activity foi aberta sem um código válido no link, ela é inútil.
         if (actionCode == null) {
             Toast.makeText(this, "Link inválido ou expirado. Tente o processo novamente.", Toast.LENGTH_LONG).show()
-            finish() // Fecha a activity
+            finish()
         }
     }
 
     private fun setupClickListeners() {
+        // ---------- BOTÃO ENVIAR (200ms, 0.9) ----------
         btnEnviar.setOnClickListener {
+            val scaleX = ObjectAnimator.ofFloat(btnEnviar, "scaleX", 1f, 0.9f, 1f)
+            val scaleY = ObjectAnimator.ofFloat(btnEnviar, "scaleY", 1f, 0.9f, 1f)
+            AnimatorSet().apply {
+                playTogether(scaleX, scaleY)
+                duration = 200
+                start()
+            }
             handleConfirmarNovaSenha()
         }
 
-        val goBack = { finish() }
-        txtVoltar.setOnClickListener { goBack() }
-        imgVoltar.setOnClickListener { goBack() }
+        // ---------- BOTÕES VOLTAR (200ms, 0.9) ----------
+        txtVoltar.setOnClickListener {
+            val scaleX = ObjectAnimator.ofFloat(txtVoltar, "scaleX", 1f, 0.9f, 1f)
+            val scaleY = ObjectAnimator.ofFloat(txtVoltar, "scaleY", 1f, 0.9f, 1f)
+            AnimatorSet().apply {
+                playTogether(scaleX, scaleY)
+                duration = 200
+                start()
+            }
+            finish()
+        }
+
+        imgVoltar.setOnClickListener {
+            val scaleX = ObjectAnimator.ofFloat(imgVoltar, "scaleX", 1f, 0.9f, 1f)
+            val scaleY = ObjectAnimator.ofFloat(imgVoltar, "scaleY", 1f, 0.9f, 1f)
+            AnimatorSet().apply {
+                playTogether(scaleX, scaleY)
+                duration = 200
+                start()
+            }
+            finish()
+        }
     }
 
     private fun handleConfirmarNovaSenha() {
         val novaSenha = etSenhaNova.text.toString()
         val confirmaSenha = etConfirmaSenha.text.toString()
 
-        // --- 5. Validações ---
         if (novaSenha.isEmpty() || confirmaSenha.isEmpty()) {
             Toast.makeText(this, "Por favor, preencha todos os campos.", Toast.LENGTH_SHORT).show()
             return
@@ -89,20 +107,17 @@ class Insira_nova_senha : AppCompatActivity() {
             return
         }
 
-        val code = actionCode ?: return // Garante que o código não é nulo
+        val code = actionCode ?: return
 
-        btnEnviar.isEnabled = false // Desativa o botão para evitar cliques duplos
+        btnEnviar.isEnabled = false
 
-        // --- 6. Lógica do Firebase ---
         auth.confirmPasswordReset(code, novaSenha)
             .addOnCompleteListener { task ->
-                btnEnviar.isEnabled = true // Reativa o botão
+                btnEnviar.isEnabled = true
 
                 if (task.isSuccessful) {
                     Toast.makeText(this, "Senha alterada com sucesso!", Toast.LENGTH_LONG).show()
 
-                    // Envia o usuário para a tela de login, limpando as telas anteriores
-                    // Certifique-se de que 'LoginActivity::class.java' aponta para sua tela de login correta
                     val intent = Intent(this, Pag_entrar::class.java).apply {
                         flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     }

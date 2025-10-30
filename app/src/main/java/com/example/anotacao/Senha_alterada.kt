@@ -1,32 +1,35 @@
 package com.example.anotacao
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 
 class Senha_alterada : AppCompatActivity() {
+
+    private lateinit var btnVoltar: Button
+
     override fun onCreate(savedInstanceState: Bundle?) {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_senha_alterada)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
 
-        val btnVoltar = findViewById<Button>(R.id.btnVoltar)
+        // ---------- FINDVIEWBYID ----------
+        btnVoltar = findViewById(R.id.btnVoltar)
+
+        // ---------- BOTÃO VOLTAR (300ms, 0.8) ----------
         btnVoltar.setOnClickListener {
-            val intent = Intent(this, Pag_entrar::class.java)
-            startActivity(intent)
+            val scaleX = ObjectAnimator.ofFloat(btnVoltar, "scaleX", 1f, 0.8f, 1f)
+            val scaleY = ObjectAnimator.ofFloat(btnVoltar, "scaleY", 1f, 0.8f, 1f)
+            AnimatorSet().apply {
+                playTogether(scaleX, scaleY)
+                duration = 300
+                start()
+            }
+            startActivity(Intent(this, Pag_entrar::class.java))
         }
-
-
     }
 }

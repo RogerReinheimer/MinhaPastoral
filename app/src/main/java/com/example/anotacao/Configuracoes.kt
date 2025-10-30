@@ -1,7 +1,8 @@
-
 package com.example.anotacao
 
 import android.Manifest
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.app.Dialog
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -51,14 +52,14 @@ class Configuracoes : AppCompatActivity() {
     private lateinit var btnRemoverFoto: ImageView
 
     private val db = FirebaseFirestore.getInstance()
+    private val auth = FirebaseAuth.getInstance()
 
     companion object {
         private const val TAG = "Configuracoes"
-        private const val MAX_IMAGE_DIMENSION = 1024 // Redimensionar imagens grandes
+        private const val MAX_IMAGE_DIMENSION = 1024
         private const val FOTO_PERFIL_FILENAME = "foto_perfil.jpg"
     }
 
-    // Activity Result API - substitui startActivityForResult
     private val pickImageLauncher = registerForActivityResult(
         ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
@@ -71,7 +72,6 @@ class Configuracoes : AppCompatActivity() {
         }
     }
 
-    // Launcher para solicitar permissões
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
@@ -118,47 +118,105 @@ class Configuracoes : AppCompatActivity() {
     }
 
     private fun configurarListeners() {
-        // Remover foto
+        // ---------- BOTÃO REMOVER FOTO (200ms, 0.9) ----------
         btnRemoverFoto.setOnClickListener {
+            val scaleX = ObjectAnimator.ofFloat(btnRemoverFoto, "scaleX", 1f, 0.9f, 1f)
+            val scaleY = ObjectAnimator.ofFloat(btnRemoverFoto, "scaleY", 1f, 0.9f, 1f)
+            AnimatorSet().apply {
+                playTogether(scaleX, scaleY)
+                duration = 200
+                start()
+            }
             removerFoto()
         }
 
-        // Toggle de visibilidade de senha
+        // ---------- TOGGLE SENHA (200ms, 0.9) ----------
         setupPasswordVisibilityToggle(etSenha, ivToggleSenha)
         setupPasswordVisibilityToggle(etSenhaAtual, ivToggleSenhaAtual)
 
-        // Navegação
-        btnMenu.setOnClickListener { mostrarSheetLateral() }
-        btnFlutuante.setOnClickListener { mostrarSheetOpcoes() }
+        // ---------- BOTÕES DE NAVEGAÇÃO (300ms, 0.8) ----------
+        btnMenu.setOnClickListener {
+            val scaleX = ObjectAnimator.ofFloat(btnMenu, "scaleX", 1f, 0.8f, 1f)
+            val scaleY = ObjectAnimator.ofFloat(btnMenu, "scaleY", 1f, 0.8f, 1f)
+            AnimatorSet().apply {
+                playTogether(scaleX, scaleY)
+                duration = 300
+                start()
+            }
+            mostrarSheetLateral()
+        }
+
+        btnFlutuante.setOnClickListener {
+            val scaleX = ObjectAnimator.ofFloat(btnFlutuante, "scaleX", 1f, 0.8f, 1f)
+            val scaleY = ObjectAnimator.ofFloat(btnFlutuante, "scaleY", 1f, 0.8f, 1f)
+            AnimatorSet().apply {
+                playTogether(scaleX, scaleY)
+                duration = 300
+                start()
+            }
+            mostrarSheetOpcoes()
+        }
+
         btnBiblia.setOnClickListener {
+            val scaleX = ObjectAnimator.ofFloat(btnBiblia, "scaleX", 1f, 0.8f, 1f)
+            val scaleY = ObjectAnimator.ofFloat(btnBiblia, "scaleY", 1f, 0.8f, 1f)
+            AnimatorSet().apply {
+                playTogether(scaleX, scaleY)
+                duration = 300
+                start()
+            }
             startActivity(Intent(this, Mensagens::class.java))
         }
+
         btnPagHome.setOnClickListener {
+            val scaleX = ObjectAnimator.ofFloat(btnPagHome, "scaleX", 1f, 0.8f, 1f)
+            val scaleY = ObjectAnimator.ofFloat(btnPagHome, "scaleY", 1f, 0.8f, 1f)
+            AnimatorSet().apply {
+                playTogether(scaleX, scaleY)
+                duration = 300
+                start()
+            }
             startActivity(Intent(this, Pag_home::class.java))
         }
+
         btnCruz.setOnClickListener {
+            val scaleX = ObjectAnimator.ofFloat(btnCruz, "scaleX", 1f, 0.8f, 1f)
+            val scaleY = ObjectAnimator.ofFloat(btnCruz, "scaleY", 1f, 0.8f, 1f)
+            AnimatorSet().apply {
+                playTogether(scaleX, scaleY)
+                duration = 300
+                start()
+            }
             startActivity(Intent(this, Mensagens_historico::class.java))
         }
 
-        // Salvar alterações
+        // ---------- BOTÃO SALVAR (200ms, 0.9) ----------
         btnSalvar.setOnClickListener {
+            val scaleX = ObjectAnimator.ofFloat(btnSalvar, "scaleX", 1f, 0.9f, 1f)
+            val scaleY = ObjectAnimator.ofFloat(btnSalvar, "scaleY", 1f, 0.9f, 1f)
+            AnimatorSet().apply {
+                playTogether(scaleX, scaleY)
+                duration = 200
+                start()
+            }
             salvarAlteracoes()
         }
 
-        // Alterar foto - usa permissões e Activity Result API
+        // ---------- ALTERAR FOTO (200ms, 0.9) ----------
         txtAlterarFoto.setOnClickListener {
+            val scaleX = ObjectAnimator.ofFloat(txtAlterarFoto, "scaleX", 1f, 0.9f, 1f)
+            val scaleY = ObjectAnimator.ofFloat(txtAlterarFoto, "scaleY", 1f, 0.9f, 1f)
+            AnimatorSet().apply {
+                playTogether(scaleX, scaleY)
+                duration = 200
+                start()
+            }
             verificarPermissaoESelecionarImagem()
         }
 
-        // Notificações
         configurarNotificacoes()
     }
 
-    /**
-     * Verifica se a permissão de leitura de imagens está concedida
-     * Android 13+ (API 33+): READ_MEDIA_IMAGES
-     * Android 6-12 (API 23-32): READ_EXTERNAL_STORAGE
-     */
     private fun verificarPermissaoESelecionarImagem() {
         val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             Manifest.permission.READ_MEDIA_IMAGES
@@ -168,11 +226,9 @@ class Configuracoes : AppCompatActivity() {
 
         when {
             ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED -> {
-                // Permissão já concedida
                 abrirSeletorImagem()
             }
             shouldShowRequestPermissionRationale(permission) -> {
-                // Explicar por que a permissão é necessária
                 Toast.makeText(
                     this,
                     "Permissão necessária para acessar suas fotos.",
@@ -181,15 +237,11 @@ class Configuracoes : AppCompatActivity() {
                 requestPermissionLauncher.launch(permission)
             }
             else -> {
-                // Solicitar permissão
                 requestPermissionLauncher.launch(permission)
             }
         }
     }
 
-    /**
-     * Abre o seletor de imagens usando Activity Result API
-     */
     private fun abrirSeletorImagem() {
         try {
             pickImageLauncher.launch("image/*")
@@ -199,14 +251,9 @@ class Configuracoes : AppCompatActivity() {
         }
     }
 
-    /**
-     * Processa a imagem selecionada: valida, redimensiona e salva
-     * Compatível com Google Drive, Google Fotos e galeria local
-     */
     private fun processarImagemSelecionada(uri: Uri) {
         Log.d(TAG, "Processando imagem: $uri")
 
-        // Mostrar loading para URIs remotas (Drive/Fotos)
         val isRemoteUri = uri.scheme == "content" &&
                 (uri.authority?.contains("com.google") == true ||
                         uri.authority?.contains("drive") == true)
@@ -216,7 +263,6 @@ class Configuracoes : AppCompatActivity() {
         }
 
         try {
-            // 1. Abrir InputStream da URI (funciona com Drive/Fotos)
             val inputStream = contentResolver.openInputStream(uri)
             if (inputStream == null) {
                 Log.e(TAG, "InputStream é nulo para URI: $uri")
@@ -228,23 +274,17 @@ class Configuracoes : AppCompatActivity() {
                 return
             }
 
-            // 2. Copiar bytes para buffer (necessário para URIs remotas)
             val bytes = inputStream.readBytes()
             inputStream.close()
 
             if (bytes.isEmpty()) {
                 Log.e(TAG, "Dados vazios da URI: $uri")
-                Toast.makeText(
-                    this,
-                    "Imagem vazia ou corrompida.",
-                    Toast.LENGTH_SHORT
-                ).show()
+                Toast.makeText(this, "Imagem vazia ou corrompida.", Toast.LENGTH_SHORT).show()
                 return
             }
 
             Log.d(TAG, "Imagem carregada: ${bytes.size} bytes")
 
-            // 3. Decodificar bytes para Bitmap
             val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
 
             if (bitmap == null) {
@@ -259,17 +299,11 @@ class Configuracoes : AppCompatActivity() {
 
             Log.d(TAG, "Bitmap decodificado: ${bitmap.width}x${bitmap.height}")
 
-            // 4. Redimensionar se necessário (evitar OOM)
             val bitmapRedimensionado = redimensionarBitmap(bitmap)
-
-            // 5. Salvar localmente
             val sucesso = salvarImagemLocal(bitmapRedimensionado)
 
             if (sucesso) {
-                // 5. Limpar cache do Glide antes de carregar nova foto
                 Glide.get(this).clearMemory()
-
-                // 6. Carregar imagem salva no ImageView
                 carregarFotoLocal()
                 btnRemoverFoto.visibility = View.VISIBLE
                 Toast.makeText(this, "Foto salva com sucesso!", Toast.LENGTH_SHORT).show()
@@ -277,7 +311,6 @@ class Configuracoes : AppCompatActivity() {
                 Toast.makeText(this, "Erro ao salvar a foto.", Toast.LENGTH_SHORT).show()
             }
 
-            // Liberar memória
             if (bitmap != bitmapRedimensionado) {
                 bitmap.recycle()
             }
@@ -295,10 +328,6 @@ class Configuracoes : AppCompatActivity() {
         }
     }
 
-    /**
-     * Redimensiona bitmap se exceder MAX_IMAGE_DIMENSION
-     * Mantém proporção de aspecto
-     */
     private fun redimensionarBitmap(bitmap: Bitmap): Bitmap {
         val width = bitmap.width
         val height = bitmap.height
@@ -320,15 +349,10 @@ class Configuracoes : AppCompatActivity() {
         return Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, true)
     }
 
-    /**
-     * Salva bitmap no diretório interno do app (filesDir)
-     * Retorna true se salvou com sucesso e arquivo não está vazio
-     */
     private fun salvarImagemLocal(bitmap: Bitmap): Boolean {
         return try {
             val file = File(filesDir, FOTO_PERFIL_FILENAME)
 
-            // Salvar bitmap como JPEG
             FileOutputStream(file).use { out ->
                 val comprimido = bitmap.compress(Bitmap.CompressFormat.JPEG, 90, out)
                 if (!comprimido) {
@@ -337,7 +361,6 @@ class Configuracoes : AppCompatActivity() {
                 }
             }
 
-            // Validar que o arquivo foi salvo corretamente
             if (!file.exists()) {
                 Log.e(TAG, "Arquivo não existe após salvar: ${file.absolutePath}")
                 return false
@@ -352,7 +375,6 @@ class Configuracoes : AppCompatActivity() {
 
             Log.d(TAG, "Foto salva com sucesso: ${file.absolutePath} (${tamanhoArquivo} bytes)")
 
-            // Persistir caminho em SharedPreferences
             val prefs = getSharedPreferences("user_prefs", MODE_PRIVATE)
             prefs.edit().putString("foto_local", file.absolutePath).apply()
 
@@ -364,10 +386,6 @@ class Configuracoes : AppCompatActivity() {
         }
     }
 
-    /**
-     * Carrega foto do armazenamento local usando Glide
-     * IMPORTANTE: Desabilita cache para permitir trocas de foto
-     */
     private fun carregarFotoLocal() {
         val prefs = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val caminhoFoto = prefs.getString("foto_local", null)
@@ -378,28 +396,22 @@ class Configuracoes : AppCompatActivity() {
                 Log.d(TAG, "Carregando foto local: $caminhoFoto")
                 Glide.with(this)
                     .load(file)
-                    .skipMemoryCache(true) // Não usar cache de memória
-                    .diskCacheStrategy(com.bumptech.glide.load.engine.DiskCacheStrategy.NONE) // Não usar cache de disco
+                    .skipMemoryCache(true)
+                    .diskCacheStrategy(com.bumptech.glide.load.engine.DiskCacheStrategy.NONE)
                     .circleCrop()
                     .into(ivUsuario)
                 btnRemoverFoto.visibility = View.VISIBLE
                 return
             } else {
                 Log.w(TAG, "Arquivo de foto não existe ou está vazio: $caminhoFoto")
-                // Limpar referência inválida
                 prefs.edit().remove("foto_local").apply()
             }
         }
 
-        // Foto padrão
         ivUsuario.setImageResource(R.drawable.usuario_grande)
         btnRemoverFoto.visibility = View.GONE
     }
 
-    /**
-     * Remove foto do armazenamento local
-     * IMPORTANTE: Limpa cache do Glide para garantir que nova foto será carregada
-     */
     private fun removerFoto() {
         val prefs = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val caminhoFoto = prefs.getString("foto_local", null)
@@ -412,23 +424,20 @@ class Configuracoes : AppCompatActivity() {
             }
         }
 
-        // Limpar SharedPreferences
         prefs.edit().remove("foto_local").apply()
 
-        // Limpar cache do Glide
         Glide.get(this).clearMemory()
         Thread {
             Glide.get(this).clearDiskCache()
         }.start()
 
-        // Resetar para imagem padrão
         ivUsuario.setImageResource(R.drawable.usuario_grande)
         btnRemoverFoto.visibility = View.GONE
         Toast.makeText(this, "Foto removida.", Toast.LENGTH_SHORT).show()
     }
 
     private fun carregarDadosUsuario() {
-        val usuario = FirebaseAuth.getInstance().currentUser
+        val usuario = auth.currentUser
         val uid = usuario?.uid
 
         if (uid != null) {
@@ -436,7 +445,6 @@ class Configuracoes : AppCompatActivity() {
                 .addOnSuccessListener { document ->
                     if (document != null && document.exists()) {
                         etUsuario.setText(document.getString("username") ?: "")
-                        // Não carrega foto do Firebase - usa apenas local
                     }
                 }
                 .addOnFailureListener { e ->
@@ -447,12 +455,11 @@ class Configuracoes : AppCompatActivity() {
     }
 
     private fun salvarAlteracoes() {
-        val usuario = FirebaseAuth.getInstance().currentUser ?: return
+        val usuario = auth.currentUser ?: return
         val novoNome = etUsuario.text.toString().trim()
         val novaSenha = etSenha.text.toString()
         val senhaAtual = etSenhaAtual.text.toString()
 
-        // Atualizar nome
         if (novoNome.isNotEmpty()) {
             db.collection("users").document(usuario.uid)
                 .update("username", novoNome)
@@ -465,7 +472,6 @@ class Configuracoes : AppCompatActivity() {
                 }
         }
 
-        // Atualizar senha
         val email = usuario.email
         if (novaSenha.isNotEmpty() && senhaAtual.isNotEmpty() && !email.isNullOrEmpty()) {
             val credential = EmailAuthProvider.getCredential(email, senhaAtual)
@@ -495,7 +501,7 @@ class Configuracoes : AppCompatActivity() {
         cbNotificacoes.setOnCheckedChangeListener { _, isChecked ->
             prefs.edit().putBoolean("receber_notificacoes", isChecked).apply()
 
-            val uid = FirebaseAuth.getInstance().currentUser?.uid
+            val uid = auth.currentUser?.uid
 
             if (isChecked) {
                 FirebaseMessaging.getInstance().subscribeToTopic("geral")
@@ -534,8 +540,7 @@ class Configuracoes : AppCompatActivity() {
         val imgPerfil = dialog.findViewById<ImageView>(R.id.imgPerfil)
         val txtPerfilNome = dialog.findViewById<TextView>(R.id.txtPerfilNome)
 
-        // Carregar nome do usuário
-        val uid = FirebaseAuth.getInstance().currentUser?.uid
+        val uid = auth.currentUser?.uid
         if (uid != null) {
             db.collection("users").document(uid).get()
                 .addOnSuccessListener { document ->
@@ -543,30 +548,26 @@ class Configuracoes : AppCompatActivity() {
                 }
         }
 
-        // Carregar foto local (mesma lógica da tela de configurações)
         val prefs = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val caminhoFoto = prefs.getString("foto_local", null)
 
         if (caminhoFoto != null) {
             val file = File(caminhoFoto)
             if (file.exists() && file.length() > 0) {
-                // Foto existe, carregar com Glide (SEM CACHE)
                 Glide.with(this)
                     .load(file)
-                    .skipMemoryCache(true) // Desabilita cache de memória
-                    .diskCacheStrategy(com.bumptech.glide.load.engine.DiskCacheStrategy.NONE) // Desabilita cache de disco
+                    .skipMemoryCache(true)
+                    .diskCacheStrategy(com.bumptech.glide.load.engine.DiskCacheStrategy.NONE)
                     .circleCrop()
-                    .placeholder(R.drawable.img_3) // Imagem temporária enquanto carrega
-                    .error(R.drawable.img_3)       // Imagem caso falhe
+                    .placeholder(R.drawable.img_3)
+                    .error(R.drawable.img_3)
                     .into(imgPerfil)
                 Log.d(TAG, "Foto carregada no menu: $caminhoFoto")
             } else {
-                // Arquivo não existe ou está vazio
                 Log.w(TAG, "Foto não encontrada no menu, usando padrão")
                 imgPerfil.setImageResource(R.drawable.img_3)
             }
         } else {
-            // Sem foto salva, usar padrão
             imgPerfil.setImageResource(R.drawable.img_3)
         }
 
@@ -574,12 +575,14 @@ class Configuracoes : AppCompatActivity() {
             startActivity(Intent(this, Pag_layouts::class.java))
             dialog.dismiss()
         }
+
         dialog.findViewById<LinearLayout>(R.id.layoutConfig).setOnClickListener {
             startActivity(Intent(this, Configuracoes::class.java))
             dialog.dismiss()
         }
+
         dialog.findViewById<LinearLayout>(R.id.layoutSair).setOnClickListener {
-            FirebaseAuth.getInstance().signOut()
+            auth.signOut()
             val intent = Intent(this, Pag_entrar::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
@@ -615,6 +618,14 @@ class Configuracoes : AppCompatActivity() {
 
     private fun setupPasswordVisibilityToggle(editText: EditText, toggleIcon: ImageView) {
         toggleIcon.setOnClickListener {
+            val scaleX = ObjectAnimator.ofFloat(toggleIcon, "scaleX", 1f, 0.9f, 1f)
+            val scaleY = ObjectAnimator.ofFloat(toggleIcon, "scaleY", 1f, 0.9f, 1f)
+            AnimatorSet().apply {
+                playTogether(scaleX, scaleY)
+                duration = 200
+                start()
+            }
+
             val selection = editText.selectionEnd
             if (editText.inputType == (InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD)) {
                 editText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD

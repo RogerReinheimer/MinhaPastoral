@@ -1,6 +1,12 @@
 package com.example.anotacao
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.app.Dialog
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -15,29 +21,23 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Path
+import java.io.File
 import java.util.Calendar
 import java.util.Random
-import com.google.firebase.firestore.FirebaseFirestore
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
-import android.content.ContentValues.TAG
-import android.content.Context
-import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
-import java.io.File
-
 
 class Pag_home : AppCompatActivity() {
 
@@ -45,8 +45,148 @@ class Pag_home : AppCompatActivity() {
     private lateinit var tvNumeroVersiculoAntigo: TextView
     private lateinit var tvTextVersiculoNovo: TextView
     private lateinit var tvNumeroVersiculoNovo: TextView
+    private lateinit var btnMenu: ImageView
+    private lateinit var btnMais: ImageView
+    private lateinit var btnCruz: ImageView
+    private lateinit var btnBiblia: ImageView
 
     private val db = FirebaseFirestore.getInstance()
+    private val auth = FirebaseAuth.getInstance()
+
+    private val retrofit = Retrofit.Builder()
+        .baseUrl("https://bolls.life/")
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+
+    private val api = retrofit.create(BibleApi::class.java)
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        super.onCreate(savedInstanceState)
+
+        // ---------- VERIFICA LOGIN ----------
+        val user = auth.currentUser
+        if (user == null) {
+            val intent = Intent(this, Pag_entrar::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+            finish()
+            return
+        } else {
+            atualizarTokenFCM(user.uid)
+        }
+
+        setContentView(R.layout.activity_pag_home)
+
+        // ---------- FINDVIEWBYID ----------
+        tvTextVersiculoAntigo = findViewById(R.id.tv_text_versiculo_antigo)
+        tvNumeroVersiculoAntigo = findViewById(R.id.tv_numero_versiculo_antigo)
+        tvTextVersiculoNovo = findViewById(R.id.tv_text_versiculo_novo)
+        tvNumeroVersiculoNovo = findViewById(R.id.tv_numero_versiculo_novo)
+        btnMenu = findViewById(R.id.btnMenu)
+        btnMais = findViewById(R.id.btnFlutuante)
+        btnCruz = findViewById(R.id.btnMensagensSemana)
+        btnBiblia = findViewById(R.id.btnMensagens)
+
+        // ---------- CABEÇÁRIOS EXPANSÍVEIS ----------
+        findViewById<View>(R.id.Cabecario_AT).setOnClickListener { alternarVisibilidade(R.id.Conteudo_AT) }
+        findViewById<View>(R.id.Cabecario_NT).setOnClickListener { alternarVisibilidade(R.id.Conteudo_NT) }
+        findViewById<View>(R.id.Cabecario_LA).setOnClickListener { alternarVisibilidade(R.id.Conteudo_LA) }
+        findViewById<View>(R.id.Cabecario_MD).setOnClickListener { alternarVisibilidade(R.id.Conteudo_MD) }
+
+        // ---------- BOTÕES DE NAVEGAÇÃO (300ms, 0.8) ----------
+        btnMenu.setOnClickListener {
+            val scaleX = ObjectAnimator.ofFloat(btnMenu, "scaleX", 1f, 0.8f, 1f)
+            val scaleY = ObjectAnimator.ofFloat(btnMenu, "scaleY", 1f, 0.8f, 1f)
+            AnimatorSet().apply {
+                playTogether(scaleX, scaleY)
+                duration = 300
+                start()
+            }
+            mostrarSheetLateral()
+        }
+
+        btnMais.setOnClickListener {
+            val scaleX = ObjectAnimator.ofFloat(btnMais, "scaleX", 1f, 0.8f, 1f)
+            val scaleY = ObjectAnimator.ofFloat(btnMais, "scaleY", 1f, 0.8f, 1f)
+            AnimatorSet().apply {
+                playTogether(scaleX, scaleY)
+                duration = 300
+                start()
+            }
+            mostrarSheetOpcoes()
+        }
+
+        btnCruz.setOnClickListener {
+            val scaleX = ObjectAnimator.ofFloat(btnCruz, "scaleX", 1f, 0.8f, 1f)
+            val scaleY = ObjectAnimator.ofFloat(btnCruz, "scaleY", 1f, 0.8f, 1f)
+            AnimatorSet().apply {
+                playTogether(scaleX, scaleY)
+                duration = 300
+                start()
+            }
+            startActivity(Intent(this, Mensagens_historico::class.java))
+        }
+
+        btnBiblia.setOnClickListener {
+            val scaleX = ObjectAnimator.ofFloat(btnBiblia, "scaleX", 1f, 0.8f, 1f)
+            val scaleY = ObjectAnimator.ofFloat(btnBiblia, "scaleY", 1f, 0.8f, 1f)
+            AnimatorSet().apply {
+                playTogether(scaleX, scaleY)
+                duration = 300
+                start()
+            }
+            startActivity(Intent(this, Mensagens::class.java))
+        }
+
+        // ---------- CARREGAR CONTEÚDO ----------
+        buscarVersiculosDoDia()
+        carregarMensagemDoDia()
+        carregarLemaDoAno()
+        monitorarNovaMensagem(user.uid)
+
+        // ---------- PERMISSÃO NOTIFICAÇÕES ----------
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS)
+                != android.content.pm.PackageManager.PERMISSION_GRANTED
+            ) {
+                requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 1001)
+            }
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == 1001) {
+            if (grantResults.isNotEmpty() && grantResults[0] == android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "Permissão concedida!", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, "Permissão negada. Notificações não funcionarão.", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun atualizarTokenFCM(uid: String) {
+        com.google.firebase.messaging.FirebaseMessaging.getInstance().token
+            .addOnSuccessListener { token ->
+                db.collection("users")
+                    .document(uid)
+                    .update("fcmToken", token)
+                    .addOnSuccessListener {
+                        Log.d("Pag_home", "Token FCM atualizado com sucesso")
+                    }
+                    .addOnFailureListener { e ->
+                        Log.e("Pag_home", "Erro ao atualizar token FCM: ${e.message}")
+                    }
+            }
+            .addOnFailureListener { e ->
+                Log.e("Pag_home", "Falha ao pegar token FCM: ${e.message}")
+            }
+    }
 
     private fun enviarNotificacao(title: String, body: String) {
         val channelId = "canal_geral"
@@ -59,15 +199,14 @@ class Pag_home : AppCompatActivity() {
             val channel = NotificationChannel(channelId, name, importance).apply {
                 description = descriptionText
             }
-            val notificationManager: NotificationManager =
-                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
         }
 
         val intent = Intent(this, Pag_home::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
-        val pendingIntent: PendingIntent = PendingIntent.getActivity(
+        val pendingIntent = PendingIntent.getActivity(
             this, 0, intent,
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
@@ -85,102 +224,7 @@ class Pag_home : AppCompatActivity() {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        super.onCreate(savedInstanceState)
-
-        // VERIFICA LOGIN
-
-        val user = FirebaseAuth.getInstance().currentUser
-        if (user == null) {
-            val intentLogin = Intent(this, Pag_entrar::class.java)
-            intentLogin.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            startActivity(intentLogin)
-            finish()
-            return
-        } else {
-            // Atualiza token FCM do usuário logado
-            atualizarTokenFCM(user.uid)
-        }
-
-
-        setContentView(R.layout.activity_pag_home)
-
-        tvTextVersiculoAntigo = findViewById(R.id.tv_text_versiculo_antigo)
-        tvNumeroVersiculoAntigo = findViewById(R.id.tv_numero_versiculo_antigo)
-        tvTextVersiculoNovo = findViewById(R.id.tv_text_versiculo_novo)
-        tvNumeroVersiculoNovo = findViewById(R.id.tv_numero_versiculo_novo)
-
-        findViewById<View>(R.id.Cabecario_AT).setOnClickListener { alternarVisibilidade(R.id.Conteudo_AT) }
-        findViewById<View>(R.id.Cabecario_NT).setOnClickListener { alternarVisibilidade(R.id.Conteudo_NT) }
-        findViewById<View>(R.id.Cabecario_LA).setOnClickListener { alternarVisibilidade(R.id.Conteudo_LA) }
-        findViewById<View>(R.id.Cabecario_MD).setOnClickListener { alternarVisibilidade(R.id.Conteudo_MD) }
-
-        val btnMenu = findViewById<ImageView>(R.id.btnMenu)
-        val btnMais = findViewById<ImageView>(R.id.btnFlutuante)
-        val btnCruz = findViewById<ImageView>(R.id.btnMensagensSemana)
-        val btnBiblia = findViewById<ImageView>(R.id.btnMensagens)
-
-        btnMenu.setOnClickListener { mostrarSheetLateral() }
-        btnMais.setOnClickListener { mostrarSheetOpcoes() }
-        btnCruz.setOnClickListener { startActivity(Intent(this, Mensagens_historico::class.java)) }
-        btnBiblia.setOnClickListener { startActivity(Intent(this, Mensagens::class.java)) }
-
-        buscarVersiculosDoDia()
-        carregarMensagemDoDia()
-        carregarLemaDoAno()
-        monitorarNovaMensagem(user.uid)
-
-        // PERMISSÃO PARA NOTIFICAÇÃO (SEM ENVIO DE TESTE)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS)
-                != android.content.pm.PackageManager.PERMISSION_GRANTED
-            ) {
-                requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 1001)
-            }
-        }
-    }
-
-
-    private fun atualizarTokenFCM(uid: String) {
-        com.google.firebase.messaging.FirebaseMessaging.getInstance().token
-            .addOnSuccessListener { token ->
-                val db = FirebaseFirestore.getInstance()
-                db.collection("users")
-                    .document(uid)
-                    .update("fcmToken", token)
-                    .addOnSuccessListener {
-                        Log.d("Pag_home", "Token FCM atualizado com sucesso")
-                    }
-                    .addOnFailureListener { e ->
-                        Log.e("Pag_home", "Erro ao atualizar token FCM: ${e.message}")
-                    }
-            }
-            .addOnFailureListener { e ->
-                Log.e("Pag_home", "Falha ao pegar token FCM: ${e.message}")
-            }
-    }
-
-
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == 1001) {
-            if (grantResults.isNotEmpty() && grantResults[0] == android.content.pm.PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "Permissão concedida!", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(this, "Permissão negada. Notificações não funcionarão.", Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
-
-
     private fun monitorarNovaMensagem(uid: String) {
-        val db = FirebaseFirestore.getInstance()
         db.collection("mensagemDoDia")
             .document("atual")
             .addSnapshotListener { snapshot, e ->
@@ -192,24 +236,16 @@ class Pag_home : AppCompatActivity() {
                 if (snapshot != null && snapshot.exists()) {
                     val titulo = snapshot.getString("titulo") ?: "Nova mensagem"
                     val texto = snapshot.getString("texto") ?: ""
-
-                    // Envia notificação sempre que houver atualização
                     enviarNotificacao(titulo, texto)
                 }
             }
     }
-
-
-
-
-
 
     private fun alternarVisibilidade(id: Int) {
         val view = findViewById<View>(id)
         view.visibility = if (view.visibility == View.VISIBLE) View.GONE else View.VISIBLE
     }
 
-    // ----------- MENU LATERAL -------------
     private fun mostrarSheetLateral() {
         val dialog = Dialog(this)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -227,8 +263,7 @@ class Pag_home : AppCompatActivity() {
         val imgPerfil = dialog.findViewById<ImageView>(R.id.imgPerfil)
         val txtPerfilNome = dialog.findViewById<TextView>(R.id.txtPerfilNome)
 
-        // Carregar nome do usuário
-        val uid = FirebaseAuth.getInstance().currentUser?.uid
+        val uid = auth.currentUser?.uid
         if (uid != null) {
             db.collection("users").document(uid).get()
                 .addOnSuccessListener { document ->
@@ -236,30 +271,26 @@ class Pag_home : AppCompatActivity() {
                 }
         }
 
-        // Carregar foto local (mesma lógica da tela de configurações)
         val prefs = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val caminhoFoto = prefs.getString("foto_local", null)
 
         if (caminhoFoto != null) {
             val file = File(caminhoFoto)
             if (file.exists() && file.length() > 0) {
-                // Foto existe, carregar com Glide (SEM CACHE)
                 Glide.with(this)
                     .load(file)
-                    .skipMemoryCache(true) // Desabilita cache de memória
-                    .diskCacheStrategy(com.bumptech.glide.load.engine.DiskCacheStrategy.NONE) // Desabilita cache de disco
+                    .skipMemoryCache(true)
+                    .diskCacheStrategy(com.bumptech.glide.load.engine.DiskCacheStrategy.NONE)
                     .circleCrop()
-                    .placeholder(R.drawable.img_3) // Imagem temporária enquanto carrega
-                    .error(R.drawable.img_3)       // Imagem caso falhe
+                    .placeholder(R.drawable.img_3)
+                    .error(R.drawable.img_3)
                     .into(imgPerfil)
-                Log.d(TAG, "Foto carregada no menu: $caminhoFoto")
+                Log.d("Pag_home", "Foto carregada no menu: $caminhoFoto")
             } else {
-                // Arquivo não existe ou está vazio
-                Log.w(TAG, "Foto não encontrada no menu, usando padrão")
+                Log.w("Pag_home", "Foto não encontrada no menu, usando padrão")
                 imgPerfil.setImageResource(R.drawable.img_3)
             }
         } else {
-            // Sem foto salva, usar padrão
             imgPerfil.setImageResource(R.drawable.img_3)
         }
 
@@ -267,12 +298,14 @@ class Pag_home : AppCompatActivity() {
             startActivity(Intent(this, Pag_layouts::class.java))
             dialog.dismiss()
         }
+
         dialog.findViewById<LinearLayout>(R.id.layoutConfig).setOnClickListener {
             startActivity(Intent(this, Configuracoes::class.java))
             dialog.dismiss()
         }
+
         dialog.findViewById<LinearLayout>(R.id.layoutSair).setOnClickListener {
-            FirebaseAuth.getInstance().signOut()
+            auth.signOut()
             val intent = Intent(this, Pag_entrar::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
@@ -283,67 +316,27 @@ class Pag_home : AppCompatActivity() {
         dialog.show()
     }
 
-
-
     private fun mostrarSheetOpcoes() {
         val bottomSheetDialog = BottomSheetDialog(this)
         val view = layoutInflater.inflate(R.layout.bottom_sheet_opcoes, null)
-        val opcaoAnotacao = view.findViewById<TextView>(R.id.opcaoAnotacao)
-        val opcaoLema = view.findViewById<TextView>(R.id.opcaoLema)
-        val opcaoMensagem = view.findViewById<TextView>(R.id.opcaoMensagem)
-        opcaoAnotacao.setOnClickListener {
+
+        view.findViewById<TextView>(R.id.opcaoAnotacao)?.setOnClickListener {
             startActivity(Intent(this, MainAnotacao::class.java))
             bottomSheetDialog.dismiss()
         }
-        opcaoLema.setOnClickListener {
+
+        view.findViewById<TextView>(R.id.opcaoLema)?.setOnClickListener {
             startActivity(Intent(this, PredefinicaoLema::class.java))
             bottomSheetDialog.dismiss()
         }
-        opcaoMensagem.setOnClickListener {
+
+        view.findViewById<TextView>(R.id.opcaoMensagem)?.setOnClickListener {
             startActivity(Intent(this, PredefinicaoMsg::class.java))
             bottomSheetDialog.dismiss()
         }
+
         bottomSheetDialog.setContentView(view)
         bottomSheetDialog.show()
-    }
-
-
-    data class ApiVerse(val pk: Int, val verse: Int, val text: String)
-
-    data class DisplayVerse(val bookName: String, val chapter: Int, val verse: Int, val text: String)
-
-    interface BibleApi {
-        @GET("get-text/NVT/{bookId}/{chapter}/")
-        suspend fun getChapter(
-            @Path("bookId") bookId: Int,
-            @Path("chapter") chapter: Int
-        ): List<ApiVerse>
-    }
-
-    private val retrofit = Retrofit.Builder()
-        .baseUrl("https://bolls.life/")
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-
-    private val api = retrofit.create(BibleApi::class.java)
-
-    private fun buscarVersiculosDoDia() {
-        lifecycleScope.launch {
-            try {
-                val antigoJob = async { getVersiculoDoDiaParaTestamento("AT") }
-                val novoJob = async { getVersiculoDoDiaParaTestamento("NT") }
-
-                val antigo = antigoJob.await()
-                val novo = novoJob.await()
-
-                antigo?.let { preencherCardAntigoTestamento(it) }
-                novo?.let { preencherCardNovoTestamento(it) }
-
-            } catch (e: Exception) {
-                Log.e("Pag_home", "Erro ao buscar versículos do dia: ${e.message}")
-                Toast.makeText(this@Pag_home, "Falha ao carregar versículos.", Toast.LENGTH_LONG).show()
-            }
-        }
     }
 
     private fun carregarLemaDoAno() {
@@ -405,7 +398,24 @@ class Pag_home : AppCompatActivity() {
             }
     }
 
+    private fun buscarVersiculosDoDia() {
+        lifecycleScope.launch {
+            try {
+                val antigoJob = async { getVersiculoDoDiaParaTestamento("AT") }
+                val novoJob = async { getVersiculoDoDiaParaTestamento("NT") }
 
+                val antigo = antigoJob.await()
+                val novo = novoJob.await()
+
+                antigo?.let { preencherCardAntigoTestamento(it) }
+                novo?.let { preencherCardNovoTestamento(it) }
+
+            } catch (e: Exception) {
+                Log.e("Pag_home", "Erro ao buscar versículos do dia: ${e.message}")
+                Toast.makeText(this@Pag_home, "Falha ao carregar versículos.", Toast.LENGTH_LONG).show()
+            }
+        }
+    }
 
     private suspend fun getVersiculoDoDiaParaTestamento(testamento: String): DisplayVerse? {
         return try {
@@ -414,11 +424,10 @@ class Pag_home : AppCompatActivity() {
             val seed = (ano * 1000 + diaDoAno).toLong()
             val random = Random(seed)
 
-            val bookId: Int
-            if (testamento == "AT") {
-                bookId = random.nextInt(39) + 1
+            val bookId = if (testamento == "AT") {
+                random.nextInt(39) + 1
             } else {
-                bookId = random.nextInt(27) + 40
+                random.nextInt(27) + 40
             }
 
             val infoLivro = BibleData.mapBookIdToData[bookId] ?: return null
@@ -426,7 +435,6 @@ class Pag_home : AppCompatActivity() {
 
             val capituloDaApi = api.getChapter(bookId, chapter)
             val primeiroVersiculo = capituloDaApi.firstOrNull() ?: return null
-
 
             DisplayVerse(
                 bookName = infoLivro.name,
@@ -450,5 +458,18 @@ class Pag_home : AppCompatActivity() {
         val textoLimpo = Html.fromHtml(versiculo.text, Html.FROM_HTML_MODE_LEGACY).toString()
         tvTextVersiculoNovo.text = "\"$textoLimpo\""
         tvNumeroVersiculoNovo.text = "${versiculo.bookName} ${versiculo.chapter}:${versiculo.verse}"
+    }
+
+    // ---------- DATA CLASSES E INTERFACE ----------
+    data class ApiVerse(val pk: Int, val verse: Int, val text: String)
+
+    data class DisplayVerse(val bookName: String, val chapter: Int, val verse: Int, val text: String)
+
+    interface BibleApi {
+        @GET("get-text/NVT/{bookId}/{chapter}/")
+        suspend fun getChapter(
+            @Path("bookId") bookId: Int,
+            @Path("chapter") chapter: Int
+        ): List<ApiVerse>
     }
 }

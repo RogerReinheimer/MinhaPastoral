@@ -1,10 +1,10 @@
 package com.example.anotacao
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.app.Dialog
-import android.content.ContentValues.TAG
-import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import android.content.Intent
+import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -16,6 +16,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -24,41 +25,77 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import java.io.File
 
-
 class Mensagens : AppCompatActivity() {
 
+    private lateinit var btnHome: ImageView
+    private lateinit var btnCruz: ImageView
+    private lateinit var btnMais: ImageView
+    private lateinit var btnMenu: ImageView
+
+    private val db = FirebaseFirestore.getInstance()
+    private val auth = FirebaseAuth.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_mensagens)
 
-        val btnHome = findViewById<ImageView>(R.id.btnPagHome1)
-        val btnCruz = findViewById<ImageView>(R.id.btnMensagensSemana1)
+        // ---------- FINDVIEWBYID ----------
+        btnHome = findViewById(R.id.btnPagHome1)
+        btnCruz = findViewById(R.id.btnMensagensSemana1)
+        btnMais = findViewById(R.id.btnFlutuante)
+        btnMenu = findViewById(R.id.btnMenu)
 
+        // ---------- BOTÕES DE NAVEGAÇÃO (300ms, 0.8) ----------
         btnHome.setOnClickListener {
-            val intent = Intent(this, Pag_home::class.java)
-            startActivity(intent)
+            val scaleX = ObjectAnimator.ofFloat(btnHome, "scaleX", 1f, 0.8f, 1f)
+            val scaleY = ObjectAnimator.ofFloat(btnHome, "scaleY", 1f, 0.8f, 1f)
+            AnimatorSet().apply {
+                playTogether(scaleX, scaleY)
+                duration = 300
+                start()
+            }
+            startActivity(Intent(this, Pag_home::class.java))
         }
 
         btnCruz.setOnClickListener {
-            val intent = Intent(this, Mensagens_historico::class.java)
-            startActivity(intent)
+            val scaleX = ObjectAnimator.ofFloat(btnCruz, "scaleX", 1f, 0.8f, 1f)
+            val scaleY = ObjectAnimator.ofFloat(btnCruz, "scaleY", 1f, 0.8f, 1f)
+            AnimatorSet().apply {
+                playTogether(scaleX, scaleY)
+                duration = 300
+                start()
+            }
+            startActivity(Intent(this, Mensagens_historico::class.java))
         }
 
-        //botao mais
-
-        val btnMais = findViewById<ImageView>(R.id.btnFlutuante)
         btnMais.setOnClickListener {
+            val scaleX = ObjectAnimator.ofFloat(btnMais, "scaleX", 1f, 0.8f, 1f)
+            val scaleY = ObjectAnimator.ofFloat(btnMais, "scaleY", 1f, 0.8f, 1f)
+            AnimatorSet().apply {
+                playTogether(scaleX, scaleY)
+                duration = 300
+                start()
+            }
             mostrarSheetOpcoes()
         }
 
-        val btnMenu = findViewById<ImageView>(R.id.btnMenu)
         btnMenu.setOnClickListener {
+            val scaleX = ObjectAnimator.ofFloat(btnMenu, "scaleX", 1f, 0.8f, 1f)
+            val scaleY = ObjectAnimator.ofFloat(btnMenu, "scaleY", 1f, 0.8f, 1f)
+            AnimatorSet().apply {
+                playTogether(scaleX, scaleY)
+                duration = 300
+                start()
+            }
             mostrarSheetLateral()
         }
 
-        val db = FirebaseFirestore.getInstance()
+        // ---------- CARREGAR MENSAGENS ----------
+        carregarMensagensAdmin()
+    }
+
+    private fun carregarMensagensAdmin() {
         val containerHistorico = findViewById<LinearLayout>(R.id.container_historico)
         val inflater = LayoutInflater.from(this)
 
@@ -83,53 +120,58 @@ class Mensagens : AppCompatActivity() {
                     tvData.text = data
                     tvConteudo.text = texto
 
-                    // Expande/colapsa o texto
                     card.setOnClickListener {
                         tvConteudo.visibility =
                             if (tvConteudo.visibility == View.VISIBLE) View.GONE else View.VISIBLE
                     }
 
-                    // Excluir de todas as coleções
+                    // ---------- BOTÃO EXCLUIR (200ms, 0.9) ----------
                     btnExcluir.setOnClickListener {
-                        val batch = db.batch()
-
-                        val adminRef = db.collection("mensagensAdmin").document(doc.id)
-                        batch.delete(adminRef)
-
-                        db.collection("mensagensPostadas")
-                            .whereEqualTo("titulo", titulo)
-                            .whereEqualTo("data", data)
-                            .get()
-                            .addOnSuccessListener { result ->
-                                for (r in result) {
-                                    batch.delete(r.reference)
-                                }
-
-                                db.collection("mensagemDoDia").document("atual").get()
-                                    .addOnSuccessListener { atual ->
-                                        val atualTitulo = atual.getString("titulo")
-                                        if (atualTitulo == titulo) {
-                                            batch.delete(db.collection("mensagemDoDia").document("atual"))
-                                        }
-
-                                        batch.commit().addOnSuccessListener {
-                                            Toast.makeText(this, "Mensagem removida de todas as áreas.", Toast.LENGTH_SHORT).show()
-                                        }.addOnFailureListener {
-                                            Toast.makeText(this, "Erro ao excluir mensagem.", Toast.LENGTH_SHORT).show()
-                                        }
-                                    }
-                            }
+                        val scaleX = ObjectAnimator.ofFloat(btnExcluir, "scaleX", 1f, 0.9f, 1f)
+                        val scaleY = ObjectAnimator.ofFloat(btnExcluir, "scaleY", 1f, 0.9f, 1f)
+                        AnimatorSet().apply {
+                            playTogether(scaleX, scaleY)
+                            duration = 200
+                            start()
+                        }
+                        excluirMensagem(doc.id, titulo, data)
                     }
 
                     containerHistorico.addView(card)
                 }
             }
+    }
 
+    private fun excluirMensagem(docId: String, titulo: String, data: String) {
+        val batch = db.batch()
 
-    }//oncreate
+        val adminRef = db.collection("mensagensAdmin").document(docId)
+        batch.delete(adminRef)
 
-    // ----------- MENU LATERAL -------------
-    private val db = FirebaseFirestore.getInstance() // Certifique-se que está no início da classe
+        db.collection("mensagensPostadas")
+            .whereEqualTo("titulo", titulo)
+            .whereEqualTo("data", data)
+            .get()
+            .addOnSuccessListener { result ->
+                for (r in result) {
+                    batch.delete(r.reference)
+                }
+
+                db.collection("mensagemDoDia").document("atual").get()
+                    .addOnSuccessListener { atual ->
+                        val atualTitulo = atual.getString("titulo")
+                        if (atualTitulo == titulo) {
+                            batch.delete(db.collection("mensagemDoDia").document("atual"))
+                        }
+
+                        batch.commit().addOnSuccessListener {
+                            Toast.makeText(this, "Mensagem removida de todas as áreas.", Toast.LENGTH_SHORT).show()
+                        }.addOnFailureListener {
+                            Toast.makeText(this, "Erro ao excluir mensagem.", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+            }
+    }
 
     private fun mostrarSheetLateral() {
         val dialog = Dialog(this)
@@ -148,8 +190,7 @@ class Mensagens : AppCompatActivity() {
         val imgPerfil = dialog.findViewById<ImageView>(R.id.imgPerfil)
         val txtPerfilNome = dialog.findViewById<TextView>(R.id.txtPerfilNome)
 
-        // Carregar nome do usuário
-        val uid = FirebaseAuth.getInstance().currentUser?.uid
+        val uid = auth.currentUser?.uid
         if (uid != null) {
             db.collection("users").document(uid).get()
                 .addOnSuccessListener { document ->
@@ -157,14 +198,12 @@ class Mensagens : AppCompatActivity() {
                 }
         }
 
-        // Carregar foto local (mesma lógica da tela de configurações)
         val prefs = getSharedPreferences("user_prefs", MODE_PRIVATE)
         val caminhoFoto = prefs.getString("foto_local", null)
 
         if (caminhoFoto != null) {
             val file = File(caminhoFoto)
             if (file.exists() && file.length() > 0) {
-                // Foto existe, carregar com Glide (SEM CACHE)
                 Glide.with(this)
                     .load(file)
                     .skipMemoryCache(true)
@@ -186,12 +225,14 @@ class Mensagens : AppCompatActivity() {
             startActivity(Intent(this, Pag_layouts::class.java))
             dialog.dismiss()
         }
+
         dialog.findViewById<LinearLayout>(R.id.layoutConfig).setOnClickListener {
             startActivity(Intent(this, Configuracoes::class.java))
             dialog.dismiss()
         }
+
         dialog.findViewById<LinearLayout>(R.id.layoutSair).setOnClickListener {
-            FirebaseAuth.getInstance().signOut()
+            auth.signOut()
             val intent = Intent(this, Pag_entrar::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
@@ -202,42 +243,26 @@ class Mensagens : AppCompatActivity() {
         dialog.show()
     }
 
-
-    //função opções
     private fun mostrarSheetOpcoes() {
         val bottomSheetDialog = BottomSheetDialog(this)
         val view = layoutInflater.inflate(R.layout.bottom_sheet_opcoes, null)
 
-        val opcaoAnotacao = view.findViewById<TextView>(R.id.opcaoAnotacao)
-        val opcaoLema = view.findViewById<TextView>(R.id.opcaoLema)
-        val opcaoMensagem = view.findViewById<TextView>(R.id.opcaoMensagem)
-
-        opcaoAnotacao.setOnClickListener {
-            //redirecionar
-            val intent = Intent(this, MainAnotacao::class.java)
-            startActivity(intent)
-            // ação para Adicionar Anotação
+        view.findViewById<TextView>(R.id.opcaoAnotacao)?.setOnClickListener {
+            startActivity(Intent(this, MainAnotacao::class.java))
             bottomSheetDialog.dismiss()
         }
 
-        opcaoLema.setOnClickListener {
-            //redirecionar
-            val intent = Intent(this, PredefinicaoLema::class.java)
-            startActivity(intent)
-            // ação para Adicionar Lema
+        view.findViewById<TextView>(R.id.opcaoLema)?.setOnClickListener {
+            startActivity(Intent(this, PredefinicaoLema::class.java))
             bottomSheetDialog.dismiss()
         }
 
-        opcaoMensagem.setOnClickListener {
-            //redirecionar
-            val intent = Intent(this, PredefinicaoMsg::class.java)
-            startActivity(intent)
-            // ação para Adicionar Mensagem
+        view.findViewById<TextView>(R.id.opcaoMensagem)?.setOnClickListener {
+            startActivity(Intent(this, PredefinicaoMsg::class.java))
             bottomSheetDialog.dismiss()
         }
 
         bottomSheetDialog.setContentView(view)
         bottomSheetDialog.show()
     }
-
-}//fim da class
+}
