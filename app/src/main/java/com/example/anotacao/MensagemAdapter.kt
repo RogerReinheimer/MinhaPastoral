@@ -8,8 +8,10 @@ import androidx.recyclerview.widget.RecyclerView
 
 data class Mensagem(val titulo: String, val data: String, val texto: String)
 
-class MensagemAdapter (private val listaMensagens: List<Mensagem>) :
-    RecyclerView.Adapter<MensagemAdapter.MensagemViewHolder>() {
+class MensagemAdapter(
+    private val listaMensagens: List<Mensagem>,
+    private val isAdmin: Boolean
+) : RecyclerView.Adapter<MensagemAdapter.MensagemViewHolder>() {
 
     class MensagemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val txtTitulo: TextView = itemView.findViewById(R.id.tv_titulo_layout_salvo)
@@ -18,8 +20,9 @@ class MensagemAdapter (private val listaMensagens: List<Mensagem>) :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MensagemViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.card_mensagem_salva, parent, false)
+        // ADM vê o card com ações (excluir/editar); usuário comum vê o card simples
+        val layoutId = if (isAdmin) R.layout.card_mensagem_excluir else R.layout.card_mensagem_salva
+        val view = LayoutInflater.from(parent.context).inflate(layoutId, parent, false)
         return MensagemViewHolder(view)
     }
 
@@ -31,5 +34,4 @@ class MensagemAdapter (private val listaMensagens: List<Mensagem>) :
     }
 
     override fun getItemCount(): Int = listaMensagens.size
-
 }

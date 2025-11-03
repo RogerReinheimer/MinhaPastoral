@@ -11,8 +11,10 @@ data class Anotacao(
     val texto: String
 )
 
-class AnotacaoAdapter(private val listaAnotacoes: List<Anotacao>) :
-    RecyclerView.Adapter<AnotacaoAdapter.AnotacaoViewHolder>() {
+class AnotacaoAdapter(
+    private val listaAnotacoes: List<Anotacao>,
+    private val isAdmin: Boolean
+) : RecyclerView.Adapter<AnotacaoAdapter.AnotacaoViewHolder>() {
 
     class AnotacaoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val txtTitulo: TextView = itemView.findViewById(R.id.tv_titulo_layout_salvo)
@@ -20,8 +22,9 @@ class AnotacaoAdapter(private val listaAnotacoes: List<Anotacao>) :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AnotacaoViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.card_mensagem_salva, parent, false)
+        // Admin vê card com ações; comum vê card simples
+        val layoutId = if (isAdmin) R.layout.card_mensagem_excluir else R.layout.card_mensagem_salva
+        val view = LayoutInflater.from(parent.context).inflate(layoutId, parent, false)
         return AnotacaoViewHolder(view)
     }
 
@@ -30,10 +33,8 @@ class AnotacaoAdapter(private val listaAnotacoes: List<Anotacao>) :
         holder.txtTitulo.text = anotacao.titulo
         holder.txtTexto.text = anotacao.texto
 
-        // começa oculto
+        // começa oculto e expande no clique
         holder.txtTexto.visibility = View.GONE
-
-        // clica no card pra expandir/recolher o texto
         holder.itemView.setOnClickListener {
             holder.txtTexto.visibility =
                 if (holder.txtTexto.visibility == View.VISIBLE) View.GONE else View.VISIBLE

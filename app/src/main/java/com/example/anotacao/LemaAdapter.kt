@@ -8,8 +8,10 @@ import androidx.recyclerview.widget.RecyclerView
 
 data class Lema(val titulo: String, val data: String, val texto: String)
 
-class LemaAdapter(private val listaLemas: List<Lema>) :
-    RecyclerView.Adapter<LemaAdapter.LemaViewHolder>() {
+class LemaAdapter(
+    private val listaLemas: List<Lema>,
+    private val isAdmin: Boolean
+) : RecyclerView.Adapter<LemaAdapter.LemaViewHolder>() {
 
     class LemaViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val txtTitulo: TextView = itemView.findViewById(R.id.tv_titulo_layout_salvo)
@@ -18,8 +20,9 @@ class LemaAdapter(private val listaLemas: List<Lema>) :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LemaViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.card_mensagem_salva, parent, false)
+        // Admin vê card com ações; comum vê card simples
+        val layoutId = if (isAdmin) R.layout.card_mensagem_excluir else R.layout.card_mensagem_salva
+        val view = LayoutInflater.from(parent.context).inflate(layoutId, parent, false)
         return LemaViewHolder(view)
     }
 

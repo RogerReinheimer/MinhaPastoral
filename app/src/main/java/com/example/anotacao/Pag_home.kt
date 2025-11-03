@@ -472,4 +472,20 @@ class Pag_home : AppCompatActivity() {
             @Path("chapter") chapter: Int
         ): List<ApiVerse>
     }
+
+    // >>>>>>> MOVIDO PARA DENTRO DA CLASSE <<<<<<<
+    override fun onStart() {
+        super.onStart()
+        val user = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser
+        if (user != null) {
+            lifecycleScope.launch {
+                try {
+                    com.example.anotacao.core.SessionAuth.refreshClaims()
+                    android.util.Log.d("Pag_home", "Claims atualizados com sucesso.")
+                } catch (e: Exception) {
+                    android.util.Log.e("Pag_home", "Erro ao atualizar claims", e)
+                }
+            }
+        }
+    }
 }

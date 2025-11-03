@@ -18,10 +18,14 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.AppCompatButton
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
+import com.example.anotacao.core.SessionAuth
+import com.example.anotacao.core.AdminGate
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.launch
 import java.io.File
 import java.util.Calendar
 
@@ -44,6 +48,9 @@ class PredefinicaoLema : AppCompatActivity() {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_predefinicao_lema)
+
+        // 🔒 Tela exclusiva de admin
+        AdminGate.requireAdmin(this)
 
         // ---------- FINDVIEWBYID ----------
         btnBiblia = findViewById(R.id.btnMensagens5)
@@ -74,7 +81,7 @@ class PredefinicaoLema : AppCompatActivity() {
             datePickerDialog.show()
         }
 
-        // ---------- BOTÃO SALVAR (200ms, 0.9) ----------
+        // ---------- BOTÃO SALVAR ----------
         btnSalvar.setOnClickListener {
             val scaleX = ObjectAnimator.ofFloat(btnSalvar, "scaleX", 1f, 0.9f, 1f)
             val scaleY = ObjectAnimator.ofFloat(btnSalvar, "scaleY", 1f, 0.9f, 1f)
@@ -86,7 +93,7 @@ class PredefinicaoLema : AppCompatActivity() {
             salvarLema()
         }
 
-        // ---------- BOTÕES DE NAVEGAÇÃO (300ms, 0.8) ----------
+        // ---------- BOTÕES DE NAVEGAÇÃO ----------
         btnMenu.setOnClickListener {
             val scaleX = ObjectAnimator.ofFloat(btnMenu, "scaleX", 1f, 0.8f, 1f)
             val scaleY = ObjectAnimator.ofFloat(btnMenu, "scaleY", 1f, 0.8f, 1f)
@@ -98,6 +105,7 @@ class PredefinicaoLema : AppCompatActivity() {
             mostrarSheetLateral()
         }
 
+        // ✅ Gate no botão “+”
         btnMais.setOnClickListener {
             val scaleX = ObjectAnimator.ofFloat(btnMais, "scaleX", 1f, 0.8f, 1f)
             val scaleY = ObjectAnimator.ofFloat(btnMais, "scaleY", 1f, 0.8f, 1f)
@@ -106,7 +114,19 @@ class PredefinicaoLema : AppCompatActivity() {
                 duration = 300
                 start()
             }
-            mostrarSheetOpcoes()
+
+            lifecycleScope.launch {
+                val isAdmin = SessionAuth.isAdminFlow.value ?: false
+                if (!isAdmin) {
+                    Toast.makeText(
+                        this@PredefinicaoLema,
+                        "Somente administrador pode acessar estas opções.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    return@launch
+                }
+                mostrarSheetOpcoes()
+            }
         }
 
         btnBiblia.setOnClickListener {
@@ -183,6 +203,7 @@ class PredefinicaoLema : AppCompatActivity() {
             }
     }
 
+    // --- Sheet lateral (sem mudanças de regra) ---
     private fun mostrarSheetLateral() {
         val dialog = Dialog(this)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)

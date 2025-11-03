@@ -10,10 +10,13 @@ import android.util.Log
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.lifecycle.lifecycleScope
+import com.example.anotacao.core.SessionAuth
 import com.example.anotacao.ui.login.Pag_Cadastro
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.messaging.FirebaseMessaging
+import kotlinx.coroutines.launch
 
 class Pag_entrar : AppCompatActivity() {
 
@@ -52,7 +55,7 @@ class Pag_entrar : AppCompatActivity() {
         btnEntrar = findViewById(R.id.btnEntrar)
         btnMostrarSenha = findViewById(R.id.btnMostrarSenha)
 
-        // ---------- BOTÕES DE NAVEGAÇÃO (300ms, 0.8) ----------
+        // ---------- BOTÕES DE NAVEGAÇÃO ----------
         txtCadastrar.setOnClickListener {
             val scaleX = ObjectAnimator.ofFloat(txtCadastrar, "scaleX", 1f, 0.8f, 1f)
             val scaleY = ObjectAnimator.ofFloat(txtCadastrar, "scaleY", 1f, 0.8f, 1f)
@@ -75,7 +78,7 @@ class Pag_entrar : AppCompatActivity() {
             startActivity(Intent(this, Pag_esqueceu_senha::class.java))
         }
 
-        // ---------- BOTÃO ENTRAR (200ms, 0.9) ----------
+        // ---------- BOTÃO ENTRAR ----------
         btnEntrar.setOnClickListener {
             val scaleX = ObjectAnimator.ofFloat(btnEntrar, "scaleX", 1f, 0.9f, 1f)
             val scaleY = ObjectAnimator.ofFloat(btnEntrar, "scaleY", 1f, 0.9f, 1f)
@@ -98,7 +101,7 @@ class Pag_entrar : AppCompatActivity() {
             realizarLoginFirebase(email, senha, btnEntrar)
         }
 
-        // ---------- BOTÃO MOSTRAR SENHA (200ms, 0.9) ----------
+        // ---------- BOTÃO MOSTRAR SENHA ----------
         btnMostrarSenha.setOnClickListener {
             val scaleX = ObjectAnimator.ofFloat(btnMostrarSenha, "scaleX", 1f, 0.9f, 1f)
             val scaleY = ObjectAnimator.ofFloat(btnMostrarSenha, "scaleY", 1f, 0.9f, 1f)
@@ -110,10 +113,12 @@ class Pag_entrar : AppCompatActivity() {
 
             senhaVisivel = !senhaVisivel
             if (senhaVisivel) {
-                etSenha.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+                etSenha.inputType =
+                    InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
                 btnMostrarSenha.setImageResource(R.drawable.ic_visibility)
             } else {
-                etSenha.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+                etSenha.inputType =
+                    InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
                 btnMostrarSenha.setImageResource(R.drawable.ic_visibility_off)
             }
             etSenha.setSelection(etSenha.text.length)
@@ -144,13 +149,20 @@ class Pag_entrar : AppCompatActivity() {
                                     Log.e("Pag_entrar", "Erro ao salvar token: ${e.message}")
                                 }
                                 .addOnCompleteListener {
-                                    startActivity(Intent(this, Pag_home::class.java))
-                                    finish()
+                                    // 🔒 Atualiza claims do admin antes de ir pra home
+                                    lifecycleScope.launch {
+                                        try { SessionAuth.refreshClaims() } catch (_: Throwable) {}
+                                        startActivity(Intent(this@Pag_entrar, Pag_home::class.java))
+                                        finish()
+                                    }
                                 }
                         }
                     } else {
-                        startActivity(Intent(this, Pag_home::class.java))
-                        finish()
+                        lifecycleScope.launch {
+                            try { SessionAuth.refreshClaims() } catch (_: Throwable) {}
+                            startActivity(Intent(this@Pag_entrar, Pag_home::class.java))
+                            finish()
+                        }
                     }
 
                 } else {

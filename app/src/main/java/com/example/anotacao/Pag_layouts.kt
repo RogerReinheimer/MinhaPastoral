@@ -18,13 +18,17 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
+import com.example.anotacao.core.SessionAuth
+import com.example.anotacao.core.AdminGate
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
+import kotlinx.coroutines.launch
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -53,6 +57,9 @@ class Pag_layouts : AppCompatActivity() {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_pag_layouts)
+
+        // 🔒 Tela exclusiva de admin
+        AdminGate.requireAdmin(this)
 
         // ---------- FINDVIEWBYID ----------
         btnMais = findViewById(R.id.btnFlutuante)
@@ -87,7 +94,7 @@ class Pag_layouts : AppCompatActivity() {
                 if (containerAnotacao.visibility == View.VISIBLE) View.GONE else View.VISIBLE
         }
 
-        // ---------- BOTÕES DE NAVEGAÇÃO (300ms, 0.8) ----------
+        // ---------- BOTÕES DE NAVEGAÇÃO ----------
         btnMenu.setOnClickListener {
             val scaleX = ObjectAnimator.ofFloat(btnMenu, "scaleX", 1f, 0.8f, 1f)
             val scaleY = ObjectAnimator.ofFloat(btnMenu, "scaleY", 1f, 0.8f, 1f)
@@ -99,6 +106,7 @@ class Pag_layouts : AppCompatActivity() {
             mostrarSheetLateral()
         }
 
+        // ✅ Gate no botão “+” (abre opções) — só admin
         btnMais.setOnClickListener {
             val scaleX = ObjectAnimator.ofFloat(btnMais, "scaleX", 1f, 0.8f, 1f)
             val scaleY = ObjectAnimator.ofFloat(btnMais, "scaleY", 1f, 0.8f, 1f)
@@ -107,7 +115,19 @@ class Pag_layouts : AppCompatActivity() {
                 duration = 300
                 start()
             }
-            mostrarSheetOpcoes()
+
+            lifecycleScope.launch {
+                val isAdmin = SessionAuth.isAdminFlow.value ?: false
+                if (!isAdmin) {
+                    Toast.makeText(
+                        this@Pag_layouts,
+                        "Somente administrador pode acessar estas opções.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    return@launch
+                }
+                mostrarSheetOpcoes()
+            }
         }
 
         btnBiblia.setOnClickListener {
@@ -176,7 +196,8 @@ class Pag_layouts : AppCompatActivity() {
                     val data = doc.getString("data") ?: "(sem data)"
                     val texto = doc.getString("texto") ?: ""
 
-                    val item = inflater.inflate(R.layout.card_mensagem_salva, containerMensagensDia, false)
+                    // 💡 admin: usar card com ações
+                    val item = inflater.inflate(R.layout.card_mensagem_excluir, containerMensagensDia, false)
                     val tvTitulo = item.findViewById<TextView>(R.id.tv_titulo_layout_salvo)
                     val tvInfo = item.findViewById<TextView>(R.id.tv_data_layout_salvo)
                     val tvConteudo = item.findViewById<TextView>(R.id.tv_conteudo_layout_salvo)
@@ -191,9 +212,9 @@ class Pag_layouts : AppCompatActivity() {
                             if (tvConteudo.visibility == View.VISIBLE) View.GONE else View.VISIBLE
                     }
 
-                    // ---------- BOTÃO EXCLUIR (200ms, 0.9) ----------
-                    val btnExcluir = item.findViewById<Button>(R.id.btn_excluir)
-                    btnExcluir.setOnClickListener {
+                    // ---------- BOTÃO EXCLUIR (opcional) ----------
+                    val btnExcluir = item.findViewById<Button?>(R.id.btn_excluir)
+                    btnExcluir?.setOnClickListener {
                         val scaleX = ObjectAnimator.ofFloat(btnExcluir, "scaleX", 1f, 0.9f, 1f)
                         val scaleY = ObjectAnimator.ofFloat(btnExcluir, "scaleY", 1f, 0.9f, 1f)
                         AnimatorSet().apply {
@@ -213,9 +234,10 @@ class Pag_layouts : AppCompatActivity() {
                             }
                     }
 
-                    // ---------- BOTÃO POSTAR (200ms, 0.9) ----------
-                    val btnPostar = item.findViewById<Button>(R.id.btn_postar)
-                    btnPostar.setOnClickListener {
+                    // ---------- BOTÃO POSTAR (opcional) ----------
+                    val idPostar = item.resources.getIdentifier("btn_postar", "id", item.context.packageName)
+                    val btnPostar = if (idPostar != 0) item.findViewById<Button>(idPostar) else null
+                    btnPostar?.setOnClickListener {
                         val scaleX = ObjectAnimator.ofFloat(btnPostar, "scaleX", 1f, 0.9f, 1f)
                         val scaleY = ObjectAnimator.ofFloat(btnPostar, "scaleY", 1f, 0.9f, 1f)
                         AnimatorSet().apply {
@@ -247,7 +269,8 @@ class Pag_layouts : AppCompatActivity() {
                     val data = doc.getString("data") ?: "(sem data)"
                     val lema = doc.getString("lema") ?: ""
 
-                    val item = inflater.inflate(R.layout.card_mensagem_salva, containerLemaAno, false)
+                    // 💡 admin: usar card com ações
+                    val item = inflater.inflate(R.layout.card_mensagem_excluir, containerLemaAno, false)
                     val tvTitulo = item.findViewById<TextView>(R.id.tv_titulo_layout_salvo)
                     val tvInfo = item.findViewById<TextView>(R.id.tv_data_layout_salvo)
                     val tvConteudo = item.findViewById<TextView>(R.id.tv_conteudo_layout_salvo)
@@ -262,9 +285,9 @@ class Pag_layouts : AppCompatActivity() {
                             if (tvConteudo.visibility == View.VISIBLE) View.GONE else View.VISIBLE
                     }
 
-                    // ---------- BOTÃO EXCLUIR (200ms, 0.9) ----------
-                    val btnExcluir = item.findViewById<Button>(R.id.btn_excluir)
-                    btnExcluir.setOnClickListener {
+                    // ---------- BOTÃO EXCLUIR (opcional) ----------
+                    val btnExcluir = item.findViewById<Button?>(R.id.btn_excluir)
+                    btnExcluir?.setOnClickListener {
                         val scaleX = ObjectAnimator.ofFloat(btnExcluir, "scaleX", 1f, 0.9f, 1f)
                         val scaleY = ObjectAnimator.ofFloat(btnExcluir, "scaleY", 1f, 0.9f, 1f)
                         AnimatorSet().apply {
@@ -284,9 +307,10 @@ class Pag_layouts : AppCompatActivity() {
                             }
                     }
 
-                    // ---------- BOTÃO POSTAR (200ms, 0.9) ----------
-                    val btnPostar = item.findViewById<Button>(R.id.btn_postar)
-                    btnPostar.setOnClickListener {
+                    // ---------- BOTÃO POSTAR (opcional) ----------
+                    val idPostar = item.resources.getIdentifier("btn_postar", "id", item.context.packageName)
+                    val btnPostar = if (idPostar != 0) item.findViewById<Button>(idPostar) else null
+                    btnPostar?.setOnClickListener {
                         val scaleX = ObjectAnimator.ofFloat(btnPostar, "scaleX", 1f, 0.9f, 1f)
                         val scaleY = ObjectAnimator.ofFloat(btnPostar, "scaleY", 1f, 0.9f, 1f)
                         AnimatorSet().apply {
@@ -347,7 +371,7 @@ class Pag_layouts : AppCompatActivity() {
                             if (tvConteudo.visibility == View.VISIBLE) View.GONE else View.VISIBLE
                     }
 
-                    // ---------- ESTRELA FAVORITO (200ms, 0.9) ----------
+                    // ---------- ESTRELA FAVORITO ----------
                     estrela.setOnClickListener {
                         val scaleX = ObjectAnimator.ofFloat(estrela, "scaleX", 1f, 0.9f, 1f)
                         val scaleY = ObjectAnimator.ofFloat(estrela, "scaleY", 1f, 0.9f, 1f)
@@ -386,7 +410,7 @@ class Pag_layouts : AppCompatActivity() {
                             if (caixaFavoritos.childCount > 0) View.VISIBLE else View.GONE
                     }
 
-                    // ---------- BOTÃO EXCLUIR (200ms, 0.9) ----------
+                    // ---------- BOTÃO EXCLUIR ----------
                     btnExcluir.setOnClickListener {
                         val scaleX = ObjectAnimator.ofFloat(btnExcluir, "scaleX", 1f, 0.9f, 1f)
                         val scaleY = ObjectAnimator.ofFloat(btnExcluir, "scaleY", 1f, 0.9f, 1f)
