@@ -197,7 +197,7 @@ class Pag_layouts : AppCompatActivity() {
                     val texto = doc.getString("texto") ?: ""
 
                     // 💡 admin: usar card com ações
-                    val item = inflater.inflate(R.layout.card_mensagem_excluir, containerMensagensDia, false)
+                    val item = inflater.inflate(R.layout.card_mensagem_salva, containerMensagensDia, false)
                     val tvTitulo = item.findViewById<TextView>(R.id.tv_titulo_layout_salvo)
                     val tvInfo = item.findViewById<TextView>(R.id.tv_data_layout_salvo)
                     val tvConteudo = item.findViewById<TextView>(R.id.tv_conteudo_layout_salvo)
@@ -270,7 +270,7 @@ class Pag_layouts : AppCompatActivity() {
                     val lema = doc.getString("lema") ?: ""
 
                     // 💡 admin: usar card com ações
-                    val item = inflater.inflate(R.layout.card_mensagem_excluir, containerLemaAno, false)
+                    val item = inflater.inflate(R.layout.card_mensagem_salva, containerLemaAno, false)
                     val tvTitulo = item.findViewById<TextView>(R.id.tv_titulo_layout_salvo)
                     val tvInfo = item.findViewById<TextView>(R.id.tv_data_layout_salvo)
                     val tvConteudo = item.findViewById<TextView>(R.id.tv_conteudo_layout_salvo)
