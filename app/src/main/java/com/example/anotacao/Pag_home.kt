@@ -56,7 +56,24 @@ class Pag_home : AppCompatActivity() {
     private val retrofit = Retrofit.Builder()
         .baseUrl("https://bolls.life/")
         .addConverterFactory(GsonConverterFactory.create())
+        .client(
+            okhttp3.OkHttpClient.Builder()
+                .addInterceptor { chain ->
+                    val request = chain.request()
+                    val response = chain.proceed(request)
+                    // Força UTF-8 na resposta
+                    val contentType = response.header("Content-Type")
+                        ?.replace("charset=iso-8859-1", "charset=utf-8")
+                        ?: "application/json; charset=utf-8"
+
+                    response.newBuilder()
+                        .header("Content-Type", contentType)
+                        .build()
+                }
+                .build()
+        )
         .build()
+
 
     private val api = retrofit.create(BibleApi::class.java)
 
@@ -225,6 +242,8 @@ class Pag_home : AppCompatActivity() {
     }
 
     private fun monitorarNovaMensagem(uid: String) {
+        var primeiraExecucao = true
+
         db.collection("mensagemDoDia")
             .document("atual")
             .addSnapshotListener { snapshot, e ->
@@ -233,13 +252,22 @@ class Pag_home : AppCompatActivity() {
                     return@addSnapshotListener
                 }
 
-                if (snapshot != null && snapshot.exists()) {
+                if (primeiraExecucao) {
+                    primeiraExecucao = false
+                    Log.d("Pag_home", "Primeira carga - não notificando")
+                    return@addSnapshotListener
+                }
+
+                if (snapshot != null && snapshot.exists() && !snapshot.metadata.hasPendingWrites()) {
                     val titulo = snapshot.getString("titulo") ?: "Nova mensagem"
                     val texto = snapshot.getString("texto") ?: ""
+
+                    Log.d("Pag_home", "Mudança detectada do servidor - enviando notificação")
                     enviarNotificacao(titulo, texto)
                 }
             }
     }
+
 
     private fun alternarVisibilidade(id: Int) {
         val view = findViewById<View>(id)
@@ -435,6 +463,8 @@ class Pag_home : AppCompatActivity() {
 
             val capituloDaApi = api.getChapter(bookId, chapter)
             val primeiroVersiculo = capituloDaApi.firstOrNull() ?: return null
+
+            Log.d("Pag_home", "Texto original da API: ${primeiroVersiculo.text}")
 
             DisplayVerse(
                 bookName = infoLivro.name,
