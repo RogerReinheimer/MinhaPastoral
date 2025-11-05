@@ -20,6 +20,14 @@ class Pag_Cadastro : AppCompatActivity() {
     private lateinit var btnCadastrar: Button
     private lateinit var txtVoltar: TextView
     private lateinit var imgVoltar: ImageView
+    private lateinit var btnMostrarSenha: ImageView
+    private lateinit var btnMostrarConfirmaSenha: ImageView
+    private lateinit var etSenha: EditText
+    private lateinit var etConfirmaSenha: EditText
+
+    private var senhaVisivel = false
+    private var confirmaSenhaVisivel = false
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
@@ -32,10 +40,12 @@ class Pag_Cadastro : AppCompatActivity() {
         txtVoltar = findViewById(R.id.txtVoltar)
         imgVoltar = findViewById(R.id.imgVoltar)
         btnCadastrar = findViewById(R.id.btnCadastrar)
+        btnMostrarSenha = findViewById(R.id.btnMostrarSenha)
+        btnMostrarConfirmaSenha = findViewById(R.id.btnMostrarConfirmaSenha)
+        etSenha = findViewById(R.id.etSenha)
+        etConfirmaSenha = findViewById(R.id.etConfirmaSenha)
         val etEmail = findViewById<EditText>(R.id.etEmail)
         val etUsuario = findViewById<EditText>(R.id.etUsuario)
-        val etSenha = findViewById<EditText>(R.id.etSenha)
-        val etConfirmaSenha = findViewById<EditText>(R.id.etConfirmaSenha)
 
         // ---------- BOTÃO VOLTAR (200ms, 0.9) ----------
         txtVoltar.setOnClickListener {
@@ -59,6 +69,50 @@ class Pag_Cadastro : AppCompatActivity() {
             }
             finish()
         }
+
+
+        // ---------- BOTÃO MOSTRAR SENHA ----------
+        btnMostrarSenha.setOnClickListener {
+            val scaleX = ObjectAnimator.ofFloat(btnMostrarSenha, "scaleX", 1f, 0.9f, 1f)
+            val scaleY = ObjectAnimator.ofFloat(btnMostrarSenha, "scaleY", 1f, 0.9f, 1f)
+            AnimatorSet().apply {
+                playTogether(scaleX, scaleY)
+                duration = 200
+                start()
+            }
+
+            senhaVisivel = !senhaVisivel
+            if (senhaVisivel) {
+                etSenha.inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+                btnMostrarSenha.setImageResource(R.drawable.ic_visibility)
+            } else {
+                etSenha.inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD
+                btnMostrarSenha.setImageResource(R.drawable.ic_visibility_off)
+            }
+            etSenha.setSelection(etSenha.text.length)
+        }
+
+// ---------- BOTÃO MOSTRAR CONFIRMAR SENHA ----------
+        btnMostrarConfirmaSenha.setOnClickListener {
+            val scaleX = ObjectAnimator.ofFloat(btnMostrarConfirmaSenha, "scaleX", 1f, 0.9f, 1f)
+            val scaleY = ObjectAnimator.ofFloat(btnMostrarConfirmaSenha, "scaleY", 1f, 0.9f, 1f)
+            AnimatorSet().apply {
+                playTogether(scaleX, scaleY)
+                duration = 200
+                start()
+            }
+
+            confirmaSenhaVisivel = !confirmaSenhaVisivel
+            if (confirmaSenhaVisivel) {
+                etConfirmaSenha.inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+                btnMostrarConfirmaSenha.setImageResource(R.drawable.ic_visibility)
+            } else {
+                etConfirmaSenha.inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD
+                btnMostrarConfirmaSenha.setImageResource(R.drawable.ic_visibility_off)
+            }
+            etConfirmaSenha.setSelection(etConfirmaSenha.text.length)
+        }
+
 
         // ---------- BOTÃO CADASTRAR (200ms, 0.9) ----------
         btnCadastrar.setOnClickListener {

@@ -183,6 +183,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_marginStart="12dp"
+            android:layout_marginEnd="40dp"
             android:background="@android:color/transparent"
             android:ems="10"
             android:hint="Senha"
@@ -191,8 +192,18 @@
             android:textColorHint="@color/corTxtSecundario"
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btnMostrarSenha"
             app:layout_constraintStart_toEndOf="@+id/imageView7"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/btnMostrarSenha"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="10dp"
+            android:src="@drawable/ic_visibility_off"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
@@ -201,11 +212,8 @@
             android:layout_height="wrap_content"
             android:text="____"
             android:visibility="gone"
-            tools:layout_editor_absoluteX="162dp"
-            tools:layout_editor_absoluteY="20dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -235,6 +243,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_marginStart="12dp"
+            android:layout_marginEnd="40dp"
             android:background="@android:color/transparent"
             android:ems="10"
             android:hint="Confirme a Senha"
@@ -243,8 +252,18 @@
             android:textColorHint="@color/corTxtSecundario"
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btnMostrarConfirmaSenha"
             app:layout_constraintStart_toEndOf="@+id/imageView8"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/btnMostrarConfirmaSenha"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="10dp"
+            android:src="@drawable/ic_visibility_off"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
@@ -253,11 +272,10 @@
             android:layout_height="wrap_content"
             android:text="____"
             android:visibility="gone"
-            tools:layout_editor_absoluteX="162dp"
-            tools:layout_editor_absoluteY="20dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnCadastrar"
