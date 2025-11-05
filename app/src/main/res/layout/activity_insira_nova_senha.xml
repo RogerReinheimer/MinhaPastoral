@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
-    tools:context=".Insira sua nova senha">
+    tools:context=".Insira_nova_senha">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/headerSection"
@@ -61,16 +61,18 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/headerSection"> <TextView
-        android:id="@+id/textView20"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
-        android:gravity="center_horizontal"
-        android:text="Insira sua nova senha"
-        android:textColor="@color/black"
-        android:textSize="28sp"
-        android:textStyle="bold" />
+        app:layout_constraintTop_toBottomOf="@+id/headerSection">
+
+        <TextView
+            android:id="@+id/textView20"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="48dp"
+            android:gravity="center_horizontal"
+            android:text="Insira sua nova senha"
+            android:textColor="@color/black"
+            android:textSize="28sp"
+            android:textStyle="bold" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -94,6 +96,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_marginStart="12dp"
+                android:layout_marginEnd="40dp"
                 android:background="@android:color/transparent"
                 android:ems="10"
                 android:hint="Senha"
@@ -102,8 +105,18 @@
                 android:textColorHint="@color/corTxtSecundario"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/btnMostrarSenha"
                 app:layout_constraintStart_toEndOf="@+id/imageView17"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/btnMostrarSenha"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="10dp"
+                android:src="@drawable/ic_visibility_off"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
@@ -124,23 +137,6 @@
             android:layout_marginTop="16dp"
             android:background="@drawable/fundo_branco">
 
-            <EditText
-                android:id="@+id/etConfirmaSenha"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginStart="12dp"
-                android:background="@android:color/transparent"
-                android:ems="10"
-                android:hint="Confirme a Senha"
-                android:inputType="textPassword"
-                android:textColor="@color/black"
-                android:textColorHint="@color/corTxtSecundario"
-                android:textSize="16sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/imageView18"
-                app:layout_constraintTop_toTopOf="parent" />
-
             <ImageView
                 android:id="@+id/imageView18"
                 android:layout_width="35dp"
@@ -151,6 +147,34 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/senhamedio"
                 app:tint="@color/corTxtSecundario" />
+
+            <EditText
+                android:id="@+id/etConfirmaSenha"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="12dp"
+                android:layout_marginEnd="40dp"
+                android:background="@android:color/transparent"
+                android:ems="10"
+                android:hint="Confirme a Senha"
+                android:inputType="textPassword"
+                android:textColor="@color/black"
+                android:textColorHint="@color/corTxtSecundario"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/btnMostrarConfirmaSenha"
+                app:layout_constraintStart_toEndOf="@+id/imageView18"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/btnMostrarConfirmaSenha"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="10dp"
+                android:src="@drawable/ic_visibility_off"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/textView22"

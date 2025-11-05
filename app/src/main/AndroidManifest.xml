@@ -42,7 +42,7 @@
             android:name=".Insira_nova_senha"
             android:exported="true"
             android:theme="@style/Theme.Anotacao">
-            <intent-filter>
+            <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />

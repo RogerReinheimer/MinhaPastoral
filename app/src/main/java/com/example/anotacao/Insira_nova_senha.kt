@@ -3,7 +3,10 @@ package com.example.anotacao
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.text.InputType
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
@@ -13,16 +16,21 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import com.google.firebase.auth.FirebaseAuth
 
+
 class Insira_nova_senha : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
     private lateinit var etSenhaNova: EditText
     private lateinit var etConfirmaSenha: EditText
+    private lateinit var btnMostrarSenha: ImageView
+    private lateinit var btnMostrarConfirmaSenha: ImageView
     private lateinit var btnEnviar: Button
     private lateinit var txtVoltar: TextView
     private lateinit var imgVoltar: ImageView
 
     private var actionCode: String? = null
+    private var senhaVisivel = false
+    private var confirmaSenhaVisivel = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
@@ -34,25 +42,76 @@ class Insira_nova_senha : AppCompatActivity() {
         // ---------- FINDVIEWBYID ----------
         etSenhaNova = findViewById(R.id.etSenhaNova)
         etConfirmaSenha = findViewById(R.id.etConfirmaSenha)
+        btnMostrarSenha = findViewById(R.id.btnMostrarSenha)
+        btnMostrarConfirmaSenha = findViewById(R.id.btnMostrarConfirmaSenha)
         btnEnviar = findViewById(R.id.btnEnviar)
         txtVoltar = findViewById(R.id.txtVoltar)
         imgVoltar = findViewById(R.id.imgVoltar)
 
-        handleIntent()
+        processarDeepLink()
         setupClickListeners()
     }
 
-    private fun handleIntent() {
+    private fun processarDeepLink() {
+        // Obter o oobCode da URL do link do e-mail
         actionCode = intent.data?.getQueryParameter("oobCode")
 
+        Log.d("Insira_nova_senha", "Código recebido: $actionCode")
+
         if (actionCode == null) {
-            Toast.makeText(this, "Link inválido ou expirado. Tente o processo novamente.", Toast.LENGTH_LONG).show()
+            Toast.makeText(
+                this,
+                "Link inválido ou expirado. Tente o processo novamente.",
+                Toast.LENGTH_LONG
+            ).show()
             finish()
         }
     }
 
     private fun setupClickListeners() {
-        // ---------- BOTÃO ENVIAR (200ms, 0.9) ----------
+        // ---------- BOTÃO MOSTRAR SENHA ----------
+        btnMostrarSenha.setOnClickListener {
+            val scaleX = ObjectAnimator.ofFloat(btnMostrarSenha, "scaleX", 1f, 0.9f, 1f)
+            val scaleY = ObjectAnimator.ofFloat(btnMostrarSenha, "scaleY", 1f, 0.9f, 1f)
+            AnimatorSet().apply {
+                playTogether(scaleX, scaleY)
+                duration = 200
+                start()
+            }
+
+            senhaVisivel = !senhaVisivel
+            if (senhaVisivel) {
+                etSenhaNova.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+                btnMostrarSenha.setImageResource(R.drawable.ic_visibility)
+            } else {
+                etSenhaNova.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+                btnMostrarSenha.setImageResource(R.drawable.ic_visibility_off)
+            }
+            etSenhaNova.setSelection(etSenhaNova.text.length)
+        }
+
+        // ---------- BOTÃO MOSTRAR CONFIRMAR SENHA ----------
+        btnMostrarConfirmaSenha.setOnClickListener {
+            val scaleX = ObjectAnimator.ofFloat(btnMostrarConfirmaSenha, "scaleX", 1f, 0.9f, 1f)
+            val scaleY = ObjectAnimator.ofFloat(btnMostrarConfirmaSenha, "scaleY", 1f, 0.9f, 1f)
+            AnimatorSet().apply {
+                playTogether(scaleX, scaleY)
+                duration = 200
+                start()
+            }
+
+            confirmaSenhaVisivel = !confirmaSenhaVisivel
+            if (confirmaSenhaVisivel) {
+                etConfirmaSenha.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+                btnMostrarConfirmaSenha.setImageResource(R.drawable.ic_visibility)
+            } else {
+                etConfirmaSenha.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+                btnMostrarConfirmaSenha.setImageResource(R.drawable.ic_visibility_off)
+            }
+            etConfirmaSenha.setSelection(etConfirmaSenha.text.length)
+        }
+
+        // ---------- BOTÃO ENVIAR ----------
         btnEnviar.setOnClickListener {
             val scaleX = ObjectAnimator.ofFloat(btnEnviar, "scaleX", 1f, 0.9f, 1f)
             val scaleY = ObjectAnimator.ofFloat(btnEnviar, "scaleY", 1f, 0.9f, 1f)
@@ -64,7 +123,7 @@ class Insira_nova_senha : AppCompatActivity() {
             handleConfirmarNovaSenha()
         }
 
-        // ---------- BOTÕES VOLTAR (200ms, 0.9) ----------
+        // ---------- BOTÕES VOLTAR ----------
         txtVoltar.setOnClickListener {
             val scaleX = ObjectAnimator.ofFloat(txtVoltar, "scaleX", 1f, 0.9f, 1f)
             val scaleY = ObjectAnimator.ofFloat(txtVoltar, "scaleY", 1f, 0.9f, 1f)

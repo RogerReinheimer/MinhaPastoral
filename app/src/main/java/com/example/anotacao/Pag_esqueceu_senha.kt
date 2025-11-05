@@ -11,6 +11,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import com.google.firebase.auth.ActionCodeSettings
 import com.google.firebase.auth.FirebaseAuth
 
 class Pag_esqueceu_senha : AppCompatActivity() {
@@ -92,6 +93,7 @@ class Pag_esqueceu_senha : AppCompatActivity() {
 
         btnEnviar.isEnabled = false
 
+        // Envio simples - Firebase automaticamente usará o intent-filter do AndroidManifest
         auth.sendPasswordResetEmail(email)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
