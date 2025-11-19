@@ -479,14 +479,28 @@ class Pag_home : AppCompatActivity() {
     }
 
     private fun preencherCardAntigoTestamento(versiculo: DisplayVerse) {
-        val textoLimpo = Html.fromHtml(versiculo.text, Html.FROM_HTML_MODE_LEGACY).toString()
-        tvTextVersiculoAntigo.text = "\"$textoLimpo\""
+        val original = Html.fromHtml(versiculo.text, Html.FROM_HTML_MODE_LEGACY).toString()
+
+        val textoLimpinho = original
+            .replace("\"", "")          // tira aspas internas
+            .replace("\\r\\n", "\n")    // normaliza quebras da API
+            .replace("\\n", "\n")
+            .trim()
+
+        tvTextVersiculoAntigo.text = textoLimpinho
         tvNumeroVersiculoAntigo.text = "${versiculo.bookName} ${versiculo.chapter}:${versiculo.verse}"
     }
 
     private fun preencherCardNovoTestamento(versiculo: DisplayVerse) {
-        val textoLimpo = Html.fromHtml(versiculo.text, Html.FROM_HTML_MODE_LEGACY).toString()
-        tvTextVersiculoNovo.text = "\"$textoLimpo\""
+        val original = Html.fromHtml(versiculo.text, Html.FROM_HTML_MODE_LEGACY).toString()
+
+        val textoLimpinho = original
+            .replace("\"", "")
+            .replace("\\r\\n", "\n")
+            .replace("\\n", "\n")
+            .trim()
+
+        tvTextVersiculoNovo.text = textoLimpinho
         tvNumeroVersiculoNovo.text = "${versiculo.bookName} ${versiculo.chapter}:${versiculo.verse}"
     }
 
