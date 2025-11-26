@@ -8,7 +8,6 @@
     android:background="@color/fundoTela"
     tools:context=".Configuracoes">
 
-    <!-- ScrollView para permitir rolagem quando o conteúdo é muito grande -->
     <androidx.core.widget.NestedScrollView
         android:id="@+id/scrollView"
         android:layout_width="match_parent"

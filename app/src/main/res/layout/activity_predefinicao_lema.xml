@@ -9,151 +9,157 @@
     android:background="@color/fundoTela"
     tools:context=".PredefinicaoLema">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintFundo"
+    <!-- SCROLLVIEW PARA IMPEDIR QUE SUBA COM O TECLADO -->
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:fillViewport="true"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/bottomBar"
-        android:padding="16dp">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <ImageView
-            android:id="@+id/imageView2"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_marginTop="24dp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:contentDescription="Logo"
-            app:srcCompat="@drawable/logo" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp">
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginTop="24dp"
-            android:layout_marginHorizontal="8dp"
-            android:background="@drawable/fundo_azul_escuro"
-            android:orientation="vertical"
-            android:padding="16dp"
-            android:elevation="4dp"
-            android:clipToOutline="true"
-            app:layout_constraintTop_toBottomOf="@id/imageView2"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent">
+            <ImageView
+                android:id="@+id/imageView2"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_marginTop="24dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:contentDescription="Logo"
+                app:srcCompat="@drawable/logo" />
 
-            <TextView
-                android:id="@+id/textView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:gravity="center"
-                android:text="Predefinição Lema do ano"
-                android:textAlignment="center"
-                android:textColor="@color/white"
-                android:textSize="20sp"
-                android:textStyle="bold|italic"
-                android:paddingBottom="16dp" />
-
-            <!-- Bloco do título e data -->
             <LinearLayout
-                android:id="@+id/layout_lema"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:background="@drawable/fundo_azul_menosescuro"
+                android:layout_marginTop="24dp"
+                android:layout_marginHorizontal="8dp"
+                android:background="@drawable/fundo_azul_escuro"
                 android:orientation="vertical"
-                android:padding="12dp"
-                android:elevation="3dp"
-                android:clipToOutline="true">
+                android:padding="16dp"
+                android:elevation="4dp"
+                android:clipToOutline="true"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/imageView2">
 
-                <EditText
-                    android:id="@+id/etTituloLema"
+                <TextView
+                    android:id="@+id/textView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:backgroundTint="#00FFFFFF"
-                    android:hint="Escreva seu título aqui"
-                    android:inputType="text"
-                    android:paddingVertical="4dp"
+                    android:gravity="center"
+                    android:text="Predefinição Lema do ano"
                     android:textAlignment="center"
-                    android:textColor="#fff"
-                    android:textColorHint="@color/white"
-                    android:textSize="14sp"
-                    android:textStyle="italic" />
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
+                    android:textStyle="bold|italic"
+                    android:paddingBottom="16dp" />
 
-                <EditText
-                    android:id="@+id/etDataLema"
+                <LinearLayout
+                    android:id="@+id/layout_lema"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:backgroundTint="#00FFFFFF"
-                    android:focusable="false"
-                    android:hint="00/00/0000"
-                    android:inputType="none"
-                    android:paddingVertical="4dp"
-                    android:textAlignment="center"
-                    android:textColor="#FFFFFF"
-                    android:textColorHint="@color/white"
-                    android:textSize="14sp"
-                    android:textStyle="italic" />
-            </LinearLayout>
+                    android:layout_marginBottom="16dp"
+                    android:background="@drawable/fundo_azul_menosescuro"
+                    android:orientation="vertical"
+                    android:padding="12dp"
+                    android:elevation="3dp"
+                    android:clipToOutline="true">
 
-            <!-- Bloco do texto -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:layout_marginBottom="16dp"
-                android:background="@drawable/fundo_azul_menosescuro"
-                android:orientation="vertical"
-                android:padding="12dp"
-                android:elevation="3dp"
-                android:clipToOutline="true">
+                    <EditText
+                        android:id="@+id/etTituloLema"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="#00FFFFFF"
+                        android:hint="Escreva seu título aqui"
+                        android:inputType="text"
+                        android:paddingVertical="4dp"
+                        android:textAlignment="center"
+                        android:textColor="#fff"
+                        android:textColorHint="@color/white"
+                        android:textSize="14sp"
+                        android:textStyle="italic" />
 
-                <EditText
-                    android:id="@+id/etTextoLema"
+                    <EditText
+                        android:id="@+id/etDataLema"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:backgroundTint="#00FFFFFF"
+                        android:focusable="false"
+                        android:hint="00/00/0000"
+                        android:inputType="none"
+                        android:paddingVertical="4dp"
+                        android:textAlignment="center"
+                        android:textColor="#FFFFFF"
+                        android:textColorHint="@color/white"
+                        android:textSize="14sp"
+                        android:textStyle="italic" />
+                </LinearLayout>
+
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@android:color/transparent"
-                    android:gravity="top|start"
-                    android:hint="Digite seu texto aqui..."
-                    android:inputType="textMultiLine"
-                    android:scrollbars="vertical"
-                    android:textColor="@color/white"
-                    android:textColorHint="@color/white"
-                    android:textSize="13sp"
-                    android:textStyle="italic" />
+                    android:layout_height="200dp"
+                    android:layout_marginBottom="16dp"
+                    android:background="@drawable/fundo_azul_menosescuro"
+                    android:orientation="vertical"
+                    android:padding="12dp"
+                    android:elevation="3dp"
+                    android:clipToOutline="true">
+
+                    <EditText
+                        android:id="@+id/etTextoLema"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@android:color/transparent"
+                        android:gravity="top|start"
+                        android:hint="Digite seu texto aqui..."
+                        android:inputType="textMultiLine"
+                        android:scrollbars="vertical"
+                        android:textColor="@color/white"
+                        android:textColorHint="@color/white"
+                        android:textSize="13sp"
+                        android:textStyle="italic" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:weightSum="2"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="24dp">
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btnSalvar"
+                        android:layout_width="0dp"
+                        android:layout_height="40dp"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/fundo_botao_azul_escuro"
+                        android:elevation="4dp"
+                        android:text="Salvar"
+                        android:textAllCaps="false"
+                        android:textColor="@color/white"
+                        android:textSize="14sp" />
+
+                </LinearLayout>
+
             </LinearLayout>
 
-            <!-- Botões -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="horizontal"
-                android:weightSum="2"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="24dp">
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btnSalvar"
-                    android:layout_width="0dp"
-                    android:layout_height="40dp"
-                    android:layout_weight="1"
-                    android:layout_marginEnd="8dp"
-                    android:background="@drawable/fundo_botao_azul_escuro"
-                    android:elevation="4dp"
-                    android:text="Salvar"
-                    android:textAllCaps="false"
-                    android:textColor="@color/white"
-                    android:textSize="14sp" />
+    </androidx.core.widget.NestedScrollView>
 
-            </LinearLayout>
-        </LinearLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <!-- Barra inferior -->
+    <!-- Barra inferior fixa -->
     <LinearLayout
         android:id="@+id/bottomBar"
         android:layout_width="match_parent"
@@ -220,4 +226,5 @@
             android:contentDescription="Mais"
             android:src="@drawable/pontos" />
     </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
